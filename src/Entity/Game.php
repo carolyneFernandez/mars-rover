@@ -54,4 +54,12 @@ class Game
 
         return $this;
     }
+
+    /**
+     *
+     */
+    public function nextRound()
+    {
+        $this->round++;
+    }
 }

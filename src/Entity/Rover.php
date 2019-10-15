@@ -48,6 +48,11 @@ class Rover
      */
     private $road = [];
 
+    /*
+     * @ORM\Column(type="int")
+     */
+    private $bonus;
+
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Flag", mappedBy="hasFlag")
      */
@@ -165,4 +170,38 @@ class Rover
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getBonus()
+    {
+        return $this->bonus;
+    }
+
+    /**
+     * @param mixed $bonus
+     */
+    public function setBonus($bonus): void
+    {
+        $this->bonus = $bonus;
+    }
+
+    /*
+     * @param int $posX
+     * @param int $posY
+     */
+    public function move($posX, $posY)
+    {
+        $this->posX = $posX;
+        $this->posY = $posY;
+
+    }
+
+    public function calculSlop()
+    {
+
+    }
+
+
 }
