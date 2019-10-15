@@ -110,7 +110,25 @@ class CarteController extends AbstractController
             }
             return $grille;
         }
-        $grille = map_gen(50, 50);
+        $difficulty = 10;
+        if (isset($_GET['dif'])){
+            switch ($_GET['dif']) {
+                case 1:
+                    $difficulty = 10;
+                    break;
+                case 2:
+                    $difficulty = 30;
+                    break;
+                case 3:
+                    $difficulty = 50;
+                    break;
+                
+                default:
+                    # code...
+                    break;
+            }
+        }
+        $grille = map_gen($difficulty, $difficulty);
         // dump($grille);
 
                 // return un ficher twig générant un html en traitant les données envoyé en paramètre

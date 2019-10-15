@@ -9,8 +9,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width">
 		<title></title>
-			<style>
-      
+		<style>
         table {
           border: none;
           border-spacing: 0;
@@ -21,20 +20,48 @@
           width: 50px;
           height: 50px;
         }
-        
-			
+        .color1 {
+          background: #76b0e2;
+        }
+        .color2 {
+          background: #6d4d2a;
+        }
+        .color3 {
+          background: #ab9a41;
+        }
+        .color4{
+          background: #ffd1f9;
+        }
+        .color5 {
+          background: #9a4403;
+        }
+        .color6{
+          background: #cccccc;
+        }
+        .color7 {
+          background: #05ff04;
+        }			
 		</style>
 	</head>
 	<body>
     <div class="container">
 
       <div class="section">
+        <form action="" method="get">
+            Choix de la difficulté : 
+            <select name="dif" id="dif">
+                <option value="1" selected>Facile</option>
+                <option value="2">Moyen</option>
+                <option value="3">Difficile</option>
+            </select>
+            <input type="submit" value="Valider">
+        </form>
         <table border='1'>
             <tr>
             {# Foreach en twig, affichage du tableau x, y, z, materiel #}
             {% for elementy in grille %}
                 {% for elementx in elementy %}
-                    <td class='{{ elementx.1 }}'>
+                    <td class='color{{ elementx.1 }}'>
                         {{ loop.index0 }}, {{ loop.parent.loop.index0 }}, {{ elementx.0 }}, {{ elementx.1 }}
                     </td>
                 {% endfor %}
