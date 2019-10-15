@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello CarteController!{% endblock %}
+
+{% block body %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width">
+		<title></title>
+			<style>
+      
+        table {
+          border: none;
+          border-spacing: 0;
+          border: 0.2px solid black;
+        }
+        table td {
+          border: 0.1px solid black;
+          width: 50px;
+          height: 50px;
+        }
+        
+			
+		</style>
+	</head>
+	<body>
+    <div class="container">
+
+      <div class="section">
+        <table border='1'>
+            <tr>
+            {# Foreach en twig, affichage du tableau x, y, z, materiel #}
+            {% for elementy in grille %}
+                {% for elementx in elementy %}
+                    <td class='{{ elementx.1 }}'>
+                        {{ loop.index0 }}, {{ loop.parent.loop.index0 }}, {{ elementx.0 }}, {{ elementx.1 }}
+                    </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+      </div>
+	</body>
+</html>
+{% endblock %}
