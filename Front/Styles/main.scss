@@ -15,7 +15,10 @@ main{
 
 .container{
   width: 70vw;
-  display: block;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-around;
+  align-items: center;
   margin: auto;
   padding: 50px 0;
   
@@ -39,10 +42,15 @@ main{
     position: relative;
   }
 
-  &-btn {
-    position: absolute;
-    bottom: -10%;
+  &-link-bottom {
+    position: fixed;
+    bottom: 6%;
     right: 5%;
+  }
+  &-link-top{
+    position: fixed;
+    top: 6%;
+    left: 5%;
   }
 }
 
