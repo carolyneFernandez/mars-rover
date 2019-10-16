@@ -26,7 +26,7 @@ main{
     display: block;
     margin: auto;
     
-    g>#circle{
+    g>#circle-2{
       cursor: crosshair;
       -moz-box-shadow: 0 0 5px $colorBlueNeon;
       -webkit-box-shadow: 0 0 5px $colorBlueNeon;
@@ -70,6 +70,26 @@ main{
   cursor: pointer;
 }
 
+.smallAction{
+
+  transition: 0.75s ease-in-out;
+  
+  &:hover{
+    transform: scale(0.95);
+
+    .fakeBorderBottom,.fakeBorderTop{
+      background-color: $colorOrange;
+      -webkit-box-shadow: 0 0 10px 5px rgba($colorOrange,0.2);
+      -moz-box-shadow: 0 0 10px 5px rgba($colorOrange,0.2);
+      box-shadow: 0 0 10px 5px rgba($colorOrange,0.2);
+    }
+    .usableButton{
+      color: $colorOrange;
+      text-shadow: 0 0 100px rgba($colorOrange, 1);
+    }
+  }
+}
+
 .navLink{
   font-family: $Iceland;
   color: $colorBlueNeon;
@@ -78,6 +98,48 @@ main{
   text-decoration: none;
   text-shadow: 0 0 15px rgba($colorBlueNeon, 1);
   outline: none;
+}
+
+.barAdd{
+  position: relative;
+  transition: color 0.2s ease-in-out;
+
+  &::after, &::before{
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: $colorOrange;
+    transform: scaleX(0);
+    transition: transform 0.5s ease;
+  }
+
+  &::after{
+    bottom: 0;
+    transform-origin: center left;
+  }
+
+  &::before{
+    top: 0;
+    transform-origin: center right;
+  }
+
+  &:hover{
+
+    color: $colorOrange;
+    text-shadow: 0 0 15px rgba($colorOrange, 1);
+    
+    &::before{
+      transform-origin: center left;
+      transform: scaleX(1);
+    }
+
+    &::after{
+      transform-origin: center right;
+    transform: scaleX(1);
+    }
+  }
 }
 
 .fakeBorderTop, .fakeBorderBottom{
