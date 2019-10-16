@@ -4,26 +4,52 @@ body {
   padding: 0;
 }
 
+header {
+  z-index: 10;
+  position: relative;
+}
+
 main {
   z-index: 10;
   position: relative;
 }
 
-.smallAction {
-  transition: 0.75s ease-in-out;
+.title {
+  color: #06D4FE;
+  text-transform: uppercase;
+  font-family: "Iceland", cursive;
+  font-size: 3em;
+  padding: 0 10px;
+  text-shadow: 0 0 15px #06d4fe;
+  outline: none;
 }
-.smallAction:hover {
-  transform: scale(0.95);
+
+.paragraph {
+  color: white;
+  text-align: justify;
+  font-family: "Ubuntu", sans-serif;
+  margin: 30px 150px;
+  font-size: 1.2em;
 }
-.smallAction:hover .fakeBorderBottom, .smallAction:hover .fakeBorderTop {
-  background-color: #FEA806;
-  -webkit-box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
-  -moz-box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
-  box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
+
+.container {
+  width: 70vw;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-around;
+  align-items: center;
+  margin: auto;
+  padding: 50px 0;
 }
-.smallAction:hover .usableButton {
-  color: #FEA806;
-  text-shadow: 0 0 100px #fea806;
+.container svg {
+  display: block;
+  margin: auto auto 100px auto;
+}
+.container svg g > #circle {
+  cursor: crosshair;
+  -moz-box-shadow: 0 0 5px #06D4FE;
+  -webkit-box-shadow: 0 0 5px #06D4FE;
+  box-shadow: 0 0 5px #06D4FE;
 }
 
 .barAdd {
@@ -61,74 +87,11 @@ main {
   transform: scaleX(1);
 }
 
-.container2 {
-  width: 20vw;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: space-around;
-  align-items: center;
-  margin: auto;
-  padding: 80px 0;
-}
-
-.title {
-  color: #06D4FE;
-  text-transform: uppercase;
-  font-family: "Iceland", cursive;
-  font-size: 1.5em;
-  text-shadow: 0 0 15px #06d4fe;
-}
-
-.BorderTop, .BorderBottom {
-  -webkit-box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
-  -moz-box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
-  box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
-  width: 100%;
-  height: 2px;
-  background: #06D4FE;
-}
-
-.BorderBottom {
-  height: 4px;
-}
-
-p {
-  color: white;
-  text-align: justify;
-  font-family: "Ubuntu", sans-serif;
-  margin: 30px 150px;
-  font-size: 1.2em;
-}
-
-header {
-  z-index: 10;
-  position: relative;
-}
-
-.container {
-  width: 70vw;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: space-around;
-  align-items: center;
-  margin: auto;
-  padding: 50px 0;
-}
-.container svg {
-  display: block;
-  margin: auto;
-}
-.container svg g > #circle {
-  cursor: crosshair;
-  -moz-box-shadow: 0 0 5px #06D4FE;
-  -webkit-box-shadow: 0 0 5px #06D4FE;
-  box-shadow: 0 0 5px #06D4FE;
-}
 .container-btn-box {
   display: block;
-  margin: 150px auto auto auto;
-  width: 30%;
-  padding: 20px 0;
+  margin: 50px auto auto auto;
+  width: auto;
+  padding: 15px 0;
 }
 .container-link-bottom {
   position: fixed;
@@ -143,27 +106,15 @@ header {
 
 .usableButton {
   text-align: center;
-  background: transparent;
-  border: none;
-  color: #06D4FE;
-  font-family: "Iceland", cursive;
-  font-size: 5em;
-  text-transform: uppercase;
-  display: block;
+  font-size: 5em !important;
   margin: auto;
-  text-shadow: 0 0 15px #06d4fe;
-  outline: none;
   cursor: pointer;
   text-decoration: none;
 }
 
 .navLink {
-  font-family: "Iceland", cursive;
-  color: #06D4FE;
-  text-transform: uppercase;
-  font-size: 2em;
+  font-size: 2em !important;
   text-decoration: none;
-  text-shadow: 0 0 15px #06d4fe;
   outline: none;
 }
 
@@ -178,6 +129,23 @@ header {
 
 .fakeBorderBottom {
   height: 4px;
+}
+
+.smallAction {
+  transition: 0.75s ease-in-out;
+}
+.smallAction:hover {
+  transform: scale(0.95);
+}
+.smallAction:hover .fakeBorderBottom, .smallAction:hover .fakeBorderTop {
+  background-color: #FEA806;
+  -webkit-box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
+  -moz-box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
+  box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
+}
+.smallAction:hover .usableButton {
+  color: #FEA806;
+  text-shadow: 0 0 100px #fea806;
 }
 
 .particles {

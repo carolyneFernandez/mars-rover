@@ -1,29 +1,37 @@
 @import "../../Styles/variables";
 
 // Button CSS
+.container {
+  &-btn-box {
+    display: block;
+    margin: 50px auto auto auto;
+    width: auto;
+    padding: 15px 0;
+  }
+
+  &-link-bottom {
+    position: fixed;
+    bottom: 6%;
+    right: 5%;
+  }
+  &-link-top{
+    position: fixed;
+    top: 3.5%;
+    left: 2%;
+  }
+}
+
 .usableButton{
   text-align: center;
-  background: transparent;
-  border: none;
-  color: $colorBlueNeon;
-  font-family: $Iceland;
-  font-size: 5em;
-  text-transform: uppercase;
-  display: block;
+  font-size: 5em !important;
   margin: auto;
-  text-shadow: 0 0 15px rgba($colorBlueNeon, 1);
-  outline: none;
   cursor: pointer;
   text-decoration: none;
 }
 
 .navLink{
-  font-family: $Iceland;
-  color: $colorBlueNeon;
-  text-transform: uppercase;
-  font-size: 2em;
+  font-size: 2em !important;
   text-decoration: none;
-  text-shadow: 0 0 15px rgba($colorBlueNeon, 1);
   outline: none;
 }
 
@@ -38,4 +46,21 @@
 
 .fakeBorderBottom{
   height: 4px;
+}
+
+.smallAction{
+  transition: 0.75s ease-in-out;
+  &:hover{
+    transform: scale(0.95);
+    .fakeBorderBottom,.fakeBorderTop{
+      background-color: $colorOrange;
+      -webkit-box-shadow: 0 0 10px 5px rgba($colorOrange,0.2);
+      -moz-box-shadow: 0 0 10px 5px rgba($colorOrange,0.2);
+      box-shadow: 0 0 10px 5px rgba($colorOrange,0.2);
+    }
+    .usableButton{
+      color: $colorOrange;
+      text-shadow: 0 0 100px rgba($colorOrange, 1);
+    }
+  }
 }
