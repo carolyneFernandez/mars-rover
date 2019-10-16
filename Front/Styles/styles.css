@@ -27,7 +27,7 @@ header {
   display: block;
   margin: auto;
 }
-.container svg g > #circle {
+.container svg g > #circle-2 {
   cursor: crosshair;
   -moz-box-shadow: 0 0 5px #06D4FE;
   -webkit-box-shadow: 0 0 5px #06D4FE;
@@ -66,6 +66,23 @@ header {
   cursor: pointer;
 }
 
+.smallAction {
+  transition: 0.75s ease-in-out;
+}
+.smallAction:hover {
+  transform: scale(0.95);
+}
+.smallAction:hover .fakeBorderBottom, .smallAction:hover .fakeBorderTop {
+  background-color: #FEA806;
+  -webkit-box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
+  -moz-box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
+  box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
+}
+.smallAction:hover .usableButton {
+  color: #FEA806;
+  text-shadow: 0 0 100px #fea806;
+}
+
 .navLink {
   font-family: "Iceland", cursive;
   color: #06D4FE;
@@ -74,6 +91,41 @@ header {
   text-decoration: none;
   text-shadow: 0 0 15px #06d4fe;
   outline: none;
+}
+
+.barAdd {
+  position: relative;
+  transition: color 0.2s ease-in-out;
+}
+.barAdd::after, .barAdd::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #FEA806;
+  transform: scaleX(0);
+  transition: transform 0.5s ease;
+}
+.barAdd::after {
+  bottom: 0;
+  transform-origin: center left;
+}
+.barAdd::before {
+  top: 0;
+  transform-origin: center right;
+}
+.barAdd:hover {
+  color: #FEA806;
+  text-shadow: 0 0 15px #fea806;
+}
+.barAdd:hover::before {
+  transform-origin: center left;
+  transform: scaleX(1);
+}
+.barAdd:hover::after {
+  transform-origin: center right;
+  transform: scaleX(1);
 }
 
 .fakeBorderTop, .fakeBorderBottom {
