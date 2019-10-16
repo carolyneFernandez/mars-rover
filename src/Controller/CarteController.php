@@ -28,47 +28,37 @@ class CarteController extends AbstractController
              Si niveau de difficulté = 2 alors autant de plat que de montagne
              Si niveau de difficulté = 3 alors plus de montagne que de plat */
 
-      if (isset($_GET['dif'])) {
-        if ($_GET['dif'] == 1) {
-          if ($z >= -50 && $z <= 0) {
-            $material = 3;
-          } else if($z > 0 && $z <= 50){
-            $material = 5;
-          } else {
-            $material = 7;
-          }
+      if ($z >= -100 && $z <= -90) {
+        $material = 1;
+      } else if ($z > -90 && $z <= -75) {
+        $material = 6;
+      } else if ($z > -75 && $z <= -50) {
+        $material = 2;
+      } else if ($z > -50 && $z <= -45) {
+        $material = 4;
+      } else if ($z > -45 && $z <= -25) {
+        $material = 2;
+      } else if ($z > -25 && $z <= -10) {
+        $material = 3;
+      } else if ($z > -10 && $z <= 10) {
+        $material = 5;
+      } else if ($z > 10 && $z <= 25) {
+        $material = 3;
+      } else if ($z > 25 && $z <= 45) {
+        $material = 2;
+      } else if ($z > 45 && $z <= 50) {
+        $material = 4;
+      } else if ($z > 50 && $z <= 75) {
+        $material = 2;
+      } else if ($z > 75 && $z <= 90) {
+        $material = 6;
+      } else if ($z > 90 && $z <= 100) {
+        $material = 1;
+      } else {
+        $material = 7;
       }
 
-        return $material;
-      }
-
-      // $material = 2;
-      // if($z >= -128 && $z<= -107){
-      //   $material = 5;
-      // } else if($z > -107 && $z <= -86){
-      //   $material = 7;
-      // } else if($z > -86 && $z <= -65){
-      //   $material = 2;
-      // } else if($z > -65 && $z <= -44){
-      //   $material = 3;
-      // } else if($z > -44 && $z <= -23){
-      //   $material = 3;
-      // } else if($z > -23 && $z <= -2){
-      //   $material = 5;
-      // } else if($z > -2 && $z <= 19){
-      //   $material = 3;
-      // } else if($z > 19 && $z <= 40){
-      //   $material = 3;
-      // } else if($z > 40 && $z <= 61){
-      //   $material = 6;
-      // } else if($z > 61 && $z <= 83){
-      //   $material = 6;
-      // }else if($z > 83 && $z <= 104){
-      //   $material = 2;
-      // }else if($z > 104 && $z <= 127){
-      //   $material = 1;
-      // }
-      // return $material;
+      return $material;
     }
 
     function map_gen($x, $y)
@@ -85,7 +75,9 @@ class CarteController extends AbstractController
             $grille[$i][$j] = [0, 'NULL'];
           }
         }
-
+        /** Initialisation de la profondeur à 50 */
+        $pronfondeur = 50;
+        /** En fonction de la difficulté, on augmente la profondeur de la carte */
         switch ($_GET['dif']) {
 
           case 1:
@@ -104,11 +96,17 @@ class CarteController extends AbstractController
             $pronfondeur = 50;
             break;
         }
-
+        /** Initialisation des 4 coins de la grille en générant une profondeur aléatoire en fonction 
+         * du niveau de la map.
+         * $grille[y][x][z]
+         */
         $grille[0][0][0] = (int) mt_rand(-($pronfondeur), $pronfondeur);
         $grille[0][$h - 1][0] = (int) mt_rand(-($pronfondeur), $pronfondeur);
         $grille[$h - 1][0][0] = (int) mt_rand(-($pronfondeur), $pronfondeur);
         $grille[$h - 1][$h - 1][0] = (int) mt_rand(-($pronfondeur), $pronfondeur);
+        var_dump($pronfondeur);
+        var_dump($grille[0][0][0]);
+        var_dump($grille[0][$h - 1][0]);
 
         $i = $h - 1;
 
@@ -119,7 +117,7 @@ class CarteController extends AbstractController
           for ($x = $id; $x < $h - 1; $x += $i) {
             for ($y = $id; $y < $h - 1; $y = $y + $i) {
               $moyenne = ($grille[$x - $id][$y - $id][0] + $grille[$x - $id][$y + $id][0] + $grille[$x + $id][$y + $id][0] + $grille[$x + $id][$y - $id][0]) / 4;
-              $grille[$x][$y][0] = (int) ($moyenne + mt_rand(-$id, $id));
+              $grille[$x][$y][0] = (int) ($moyenne + mt_rand(-($id), $id));
               $grille[$x][$y][1] = setMaterial($grille[$x][$y][0]);
             }
           }
@@ -150,106 +148,28 @@ class CarteController extends AbstractController
                 $somme = $somme + $grille[$x][$y + $id][0];
                 $n = $n + 1;
               }
-              $grille[$x][$y][0] = (int) ($somme / $n + mt_rand(-$id, $id));
+              $grille[$x][$y][0] = (int) ($somme / $n + mt_rand(-($id), $id));
+
+        //   if ($grille[$x][$y][0]>$pronfondeur || $grille[$x][$y][0] < -$pronfondeur){
+         //     $grille[$x][$y][0] = 99;
+         //    }
+
               $grille[$x][$y][1] = setMaterial($grille[$x][$y][0]);
+              //var_dump($grille[$x][$y][0]);
             }
           }
           $i = $id;
         }
         return $grille;
       }
-      // $h = $x;
-      // $grille = array();
-      // //Initialisation de la grille
-      // for ($i = 0; $i < $h; $i++) {
-      //   $grille[$i] = array();
-      // }
-      // for ($i = 0; $i < $h; $i++) {
-      //   for ($j = 0; $j < $h; $j++) {
-      //     $grille[$i][$j] = [0, 'NULL'];
-      //   }
-      // }
-
-      // //Affectation de nombres random aux coins de la grille
-      // $grille[0][0][0] = (int) mt_rand(-128, 127);
-      // $grille[0][$h - 1][0] = (int) mt_rand(-128, 127);
-      // $grille[$h - 1][0][0] = (int) mt_rand(-128, 127);
-      // $grille[$h - 1][$h - 1][0] = (int) mt_rand(-128, 127);
-
-      //   $i = $h - 1;
-
-      //   while ($i > 1) {
-      //     $id = $i / 2;
-      //     //Début de la phase Diamant
-      //     //   dump($grille);
-      //     for ($x = $id; $x < $h - 1; $x += $i) {
-      //       for ($y = $id; $y < $h - 1; $y = $y + $i) {
-      //         $moyenne = ($grille[$x - $id][$y - $id][0] + $grille[$x - $id][$y + $id][0] + $grille[$x + $id][$y + $id][0] + $grille[$x + $id][$y - $id][0]) / 4;
-      //         $grille[$x][$y][0] = (int) ($moyenne + mt_rand(-$id, $id));
-      //         $grille[$x][$y][1] = setMaterial($grille[$x][$y][0]);
-      //       }
-      //     }
-      //     //Phase de carré
-      //     $decalage = 0;
-      //     for ($x = 0; $x < $h; $x = $x + $id) {
-      //       if ($decalage == 0) {
-      //         $decalage = $id;
-      //       } else {
-      //         $decalage = 0;
-      //       }
-      //       for ($y = $decalage; $y < $h; $y = $y + $i) {
-      //         $somme = 0;
-      //         $n = 0;
-      //         if ($x >= $id) {
-      //           $somme = $somme + $grille[$x - $id][$y][0];
-      //           $n = $n + 1;
-      //         }
-      //         if ($x + $id < $h) {
-      //           $somme = $somme + $grille[$x + $id][$y][0];
-      //           $n = $n + 1;
-      //         }
-      //         if ($y >= $id) {
-      //           $somme = $somme + $grille[$x][$y - $id][0];
-      //           $n = $n + 1;
-      //         }
-      //         if ($y + $id < $h) {
-      //           $somme = $somme + $grille[$x][$y + $id][0];
-      //           $n = $n + 1;
-      //         }
-      //         $grille[$x][$y][0] = (int) ($somme / $n + mt_rand(-$id, $id));
-      //         $grille[$x][$y][1] = setMaterial($grille[$x][$y][0]);
-      //       }
-      //     }
-      //     $i = $id;
-      //   }
-      //   return $grille;
-      // }
-      // $difficulty = 10;
-      /* $_GET['dif'] = le niveau de difficulté chosi
-        case x: représente la valeur de $_GET['dif'] (1 = facile, 2 = moyen, 3 = difficile)
-        */
-      // if (isset($_GET['dif'])){
-      //     switch ($_GET['dif']) {
-      //         case 1:
-      //             $difficulty = 10;
-      //             break;
-      //         case 2:
-      //             $difficulty = 30;
-      //             break;
-      //         case 3:
-      //             $difficulty = 50;
-      //             break;
-
-      //         default:
-      //             # code...
-      //             break;
-      //     }
-      // }
-      // dump($grille);
-
-      // return un ficher twig générant un html en traitant les données envoyé en paramètre
     }
-    $grille = map_gen(500, 500);
+    $grille = map_gen(400, 400);
+    //echo "<pre>";
+    //print_r(json_encode($grille, JSON_FORCE_OBJECT));
+    //echo "</pre>";
+    // // echo "<pre>";
+    // // var_dump($grille);
+    // // echo "</pre>";
     return $this->render('carte/index.html.twig', [
       'controller_name' => 'CarteController',
       'grille' => $grille
