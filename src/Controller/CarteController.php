@@ -28,9 +28,9 @@ class CarteController extends AbstractController
              Si niveau de difficulté = 2 alors autant de plat que de montagne
              Si niveau de difficulté = 3 alors plus de montagne que de plat */
 
-      if ($z >= -100 && $z <= -90) {
+      if ($z >= -100 && $z <= -85) {
         $material = 1;
-      } else if ($z > -90 && $z <= -75) {
+      } else if ($z > -85 && $z <= -75) {
         $material = 6;
       } else if ($z > -75 && $z <= -50) {
         $material = 2;
@@ -50,9 +50,9 @@ class CarteController extends AbstractController
         $material = 4;
       } else if ($z > 50 && $z <= 75) {
         $material = 2;
-      } else if ($z > 75 && $z <= 90) {
+      } else if ($z > 75 && $z <= 85) {
         $material = 6;
-      } else if ($z > 90 && $z <= 100) {
+      } else if ($z > 85 && $z <= 100) {
         $material = 1;
       } else {
         $material = 7;
@@ -76,35 +76,35 @@ class CarteController extends AbstractController
           }
         }
         /** Initialisation de la profondeur à 50 */
-        $pronfondeur = 50;
+        $profondeur = 50;
         /** En fonction de la difficulté, on augmente la profondeur de la carte */
         switch ($_GET['dif']) {
 
           case 1:
-            $pronfondeur = 50;
+            $profondeur = 50;
             break;
 
           case 2:
-            $pronfondeur = 75;
+            $profondeur = 75;
             break;
 
           case 3:
-            $pronfondeur = 100;
+            $profondeur = 100;
             break;
 
           default:
-            $pronfondeur = 50;
+            $profondeur = 50;
             break;
         }
         /** Initialisation des 4 coins de la grille en générant une profondeur aléatoire en fonction 
          * du niveau de la map.
          * $grille[y][x][z]
          */
-        $grille[0][0][0] = (int) mt_rand(-($pronfondeur), $pronfondeur);
-        $grille[0][$h - 1][0] = (int) mt_rand(-($pronfondeur), $pronfondeur);
-        $grille[$h - 1][0][0] = (int) mt_rand(-($pronfondeur), $pronfondeur);
-        $grille[$h - 1][$h - 1][0] = (int) mt_rand(-($pronfondeur), $pronfondeur);
-        var_dump($pronfondeur);
+        $grille[0][0][0] = (int) mt_rand(-($profondeur), $profondeur);
+        $grille[0][$h - 1][0] = (int) mt_rand(-($profondeur), $profondeur);
+        $grille[$h - 1][0][0] = (int) mt_rand(-($profondeur), $profondeur);
+        $grille[$h - 1][$h - 1][0] = (int) mt_rand(-($profondeur), $profondeur);
+        var_dump($profondeur);
         var_dump($grille[0][0][0]);
         var_dump($grille[0][$h - 1][0]);
 
@@ -148,11 +148,16 @@ class CarteController extends AbstractController
                 $somme = $somme + $grille[$x][$y + $id][0];
                 $n = $n + 1;
               }
-              $grille[$x][$y][0] = (int) ($somme / $n + mt_rand(-($id), $id));
+                set_time_limit(10);
+                $grille[$x][$y][0] = (int) ($somme / $n + mt_rand(-($id), $id));
+                if ($grille[$x][$y][0] > $profondeur || $grille[$x][$y][0] < -$profondeur ) {
+                  $grille[$x][$y][0] = (int) ($n + mt_rand(-$profondeur, $profondeur));
+                }
+              
 
-        //   if ($grille[$x][$y][0]>$pronfondeur || $grille[$x][$y][0] < -$pronfondeur){
-         //     $grille[$x][$y][0] = 99;
-         //    }
+              //if ($grille[$x][$y][0] > $profondeur || $grille[$x][$y][0] < -$profondeur) {
+              //  $grille[$x][$y][0] = 99;
+             // }
 
               $grille[$x][$y][1] = setMaterial($grille[$x][$y][0]);
               //var_dump($grille[$x][$y][0]);
