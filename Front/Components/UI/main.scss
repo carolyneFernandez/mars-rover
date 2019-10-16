@@ -1,0 +1,55 @@
+@import "../../Styles/variables";
+
+
+// General CSS here
+body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+main{
+  z-index: 10;
+  position: relative;
+}
+
+.container{
+  width: 70vw;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-around;
+  align-items: center;
+  margin: auto;
+  padding: 50px 0;
+  
+  svg{
+    display: block;
+    margin: auto;
+    
+    g>#circle{
+      cursor: crosshair;
+      -moz-box-shadow: 0 0 5px $colorBlueNeon;
+      -webkit-box-shadow: 0 0 5px $colorBlueNeon;
+      box-shadow: 0 0 5px $colorBlueNeon;
+    }
+  }
+
+  &-btn-box {
+    display: block;
+    margin: 150px auto auto auto;
+    width: 30%;
+    padding: 20px 0;
+    position: relative;
+  }
+
+  &-link-bottom {
+    position: fixed;
+    bottom: 6%;
+    right: 5%;
+  }
+  &-link-top{
+    position: fixed;
+    top: 6%;
+    left: 5%;
+  }
+}

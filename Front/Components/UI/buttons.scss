@@ -1,0 +1,41 @@
+@import "../../Styles/variables";
+
+// Button CSS
+.usableButton{
+  text-align: center;
+  background: transparent;
+  border: none;
+  color: $colorBlueNeon;
+  font-family: $Iceland;
+  font-size: 5em;
+  text-transform: uppercase;
+  display: block;
+  margin: auto;
+  text-shadow: 0 0 15px rgba($colorBlueNeon, 1);
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.navLink{
+  font-family: $Iceland;
+  color: $colorBlueNeon;
+  text-transform: uppercase;
+  font-size: 2em;
+  text-decoration: none;
+  text-shadow: 0 0 15px rgba($colorBlueNeon, 1);
+  outline: none;
+}
+
+.fakeBorderTop, .fakeBorderBottom{
+  -webkit-box-shadow: 0 0 10px 5px rgba($colorBlueNeon,0.2);
+  -moz-box-shadow: 0 0 10px 5px rgba($colorBlueNeon,0.2);
+  box-shadow: 0 0 10px 5px rgba($colorBlueNeon,0.2);
+  width: 100%;
+  height: 2px;
+  background: $colorBlueNeon;
+}
+
+.fakeBorderBottom{
+  height: 4px;
+}
