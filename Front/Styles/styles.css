@@ -9,6 +9,11 @@ main {
   position: relative;
 }
 
+header {
+  z-index: 10;
+  position: relative;
+}
+
 .container {
   width: 70vw;
   display: flex;
@@ -22,7 +27,7 @@ main {
   display: block;
   margin: auto;
 }
-.container svg g > #circle {
+.container svg g > #circle-2 {
   cursor: crosshair;
   -moz-box-shadow: 0 0 5px #06D4FE;
   -webkit-box-shadow: 0 0 5px #06D4FE;
@@ -42,8 +47,8 @@ main {
 }
 .container-link-top {
   position: fixed;
-  top: 6%;
-  left: 5%;
+  top: 3.5%;
+  left: 2%;
 }
 
 .usableButton {
@@ -62,6 +67,23 @@ main {
   text-decoration: none;
 }
 
+.smallAction {
+  transition: 0.75s ease-in-out;
+}
+.smallAction:hover {
+  transform: scale(0.95);
+}
+.smallAction:hover .fakeBorderBottom, .smallAction:hover .fakeBorderTop {
+  background-color: #FEA806;
+  -webkit-box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
+  -moz-box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
+  box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
+}
+.smallAction:hover .usableButton {
+  color: #FEA806;
+  text-shadow: 0 0 100px #fea806;
+}
+
 .navLink {
   font-family: "Iceland", cursive;
   color: #06D4FE;
@@ -70,6 +92,41 @@ main {
   text-decoration: none;
   text-shadow: 0 0 15px #06d4fe;
   outline: none;
+}
+
+.barAdd {
+  position: relative;
+  transition: color 0.2s ease-in-out;
+}
+.barAdd::after, .barAdd::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #FEA806;
+  transform: scaleX(0);
+  transition: transform 0.5s ease;
+}
+.barAdd::after {
+  bottom: 0;
+  transform-origin: center left;
+}
+.barAdd::before {
+  top: 0;
+  transform-origin: center right;
+}
+.barAdd:hover {
+  color: #FEA806;
+  text-shadow: 0 0 15px #fea806;
+}
+.barAdd:hover::before {
+  transform-origin: center left;
+  transform: scaleX(1);
+}
+.barAdd:hover::after {
+  transform-origin: center right;
+  transform: scaleX(1);
 }
 
 .fakeBorderTop, .fakeBorderBottom {
@@ -128,6 +185,45 @@ main {
   width: 100%;
   max-width: 100%;
   height: auto;
+}
+
+.container2 {
+  width: 20vw;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-around;
+  align-items: center;
+  margin: auto;
+  padding: 80px 0;
+}
+
+.title {
+  color: #06D4FE;
+  text-transform: uppercase;
+  font-family: "Iceland", cursive;
+  font-size: 1.5em;
+  text-shadow: 0 0 15px #06d4fe;
+}
+
+.BorderTop, .BorderBottom {
+  -webkit-box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
+  -moz-box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
+  box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
+  width: 100%;
+  height: 2px;
+  background: #06D4FE;
+}
+
+.BorderBottom {
+  height: 4px;
+}
+
+p {
+  color: white;
+  text-align: justify;
+  font-family: "Ubuntu", sans-serif;
+  margin: 30px 150px;
+  font-size: 1.2em;
 }
 
 /*# sourceMappingURL=styles.css.map */
