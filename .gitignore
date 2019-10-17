@@ -22,3 +22,6 @@ yarn-error.log
 ###< symfony/webpack-encore-bundle ###
 /Front/Components/.DS_Store
 /Front/.DS_Store
+
+/Front/Styles/styles.css
+/Front/Styles/styles.css.map
