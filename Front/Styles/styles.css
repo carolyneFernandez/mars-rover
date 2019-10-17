@@ -108,7 +108,7 @@ main {
 .usableButton {
   text-align: center;
   font-size: 5em !important;
-  margin: auto;
+  margin: 10px;
   cursor: pointer;
   text-decoration: none;
   display: block;
@@ -207,18 +207,6 @@ main {
   width: 70%;
 }
 
-.buttonSelect {
-  border: 5px solid #06D4FE;
-  padding: 10px 20px;
-  border-radius: 30px;
-  box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
-  width: auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  cursor: pointer;
-}
 .buttonSelect-row {
   border: 5px solid #06D4FE;
   padding: 20px 30px;
@@ -236,13 +224,12 @@ main {
   padding: 20px 30px;
   border-radius: 30px;
   box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
-  width: 100%;
+  width: auto;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   cursor: pointer;
-  margin-right: 150px;
 }
 
 /*# sourceMappingURL=styles.css.map */
