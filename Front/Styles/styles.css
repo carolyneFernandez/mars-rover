@@ -99,9 +99,6 @@ main {
   bottom: 6%;
   right: 5%;
 }
-.container-link-bottom-center{
-  margin-top:180px;
-}
 .container-link-top {
   position: fixed;
   top: 3.5%;
@@ -116,7 +113,6 @@ main {
   text-decoration: none;
   display: block;
 }
-
 
 .navLink {
   font-size: 2em !important;
@@ -170,17 +166,10 @@ main {
   margin-top: 50px;
   height: 50vh;
 }
-.wrapper-buttons-column {
+.wrapper-buttons {
   display: flex;
   flex-direction: column;
   width: 12%;
-}
-.wrapper-buttons-row {
-  display: flex;
-  flex-direction: row;
-  flex: 0 0 65%;
-  margin-left: 145px; 
-  margin-top:40px; 
 }
 .wrapper-view {
   display: flex;
@@ -197,13 +186,14 @@ main {
   max-width: 100%;
   height: auto;
   margin-bottom: 10px;
+  color: rgba(6, 212, 254, 0.2);
 }
 
 .wrapper-imageItem {
   width: 70%;
 }
 
-.buttonSelect-column {
+.buttonSelect {
   border: 5px solid #06D4FE;
   padding: 10px 20px;
   border-radius: 30px;
@@ -215,22 +205,5 @@ main {
   flex-direction: column;
   cursor: pointer;
 }
-.buttonSelect-row {
-  border: 5px solid #06D4FE;
-  padding: 20px 30px;
-  border-radius: 30px;
-  box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  cursor: pointer;
-  margin-right:150px; 
-}
-
-
-
-
 
 /*# sourceMappingURL=styles.css.map */
