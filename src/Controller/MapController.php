@@ -15,12 +15,14 @@ class MapController extends AbstractController
      */
     public function index(EasyMapRepository $easyMap)
     {   
-        $easyMap = new Map(100,10,10,10);
-        echo $easyMap->__toString();
-        die();
+        $easyMap = new Map(300,300,10,10);
+        $grille = $easyMap->map_gen();
+        echo $easyMap->getAltitude(150, 150, $grille);
         
+
         return $this->render('map/index.html.twig', [
             'controller_name' => 'MapController',
+            'grille' => $grille
         ]);
     }
 }
