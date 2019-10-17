@@ -111,12 +111,14 @@ main {
   margin: auto;
   cursor: pointer;
   text-decoration: none;
+  display: block;
 }
 
 .navLink {
   font-size: 2em !important;
   text-decoration: none;
   outline: none;
+  display: block;
 }
 
 .fakeBorderTop, .fakeBorderBottom {
