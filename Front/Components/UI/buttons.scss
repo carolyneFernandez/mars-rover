@@ -51,7 +51,7 @@
 }
 
 .smallAction{
-  transition: 0.75s ease-in-out;
+  transition: 0.3s ease-in-out;
   &:hover{
     transform: scale(0.95);
     .fakeBorderBottom,.fakeBorderTop{

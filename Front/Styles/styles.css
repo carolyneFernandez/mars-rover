@@ -42,11 +42,11 @@ main {
   margin: auto;
   padding: 50px 0;
 }
-.container svg {
+.container .logoIndex {
   display: block;
   margin: auto auto 100px auto;
 }
-.container svg g > #circle {
+.container .logoIndex g > #circle {
   cursor: crosshair;
   -moz-box-shadow: 0 0 5px #06D4FE;
   -webkit-box-shadow: 0 0 5px #06D4FE;
@@ -135,7 +135,7 @@ main {
 }
 
 .smallAction {
-  transition: 0.75s ease-in-out;
+  transition: 0.3s ease-in-out;
 }
 .smallAction:hover {
   transform: scale(0.95);
@@ -207,18 +207,6 @@ main {
   width: 70%;
 }
 
-.buttonSelect {
-  border: 5px solid #06D4FE;
-  padding: 10px 20px;
-  border-radius: 30px;
-  box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
-  width: auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  cursor: pointer;
-}
 .buttonSelect-row {
   border: 5px solid #06D4FE;
   padding: 20px 30px;
@@ -231,12 +219,25 @@ main {
   flex-direction: column;
   cursor: pointer;
 }
+.buttonSelect-row:hover {
+  border-color: #FEA806;
+  box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
+}
+.buttonSelect-row .logoSelect {
+  fill: #06D4FE;
+}
+.buttonSelect-row:hover .logoSelect {
+  fill: #FEA806;
+}
+.buttonSelect-row:hover svg filter {
+  display: none;
+}
 .buttonSelect-column {
   border: 5px solid #06D4FE;
   padding: 20px 30px;
   border-radius: 30px;
   box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
-  width: 100%;
+  width: auto;
   display: flex;
   justify-content: center;
   align-items: center;

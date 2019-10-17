@@ -66,8 +66,20 @@
     align-items: center;
     flex-direction: column;
     cursor: pointer;
+    &:hover{
+      border-color: $colorOrange;
+      box-shadow: 0 0 10px 5px rgba($colorOrange, 0.2);
+    }
 
-
+    .logoSelect{
+      fill: $colorBlueNeon;
+    }
+    &:hover .logoSelect{
+      fill: $colorOrange;
+    }
+    &:hover svg filter{
+      display: none;
+    }
   }
   &-column{
     border: 5px solid $colorBlueNeon;
@@ -80,7 +92,7 @@
     align-items: center;
     flex-direction: column;
     cursor: pointer;
-    margin-right:150px; 
+    margin-right:150px;
   }
 }
 
