@@ -55,22 +55,11 @@
 }
 
 .buttonSelect {
-  border: 5px solid $colorBlueNeon;
-  padding: 10px 20px;
-  border-radius: 30px;
-  box-shadow: 0 0 10px 5px rgba($colorBlueNeon,0.2);
-  width: auto;
-  //height: 33%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  cursor: pointer;
   &-row{
-    border: 5px solid #06D4FE;
+    border: 5px solid $colorBlueNeon;
     padding: 20px 30px;
     border-radius: 30px;
-    box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
+    box-shadow: 0 0 10px 5px rgba($colorBlueNeon, 0.2);
     width: 20%;
     display: flex;
     justify-content: space-evenly;
@@ -81,11 +70,11 @@
 
   }
   &-column{
-    border: 5px solid #06D4FE;
+    border: 5px solid $colorBlueNeon;
     padding: 20px 30px;
     border-radius: 30px;
-    box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
-    width: 100%;
+    box-shadow: 0 0 10px 5px rgba($colorBlueNeon, 0.2);
+    width: auto;
     display: flex;
     justify-content: center;
     align-items: center;
