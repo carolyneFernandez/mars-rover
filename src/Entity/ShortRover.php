@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Controller\GameController;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,17 +16,16 @@ class ShortRover extends Rover
      * @ORM\Column(type="integer")
      */
     private $id;
-
+    private $energy=100;
+    private $distance=1;
+    
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * Algorithme qui choisira le prochain coup en fonction de son type de rover
-     */
-    public function choiceStep()
-    {
-
-    }
+    
+    
 }
+?>
+
