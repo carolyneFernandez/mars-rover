@@ -19,6 +19,7 @@
     align-items: center;
     justify-content: center;
   }
+
 }
 
 .nameItem {
@@ -29,6 +30,7 @@
   max-width: 100%;
   height: auto;
   margin-bottom: 10px;
+  color:rgba($colorBlueNeon,0.2);
 }
 
 .wrapper-imageItem {
@@ -48,3 +50,4 @@
   flex-direction: column;
   cursor: pointer;
 }
+
