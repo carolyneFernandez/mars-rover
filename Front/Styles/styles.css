@@ -169,7 +169,21 @@ main {
 .wrapper-buttons {
   display: flex;
   flex-direction: column;
-  width: 12%;
+  flex: 0 0 12%;
+}
+.wrapper-buttons-column {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 12%;
+}
+.wrapper-buttons-row {
+  display: flex;
+  flex-direction: row;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  width: 100%;
+  justify-content: space-evenly;
+  align-items: center;
 }
 .wrapper-view {
   display: flex;
@@ -204,6 +218,31 @@ main {
   align-items: center;
   flex-direction: column;
   cursor: pointer;
+}
+.buttonSelect-row {
+  border: 5px solid #06D4FE;
+  padding: 20px 30px;
+  border-radius: 30px;
+  box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
+  width: 20%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: column;
+  cursor: pointer;
+}
+.buttonSelect-column {
+  border: 5px solid #06D4FE;
+  padding: 20px 30px;
+  border-radius: 30px;
+  box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  cursor: pointer;
+  margin-right: 150px;
 }
 
 /*# sourceMappingURL=styles.css.map */
