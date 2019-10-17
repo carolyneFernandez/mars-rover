@@ -20,8 +20,12 @@
     &-row{
       display: flex;
       flex-direction: row;
-      flex: 0 0 65%; 
       margin-top:40px; 
+      margin-bottom: 40px;
+      width: 100%;
+      justify-content: space-evenly;
+      align-items: center;
+      
 
     }
   }
@@ -67,12 +71,14 @@
     padding: 20px 30px;
     border-radius: 30px;
     box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
-    width: 100%;
+    width: 20%;
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
     flex-direction: column;
     cursor: pointer;
+
+
   }
   &-column{
     border: 5px solid #06D4FE;
