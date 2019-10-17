@@ -21,11 +21,11 @@
   }
 }
 
-.roverName {
+.nameItem {
   font-size: 25px !important;
 }
 
-.imageRover {
+.imageItem {
   max-width: 100%;
   height: auto;
   margin-bottom: 10px;
@@ -41,4 +41,5 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  cursor: pointer;
 }

@@ -22,6 +22,7 @@ main {
   padding: 0 10px;
   text-shadow: 0 0 15px #06d4fe;
   outline: none;
+  margin: 10px 0;
 }
 
 .paragraph {
@@ -175,11 +176,11 @@ main {
   justify-content: center;
 }
 
-.roverName {
+.nameItem {
   font-size: 25px !important;
 }
 
-.imageRover {
+.imageItem {
   max-width: 100%;
   height: auto;
   margin-bottom: 10px;
@@ -195,6 +196,7 @@ main {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  cursor: pointer;
 }
 
 /*# sourceMappingURL=styles.css.map */
