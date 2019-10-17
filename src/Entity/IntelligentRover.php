@@ -9,25 +9,17 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class IntelligentRover extends Rover
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     /**
      * Algorithme qui choisira le prochain coup en fonction de son type de rover
+     * @throws \Exception
      */
     public function choiceStep()
     {
+        dump("je fais mon traitement intelligent");
+        $this->requestAdjCases(999, 999, 2);
 
-
+        dump($this->getAdjCases());
     }
 
 }
