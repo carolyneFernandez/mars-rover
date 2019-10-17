@@ -166,15 +166,10 @@ main {
   margin-top: 50px;
   height: 50vh;
 }
-.wrapper-buttons {
-  display: flex;
-  flex-direction: column;
-  flex: 0 0 12%;
-}
 .wrapper-buttons-column {
   display: flex;
   flex-direction: column;
-  flex: 0 0 12%;
+  width: 12%;
 }
 .wrapper-buttons-row {
   display: flex;
@@ -221,7 +216,7 @@ main {
 }
 .buttonSelect-row {
   border: 5px solid #06D4FE;
-  padding: 20px 30px;
+  padding: 10px 20px;
   border-radius: 30px;
   box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
   width: 20%;
@@ -233,7 +228,7 @@ main {
 }
 .buttonSelect-column {
   border: 5px solid #06D4FE;
-  padding: 20px 30px;
+  padding: 10px 20px;
   border-radius: 30px;
   box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
   width: 100%;
@@ -242,7 +237,6 @@ main {
   align-items: center;
   flex-direction: column;
   cursor: pointer;
-  margin-right: 150px;
 }
 
 /*# sourceMappingURL=styles.css.map */
