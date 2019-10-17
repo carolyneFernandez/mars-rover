@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class GameController extends AbstractController
@@ -16,8 +17,25 @@ class GameController extends AbstractController
     /**
      * @Route("/game", name="game")
      */
-    public function index()
+    public function index(Request $request)
     {
+        /*
+         * Requête API méthode GET :
+         * int posX,
+         * int posY,
+         * string typeRover (short, intelligent, economic)
+         * int energy
+         * string map (nom de la map à utiliser)
+         */
+        /*
+         * Réponse de la requête API :
+         * int nextX -> prochain X du rover,
+         * int nextY -> prochain Y du rover,
+         * restEnergy -> restant d'énergie après le déplacement,
+         * array analyse ( ['x,y','x,y'] -> implicitera le fait qu'on procède à des analyses de sols ).
+         * array action ( ['move','stay', ... ] -> la décision du rover )
+         */
+
         $typeRover = "intelligent";
 
 
