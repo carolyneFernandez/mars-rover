@@ -90,9 +90,6 @@ class Map
             $grille[0][$h - 1][0] = (int) mt_rand(-($profondeur), $profondeur);
             $grille[$h - 1][0][0] = (int) mt_rand(-($profondeur), $profondeur);
             $grille[$h - 1][$h - 1][0] = (int) mt_rand(-($profondeur), $profondeur);
-            var_dump($profondeur);
-            var_dump($grille[0][0][0]);
-            var_dump($grille[0][$h - 1][0]);
 
             $i = $h - 1;
 
@@ -159,8 +156,42 @@ class Map
      *  Cette fonction doit renvoyer les cases adjacentes en fonction de la case à la position 
      *  x, y et du rayon
      */
-    public function caseAdjacentes($x, $y, $rayon)
-    { }
+    public function requestAdjCases($x, $y, $grille, $radius = 1)
+    {
+        //requête adjCases à l'API carte : position rover simulé : (2,2)
+        $width = 1000-1;
+        $height = 1000-1;
+
+        for ($i = 1; $i <= $radius; $i++) {
+            if ($x + $i <= $width) {
+                $cases[$x + $i . ',' . $y] = $grille[$x][$y][0]; // milieu droite
+            }
+            if ($x + $i < $width && $y + $i <= $height) {
+                $cases[($x + $i) . ',' . ($y + $i)] = $grille[$x][$y][0]; // bas droite
+            }
+            if ($y + $i <= $height) {
+                $cases[$x . ',' . ($y + $i)] = $grille[$x][$y][0]; // milieu bas
+            }
+            if ($x - $i >= 0 && $y + $i <= $height) {
+                $cases[($x - $i) . ',' . ($y + $i)] = $grille[$x][$y][0]; // bas gauche
+            }
+            if ($x - $i >= 0) {
+                $cases[($x - $i) . ',' . $y] = $grille[$x][$y][0]; // milieu gauche
+            }
+            if ($x - $i >= 0 && $y - $i >= 0) {
+                $cases[($x - $i) . ',' . ($y - $i)] = $grille[$x][$y][0]; // haut gauche
+            }
+            if ($y - $i >= 0) {
+                $cases[$x . ',' . ($y - $i)] = $grille[$x][$y][0]; // milieu haut
+            }
+            if ($x + $i <= $width && $y - $i >= 0) {
+                $cases[($x + $i) . ',' . ($y - $i)] = $grille[$x][$y][0]; // haut droite
+            }
+
+        }
+
+        return $cases;
+    }
 
     /*
      *  Cette fonction doit renvoyer l'altitude en fonction de la case à la position 
@@ -174,7 +205,9 @@ class Map
 
 
     public function emplacementCaseGlace()
-    { }
+    { 
+        
+    }
 
     public function __toString()
     {
