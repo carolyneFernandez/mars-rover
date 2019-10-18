@@ -44,7 +44,7 @@ class GameController extends AbstractController
 
     public function choiceStep()
     {
-        
+        $noimpo=0;
 
         $url = './../assets/json/carte/map.json'; // path to your JSON file
         $data = file_get_contents($url); // put the contents of the file into a variable
@@ -121,7 +121,6 @@ class GameController extends AbstractController
     /**
      * function that will find the way if the line is vertical
      */
-
     public function ligne_h($y, $x1, $x2, $tab) 
     {
         for($i = $x1 ; $i <= $x2; $i ++) {
@@ -148,8 +147,8 @@ class GameController extends AbstractController
 
         if ($diff_x <= 1) {
             for($i = $x1 ; $i <= $x2; $i ++) {
-                $z1=$tab[round($i)][$x1][0];
-                $z2=$tab[round($i)][$x1][0];
+                $z1=$tab[$py][round($i)][0];
+                $z2=$tab[$py+1][round($i+1)][0];
               
                 $mateialCost= $constEnergy[$tab[round($px)][$i][1]][0];
                
