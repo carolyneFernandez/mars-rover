@@ -148,8 +148,8 @@ class GameController extends AbstractController
 
         if ($diff_x <= 1) {
             for($i = $x1 ; $i <= $x2; $i ++) {
-                $z1=$tab[round($i)][$x1][0];
-                $z2=$tab[round($i)][$x1][0];
+                $z1=$tab[$py][round($i)][0];
+                $z2=$tab[$py+1][round($i+1)][0];
               
                 $mateialCost= $constEnergy[$tab[round($px)][$i][1]][0];
                
