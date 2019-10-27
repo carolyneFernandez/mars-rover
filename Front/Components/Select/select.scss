@@ -80,7 +80,9 @@
     &:hover svg filter{
       display: none;
     }
+
   }
+
   &-column{
     border: 5px solid $colorBlueNeon;
     padding: 20px 30px;
@@ -94,5 +96,15 @@
     cursor: pointer;
     margin-right:150px;
   }
+}
+
+
+.logoSelected{
+  fill: $colorOrange;
+  border-color: $colorOrange;
+  box-shadow: 0 0 10px 5px rgba($colorOrange, 0.2);
+  transform: scale(0.95);
+  color: $colorOrange;
+  text-shadow: 0 0 100px rgba($colorOrange, 1);
 }
 
