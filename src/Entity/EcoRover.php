@@ -16,6 +16,11 @@ class EcoRover extends Rover
      */
     private $id;
 
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $iceConsumed = [];
+
     public function getId(): ?int
     {
         return $this->id;
@@ -29,7 +34,7 @@ class EcoRover extends Rover
 
     }
 
-    public function brensenham($posX, $posY, $destX, $destY, $direction = false){
+    public function brensenham($posX, $posY, $destX, $destY, $direction = false, $turn = false){
         $x = $posX;
         $y = $posY;
         $dx = $destX - $posX; //distance sur l'axe des abscisses
@@ -64,9 +69,17 @@ class EcoRover extends Rover
                     $y += $yinc;
                 }
                 
-                $path[$y][$x] = true;
+                if ($turn) {
+                    $path[$i][$y][$x] = true;
+                } else {
+                    $path[$y][$x] = true;
+                }
                 //si on cherche une direction
                 if($direction == true && ($y-1 >= 0 && $y+1 <= 9)){
+                    if ($turn) {
+                        $path[$i][$y-1][$x] = true;
+                        $path[$i][$y+1][$x] = true;
+                    }
                     $path[$y-1][$x] = true;
                     $path[$y+1][$x] = true;
                 }
@@ -80,9 +93,17 @@ class EcoRover extends Rover
                     $error -= $dy;
                     $x += $xinc;
                 }
-                $path[$y][$x] = true;
+                if ($turn) {
+                    $path[$i][$y][$x] = true;
+                } else {
+                    $path[$y][$x] = true;
+                }
                 //si on cherche une direction
                 if($direction == true && ($x-1 >= 0 && $x+1 <= 9)){
+                    if ($turn) {
+                        $path[$i][$y][$x-1] = true;
+                        $path[$i][$y][$x+1] = true;
+                    } 
                     $path[$y][$x-1] = true;
                     $path[$y][$x+1] = true;
                 }
@@ -92,5 +113,24 @@ class EcoRover extends Rover
 
 
         return $path;
+    }
+
+    public function getIceConsumed(): ?array
+    {
+        return $this->iceConsumed;
+    }
+
+    public function setIceConsumed(?array $iceConsumed): self
+    {
+        $this->iceConsumed = $iceConsumed;
+
+        return $this;
+    }
+
+    public function addIceConsumed($x, $y): self
+    {
+        $this->iceConsumed[$y][$x] = true;
+        
+        return $this;
     }
 }

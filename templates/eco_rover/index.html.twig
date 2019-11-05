@@ -44,6 +44,9 @@
     .glace{
         background-color: #33DDFF;
     }
+    .wall{
+        background-color: brown;
+    }
 </style>
 
  <div class="row">
@@ -60,6 +63,14 @@
                         <div class="pixel green">
                             {{ value[0] }}
                         </div> 
+                    {# {% elseif value['path'] is defined %}
+                        <div class="pixel blue">
+                            {{ value[0] }}
+                        </div> #}
+                    {% elseif value['isPath'] is defined %} {# case de d'arrivé #}
+                        <div class="pixel green">
+                            {{ value[0] }}
+                        </div>
                     {% elseif value['end'] is defined %} {# case de d'arrivé #}
                         <div class="pixel red">
                             {{ value[0] }}
@@ -68,8 +79,8 @@
                         <div class="pixel glace">
                             {{ value[0] }}
                         </div>
-                    {% elseif value['path'] is defined %}
-                        <div class="pixel blue">
+                    {% elseif value['z-index'] is defined and value['z-index'] > 90 %}
+                        <div class="pixel wall">
                             {{ value[0] }}
                         </div>
                     {% else %} {# toutes les autres cases #}
