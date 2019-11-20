@@ -25,9 +25,10 @@ class GameController extends AbstractController
         '2' => 'recharge entre 20 et 60%',
         '3' => 'coût -50% pour les 4 prochains tours.'
     );
+
     private $energy=50;
     private $distance=1;
-
+    private $deplacement=true;
     /**
      * @Route("/game", name="game")
      */
@@ -50,12 +51,12 @@ class GameController extends AbstractController
         $data = file_get_contents($url); // put the contents of the file into a variable
         $table = json_decode($data,true); //
 
-        $x1=0;
+        $x1=1;
         $y1=0;
         
         //flag point 
-        $x2=4;
-        $y2=4;
+        $x2=1;
+        $y2=9;
         // Si en absisse x2 est devant x1, on les inverse
       
        
@@ -76,10 +77,10 @@ class GameController extends AbstractController
             $v=$y1;
         }
         if($x2==$x1){
-            $table = $this->ligne_v($x1,$y1,$y2,$table);
+            $table = $this->ligne_v($x1,$y1,$y2,$this->energy,$table);
     
         }else if($y1==$y2){
-            $table = $this->ligne_h($y1,$x1,$x2,$table);
+            $table = $this->ligne_h($y1,$x1,$x2,$this->energy,$table);
     
         }else{
             $table=$this->ligne($x1,$y1,$x2,$y2,$this->energy,$table);
@@ -94,7 +95,7 @@ class GameController extends AbstractController
             foreach ($x as $value ) {
               
                 if (isset($value['path'])) {
-                    $s .= '<td>'.$value['path'].$value[0].'</td>';
+                    $s .= '<td>'.$value['path'].$value[0].$value[1].'</td>';
                 }else{
                     $s .= "<td class='blanc'></td>";
                 }
@@ -111,20 +112,80 @@ class GameController extends AbstractController
      * function that will find the way if the line is vertical
      */
 
-    public function ligne_v($x, $y1, $y2, $tab) 
+    public function ligne_v($x, $y1, $y2,$energy ,$tab) 
     {
+        $constEnergy=GameController::CONTENTS;
         for($i = $y1 ; $i <= $y2; $i ++) {
-            $tab[$i][$x]['path'] = "o";
+        
+            if($energy < 4.5){
+                 $this->deplacement=false;
+             }
+             if($this->deplacement==true){
+                $tab[$i][$x]['path'] = "V";
+
+            }
+             if($i ==  $y2){
+                 $this->deplacement=false;
+ 
+             }
+            if($this->deplacement==true){
+                if(!$this->calculteMovimentV($tab,$i,$x,$constEnergy,$energy)){
+                    $tab[$i][$y1]['path'] = "o";
+
+                }
+                                
+            }
+ 
+           
         }
         return $tab;
     }
+
+    public function calculteMovimentV($tab,$i,$x,$constEnergy,$energy){
+        $z1=$tab[round($i)][$x][0];//hateur actualle
+        $z2=$tab[round($i+1)][$x][0];//hateur suivant
+        $mateialCost= $constEnergy[$tab[round($i)][$x][1]][0];
+        if($mateialCost==0){
+            $energy+=15;
+        }
+       $pont=abs($z2-$z1)/$this->distance;//ponemos la pendiente con 2 decimales
+       if($pont <3){
+
+            $distanceCost=($this->distance*(1+$pont)*$mateialCost) ;  
+            $energy=$energy-$distanceCost;
+            return true;                    
+        }else{
+           // $tab[$i][$y1]['path'] = "o";
+            return false;
+        }
+    }
+
+    public function changePositionV($y){
+        $y=$y+1;
+    }
+
     /**
      * function that will find the way if the line is vertical
      */
-    public function ligne_h($y, $x1, $x2, $tab) 
+    public function ligne_h($y, $x1, $x2, $energy,$tab) 
     {
+        $constEnergy=GameController::CONTENTS;
         for($i = $x1 ; $i <= $x2; $i ++) {
             $tab[$y][$i]['path'] = "o";
+
+            if($i<$x2){
+                $z1=$tab[$y][round($i)][0];//prender le valeur de hateur actuell
+                $z2=$tab[$y][round($i+1)][0];//prendrer le valueru de hateur suivante
+                $mateialCost= $constEnergy[$tab[round($y)][$i][1]][0]; //prender le valeur de materieux
+                $pont=($z2-$z1)/$this->distance;//ponemos la pendiente con 2 decimales
+                $pont=abs(round($pont,2)); 
+
+                if($pont <100){
+                    $distanceCost=round(($this->distance*(1+$pont)*$mateialCost),2) ;
+                    $energy=$energy-$distanceCost;
+                }
+              
+            }
         }
         return $tab;
     }
@@ -147,29 +208,28 @@ class GameController extends AbstractController
 
         if ($diff_x <= 1) {
             for($i = $x1 ; $i <= $x2; $i ++) {
-                $z1=$tab[$py][round($i)][0];
-                $z2=$tab[$py+1][round($i+1)][0];
-              
-                $mateialCost= $constEnergy[$tab[round($px)][$i][1]][0];
-               
-                $tab[round($py)][$i]['path'] = " ";
-                if(round($py)==round($py + $diff_x)-1){
-                    $this->distance=1.4;
-                }
+                
+                $tab[round($py)][$i]['path'] = "0";
 
-                if($i<$y2){
+                if($i<$y2){ //ponemos esto para que solo lo haga cuando se desplaze
+                    $z1=$tab[$py][round($i)][0];
+                    $z2=$tab[$py+1][round($i+1)][0];
+                
+                    $mateialCost= $constEnergy[$tab[round($px)][$i][1]][0];
+                
+                    if(round($py)==round($py + $diff_x)-1){
+                        $this->distance=1.4;
+                    }
                     $pont=($z2-$z1)/$this->distance;//ponemos la pendiente con 2 decimales
-                    $pont=abs(round($pont,2));
-                   echo $z2.' - '.$z1.' = '.$pont ." ";
+                    $pont=abs(round($pont,2));                  
                     if($pont <100){
-                     //  echo $pont." ";
                         $distanceCost=round(($this->distance*(1+$pont)*$mateialCost),2) ;
-                       // echo $distanceCost." ";
                         $energy=$energy-$distanceCost;
                     }
                   
                    
                 }
+
                 $py += $diff_x;
                 
             }
@@ -188,13 +248,11 @@ class GameController extends AbstractController
                 $tab[$i][round($px)]['path'] = "";
                 if(round($px)==round($px + $diff_y)-1){
                    $this->distance=1.4;
-
                 }
                 if($i<$y2){
                     $pont=($z2-$z1)/$this->distance;//ponemos la pendiente con 2 decimales
                     $pont=abs(round($pont,2));
                     if($pont <100){
-                       echo $pont." ";
                         $distanceCost=round(($this->distance*(1+$pont)*$mateialCost),2) ;
                         $energy=$energy-$distanceCost;
                     }
@@ -220,7 +278,7 @@ td {
     width: 30px;
     height: 30px;
     text-align: center;
-   /* background: black;*/
+   /*$$ background: black;*/
 }
 .blanc{
     background: white;
