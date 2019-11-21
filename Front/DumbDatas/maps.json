@@ -1,0 +1,14 @@
+[
+  {
+    "difficultyId": 1,
+    "name": "easy"
+  },
+  {
+    "difficultyId": 2,
+    "name": "medium"
+  },
+  {
+    "difficultyId": 3,
+    "name": "dificulte"
+  }
+]

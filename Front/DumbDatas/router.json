@@ -1,0 +1,14 @@
+[
+  {
+    "type": "dumb",
+    "name": "XX-DUMB"
+  },
+  {
+    "type": "intelligent",
+    "name": "XX-INTELLIGENT"
+  },
+  {
+    "type": "faster",
+    "name": "XX-FASTER"
+  }
+]
