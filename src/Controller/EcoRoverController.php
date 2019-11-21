@@ -50,11 +50,13 @@ class EcoRoverController extends AbstractController
         }
         $map = json_decode($file, true);
         $rover = new EcoRover();
-        
+
         // définition de la position de départ et d'arrivé
-        $posX = 1;$posY = 4;
+        $posX = 6;
+        $posY = 6;
         $rover->setPosX($posX)->setPosY($posY);
-        $destX = 9;$destY = 8;
+        $destX = 0;
+        $destY = 5;
         $map[$posY][$posX]['start'] = true;
         $map[$destY][$destX]['end'] = true;
         $destination['x'] = $destX;
@@ -67,7 +69,7 @@ class EcoRoverController extends AbstractController
                 $map[$y][$x]['content'] = 1; //1 = glace
             }
         }
-        
+
         //place des murs de glace sur la carte 
         $map[4][2]['z-index'] = 99;
         $map[5][4]['z-index'] = 99;
@@ -111,49 +113,51 @@ class EcoRoverController extends AbstractController
                 $map[$y][$x]['isPath'] = true;
             }
         }
-        
-        
+
+
         return $this->render('eco_rover/index.html.twig', [
             'controller_name' => 'EcoRoverController',
             'map' => $map
         ]);
     }
 
-    public function move($map, $rover, $destination) {
+    public function move($map, $rover, $destination)
+    {
+        $cost = 0;
 
         //Initialisation des cases adjacentes
         $adjCases = array();
         // Haut gauche
-        if (isset($map[$rover->getPosY()+1][$rover->getPosX()-1])) {
-            $adjCases[$rover->getPosY()+1][$rover->getPosX()-1] = $map[$rover->getPosY()+1][$rover->getPosX()-1];
+        if (isset($map[$rover->getPosY() + 1][$rover->getPosX() - 1])) {
+            $adjCases[$rover->getPosY() + 1][$rover->getPosX() - 1] = $map[$rover->getPosY() + 1][$rover->getPosX() - 1];
         }
         // Haut
-        if (isset($map[$rover->getPosY()+1][$rover->getPosX()])) {
-            $adjCases[$rover->getPosY()+1][$rover->getPosX()] = $map[$rover->getPosY()+1][$rover->getPosX()];
+        if (isset($map[$rover->getPosY() + 1][$rover->getPosX()])) {
+            $adjCases[$rover->getPosY() + 1][$rover->getPosX()] = $map[$rover->getPosY() + 1][$rover->getPosX()];
         }
         // Haut droite
-        if (isset($map[$rover->getPosY()+1][$rover->getPosX()+1])) {
-            $adjCases[$rover->getPosY()+1][$rover->getPosX()+1] = $map[$rover->getPosY()+1][$rover->getPosX()+1];
+        if (isset($map[$rover->getPosY() + 1][$rover->getPosX() + 1])) {
+            $adjCases[$rover->getPosY() + 1][$rover->getPosX() + 1] = $map[$rover->getPosY() + 1][$rover->getPosX() + 1];
         }
         // Droite
-        if (isset($map[$rover->getPosY()][$rover->getPosX()+1])) {
-            $adjCases[$rover->getPosY()][$rover->getPosX()+1] = $map[$rover->getPosY()][$rover->getPosX()+1];
+        if (isset($map[$rover->getPosY()][$rover->getPosX() + 1])) {
+            $adjCases[$rover->getPosY()][$rover->getPosX() + 1] = $map[$rover->getPosY()][$rover->getPosX() + 1];
         }
         // Bas droite
-        if (isset($map[$rover->getPosY()-1][$rover->getPosX()+1])) {
-            $adjCases[$rover->getPosY()-1][$rover->getPosX()+1] = $map[$rover->getPosY()-1][$rover->getPosX()+1];
+        if (isset($map[$rover->getPosY() - 1][$rover->getPosX() + 1])) {
+            $adjCases[$rover->getPosY() - 1][$rover->getPosX() + 1] = $map[$rover->getPosY() - 1][$rover->getPosX() + 1];
         }
         // Bas
-        if (isset($map[$rover->getPosY()-1][$rover->getPosX()])) {
-            $adjCases[$rover->getPosY()-1][$rover->getPosX()] = $map[$rover->getPosY()-1][$rover->getPosX()];
+        if (isset($map[$rover->getPosY() - 1][$rover->getPosX()])) {
+            $adjCases[$rover->getPosY() - 1][$rover->getPosX()] = $map[$rover->getPosY() - 1][$rover->getPosX()];
         }
         // Bas gauche
-        if (isset($map[$rover->getPosY()-1][$rover->getPosX()-1])) {
-            $adjCases[$rover->getPosY()-1][$rover->getPosX()-1] = $map[$rover->getPosY()-1][$rover->getPosX()-1];
+        if (isset($map[$rover->getPosY() - 1][$rover->getPosX() - 1])) {
+            $adjCases[$rover->getPosY() - 1][$rover->getPosX() - 1] = $map[$rover->getPosY() - 1][$rover->getPosX() - 1];
         }
         // Gauche
-        if (isset($map[$rover->getPosY()][$rover->getPosX()-1])) {
-            $adjCases[$rover->getPosY()][$rover->getPosX()-1] = $map[$rover->getPosY()][$rover->getPosX()-1];
+        if (isset($map[$rover->getPosY()][$rover->getPosX() - 1])) {
+            $adjCases[$rover->getPosY()][$rover->getPosX() - 1] = $map[$rover->getPosY()][$rover->getPosX() - 1];
         }
         $rover->setAdjCases($adjCases);
 
@@ -163,24 +167,31 @@ class EcoRoverController extends AbstractController
         // pour ne pas manquer les cases de glace adjacente
         foreach ($rover->getAdjCases() as $y => $row) {
             foreach ($row as $x => $value) {
-               $direction[$y][$x] = true;
+                $direction[$y][$x] = true;
             }
         }
-        
+
         // recupere les blocs de glace qui se trouvent dans la bonne direction
         $caseFound = false;
         foreach ($direction as $y => $case) {
             foreach ($case as $x => $value) {
+                // ---> DETERMINATION COUT DE LA COMPOSITION DU SOL
+                //scan sur adjacent
+                if (isset($rover->getAdjCases()[$y][$x]))
+                {
+                    $cost += 0.2;
+                } else {
+                    $cost += 0.4;
+                }
                 // si aucune case n'a été trouvé, que c'est une case de glace et qu'elle n'a pas été consummée
-                if ($caseFound == false && (isset($map[$y][$x]['content']) && $map[$y][$x]['content'] == 1) && !isset($rover->getIceConsumed()[$y][$x])){
+                if ($caseFound == false && (isset($map[$y][$x]['content']) && $map[$y][$x]['content'] == 1) && !isset($rover->getIceConsumed()[$y][$x])) {
                     $nextIceCase['x'] = $x;
                     $nextIceCase['y'] = $y;
                     $caseFound = true;
                 }
-               
             }
         }
-        
+
         // si aucune case de glace dans la direction, la prochaine direction est la destination
         if (!isset($nextIceCase)) {
             $nextIceCase['x'] = $destination['x'];
@@ -219,7 +230,7 @@ class EcoRoverController extends AbstractController
         ksort($orderedAdjCases);
 
         // choix de la case : si une case n'est pas praticable alors on la place dans ignoredCases et on la retire de orderedAdjCases. On essaye alors de se déplacer sur la premiere case de orderedAdjCases, si ce n'est pas possible on réitère l'opération.
-        
+
         $nextCase = $rover->brensenham($rover->getPosX(), $rover->getPosY(), $nextIceCase['x'], $nextIceCase['y'], false, true)[1];
         $ignoredAdjCases = array();
 
@@ -229,33 +240,47 @@ class EcoRoverController extends AbstractController
                 // si la case de glace n'a pas été consommée
                 if (!isset($rover->getIceConsumed()[$y][$x])) {
                     // si la pente est trop abrupte : A DEFINIR
-                    if(isset($map[$y][$x]['z-index'])) {
+                    // ---> DETERMINATION DE LA PENTE
+                    //definir si la case scanné est horizontale/verticale ou diagonale
+                    $cost += 1;
+                    if (isset($map[$y][$x]['z-index'])) {
                         array_push($ignoredAdjCases, ['x' => $x, 'y' => $y]);
-                    }else {
+                    } else {
+                        //par defaut : 1  A DEFINIR !!
+                        $cost += 1;
+                        dump($cost);
+                        $rover->setEnergy($rover->getEnergy() - $cost);
                         return ['x' => $x, 'y' => $y, 'direction' => $direction];
                     }
                 }
             }
         }
-        
+
         // sinon choisit une autre case adjacente parmis celles praticable
         foreach ($orderedAdjCases as $key => $index) {
             foreach ($index as $y => $row) {
                 foreach ($row as $x => $value) {
                     // si la case de glace n'a pas été consommée
                     if (!isset($rover->getIceConsumed()[$y][$x])) {
-                        // si la pente est trop abrupte : A DEFINIR
-                        if(isset($map[$y][$x]['z-index'])) {
+                        // ---> DETERMINATION DE LA PENTE
+                        //definir si la case scanné est horizontale/verticale ou diagonale
+                        $cost += 1;
+                        if (isset($map[$y][$x]['z-index'])) {
                             array_push($ignoredAdjCases, ['x' => $x, 'y' => $y]);
-                        }else {
+                        } else {
+                            // ---> DETERMINATION DE LA DIRECTION
+                            //par defaut : 1  A DEFINIR !!
+                            $cost += 1;
+                            dump($cost);
+                            $rover->setEnergy($rover->getEnergy() - $cost);
                             return ['x' => $x, 'y' => $y, 'direction' => $direction];
                         }
                     }
                 }
             }
+
+           
         }
+        
     }
-
 }
-
-
