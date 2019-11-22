@@ -3,7 +3,30 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
+        {% block stylesheets %}
+            <style>
+                table{
+                    border-collapse: collapse;
+                }
+                table td{
+                    border: solid 1px black;
+                    width: 65px;
+                    height: 65px;
+                }
+
+                .ice{
+                    background-color: #5eb5e0;
+                }
+                .black{
+                    background-color: black;
+                    color: white !important;
+                }
+
+                .ice.black{
+                    background-color: darkblue;
+                }
+            </style>
+        {% endblock %}
     </head>
     <body>
         {% block body %}{% endblock %}

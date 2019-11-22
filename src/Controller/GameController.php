@@ -26,7 +26,7 @@ class GameController extends AbstractController
 
         $errors = array();
         /*
-         * Requête API méthode GET :
+         * Requête du front vers l'API avec la méthode GET :
          * int posX,
          * int posY,
          * string typeRover (short, intelligent, economic)
@@ -84,7 +84,7 @@ class GameController extends AbstractController
 //            dump($iceCases);
             dump($rover);
             $road = $rover->choiceStep();
-            dump($road);
+//            dump($road);
             $strJsonFileContents = file_get_contents("../public/".$map);
             $arrayMap = json_decode($strJsonFileContents, true);
             dump($arrayMap);

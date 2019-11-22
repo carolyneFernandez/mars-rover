@@ -20,8 +20,50 @@ class IntelligentRover extends Rover
         $this->requestAdjCases(999, 999, 2);
 
         dump($this->getAdjCases());
-        $destX = 8;
-        $destY = 2;
+
+        $road = $this->brensenham($this->getPosX(),$this->getPosY(), 3,9  );
+        dump($road);
+        $i = 0;
+        $pentes = [];
+        foreach ($road as $etape => $param){
+            if($i!=0){
+                $coor = explode(",", $etape);
+//                $pentes[] = $this->calculPente($coor[0], $coor[1], $param[0]  );
+            }
+            $i++;
+        }
+        dump($pentes);
+
+        return $road;
+
+
+    }
+
+
+    public function calculs($distance, $x1Ori, $y1Ori, $x2Dest, $y2Dest)
+    {
+
+        $pentes[$x2Dest . ',' . $y2Dest] = $this->calculPente($this->requestGetZ($x1Ori, $y1Ori), $this->requestGetZ($x2Dest, $y2Dest), $distance);
+
+    }
+
+
+
+    public function calculPente($z1, $z2, $distance)
+    {
+        return ($z2 - $z1) / $distance;
+    }
+
+
+    /**
+     * @param int $destX
+     * @param int $destY
+     * @param string $typeAction Défini si la fonction retourne toute la route ou seulement la case suivante
+     * @return mixed
+     */
+    public function calculRoad(int $destX, int $destY, string $typeAction="all")
+    {
+
 //        Initialisation des points :
         $x1 = $this->getPosX();
         $y1 = $this->getPosY();
@@ -36,13 +78,12 @@ class IntelligentRover extends Rover
             $y1 = $y2;
             $x2 = $c;
             $y2 = $d;
-
         }
 
 
 // On colore le point de départ et d'arriver
-        $tableau[$x1 . "," . $y1] = true;
-        $tableau[$x2 . "," . $y2] = true;
+        $tableau[$x1 . "," . $y1] = [0];
+
 
 // $u et $v forme le curseur
         $u = $x1;
@@ -54,7 +95,9 @@ class IntelligentRover extends Rover
             if ($y2 > $y1) {
 //                droite verticale vers le bas
                 while ($v <= $y2) {
-                    $tableau[$x1 . "," . $v] = true;
+                    $tableau[$x1 . "," . $v] = [1];
+
+
                     $v++;
                 }
             } else {
@@ -67,7 +110,7 @@ class IntelligentRover extends Rover
                 $y2 = $d;
                 $v = $y1;
                 while ($v <= $y2) {
-                    $tableau[$x1 . "," . $v] = true;
+                    $tableau[$x1 . "," . $v] = [1];
                     $v++;
                 }
             }
@@ -85,7 +128,7 @@ class IntelligentRover extends Rover
                 while ($v < $y2) {
                     $v++;
                     $u = $u + $coeff;
-                    $tableau[round($u) . ',' . $v] = true;
+                    $tableau[round($u) . ',' . $v] = [1.4];
                 }
 
             } elseif ($coeff <= -2) {
@@ -94,25 +137,26 @@ class IntelligentRover extends Rover
                 while ($v > $y2) {
                     $v--;
                     $u = $u - $coeff; // -- = +
-                    $tableau[round($u) . ',' . $v] = true;
+                    $tableau[round($u) . ',' . $v] = [1.4];
                 }
             } elseif ($coeff > -2 && $coeff < 0) {
 //                entre 0 et pi/4
                 while ($u < $x2) {
                     $u_preced = $u;
+                    dump("yoo");
 //                    $v_preced = round($v);
                     $u++;
                     $v_preced = $v;
                     $v = $v + $coeff;
 
-                    $tableau[$u . ',' . round($v)] = true;
 
 //                    En fonction du coeff, si la position du curseur ne touche pas le point précédent, on place un point avant
                     if ($coeff < -1 && $coeff > -2) {
                         if (round($v) - $v_preced != 1 && $u_preced + $u != 1) {
-                            $tableau[$u . "," . (round($v_preced) - 1)] = true;
+                            $tableau[$u . "," . (round($v_preced) - 1)] = [1];
                         }
                     }
+                    $tableau[$u . ',' . round($v)] = [1.4];
                 }
 
             } elseif ($coeff > 0) {
@@ -124,12 +168,12 @@ class IntelligentRover extends Rover
                     $v_preced = $v;
                     $v = $v + $coeff;
 
-                    $tableau[$u . ',' . round($v)] = true;
+                    $tableau[$u . ',' . round($v)] = [1.4];
 
 //                    En fonction du coeff, si la position du curseur ne touche pas le point précédent, on place un point avant
                     if ($coeff > 1 && $coeff < 2) {
                         if (round($v) - $v_preced != 1 && $u_preced - $u != 1) {
-                            $tableau[$u . "," . (round($v_preced) + 1)] = true;
+                            $tableau[$u . "," . (round($v_preced) + 1)] = [1];
                         }
                     }
 
@@ -183,11 +227,113 @@ class IntelligentRover extends Rover
 //                    break;
 //            }
 
-
         }
-        return $tableau;
 
+        // On color la case d'arrivée
+        $tableau[$x2 . "," . $y2] = true;
+
+        if ($typeAction == "first"){
+            $coor = array_keys($tableau);
+            $tab[$coor[0]] = $tableau[$coor[0]];
+            $tab[$coor[1]] = $tableau[$coor[1]];
+            $tableau = $tab;
+            dump($tab);
+        }
+
+        return $tableau;
 
     }
 
+
+    /**
+     * @param $posX
+     * @param $posY
+     * @param $destX
+     * @param $destY
+     * @param bool $direction
+     * @param bool $turn
+     * @return mixed
+     */
+    public function brensenham($posX, $posY, $destX, $destY, $direction = false, $turn = false){
+        $x = $posX;
+        $y = $posY;
+        $dx = $destX - $posX; //distance sur l'axe des abscisses
+        $dy = $destY - $posY; //distance sur l'axe des ordonnees
+        //direction du segment
+        $xinc = $dx > 0 ? 1 : -1;
+        $yinc = $dy > 0 ? 1 : -1;
+        //              |
+        //              |
+        //   xinc: -1   |   xinc: 1
+        //   yinc: 1    |   yinc: 1
+        //              |
+        // --------------------------------
+        //              |
+        //   xinc: -1   |   xinc: 1
+        //   yinc: -1   |   yinc: -1
+        //              |
+        //              |
+        $path[$y][$x] = true;
+        //convertion en valeur absolue pour evaluer la pente du segment
+        $dx = abs($dx);
+        $dy = abs($dy);
+
+        //selon la pente du segment
+        if($dx > $dy){ //Si est plutot horizontale
+            $error = $dx / 2;
+            for ($i=1; $i <= $dx; $i++) { //pour chaque pixel sur la distance des absisses
+                $x += $xinc;
+                $error += $dy;
+                if($error >= $dx){
+                    $error -= $dx;
+                    $y += $yinc;
+                }
+
+                if ($turn) {
+                    $path[$i][$y][$x] = true;
+                } else {
+                    $path[$y][$x] = true;
+                }
+                //si on cherche une direction
+                if($direction == true && ($y-1 >= 0 && $y+1 <= 9)){
+                    if ($turn) {
+                        $path[$i][$y-1][$x] = true;
+                        $path[$i][$y+1][$x] = true;
+                    }
+                    $path[$y-1][$x] = true;
+                    $path[$y+1][$x] = true;
+                }
+            }
+        } else{ //Si est plutot verticale
+            $error = $dy / 2;
+            for ($i=1; $i <= $dy; $i++) {
+                $y += $yinc;
+                $error += $dx;
+                if($error >= $dy){
+                    $error -= $dy;
+                    $x += $xinc;
+                }
+                if ($turn) {
+                    $path[$i][$y][$x] = true;
+                } else {
+                    $path[$y][$x] = true;
+                }
+                //si on cherche une direction
+                if($direction == true && ($x-1 >= 0 && $x+1 <= 9)){
+                    if ($turn) {
+                        $path[$i][$y][$x-1] = true;
+                        $path[$i][$y][$x+1] = true;
+                    }
+                    $path[$y][$x-1] = true;
+                    $path[$y][$x+1] = true;
+                }
+            }
+        }
+
+        return $path;
+    }
+
+
 }
+
+

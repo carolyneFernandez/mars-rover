@@ -66,6 +66,7 @@ class Rover
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -84,6 +85,7 @@ class Rover
     public function setPosX($posX)
     {
         $this->posX = $posX;
+
         return $this;
     }
 
@@ -102,6 +104,7 @@ class Rover
     public function setPosY($posY)
     {
         $this->posY = $posY;
+
         return $this;
     }
 
@@ -120,6 +123,7 @@ class Rover
     public function setEnergy(int $energy): Rover
     {
         $this->energy = $energy;
+
         return $this;
     }
 
@@ -138,6 +142,7 @@ class Rover
     public function setPlayNextRound(bool $playNextRound): Rover
     {
         $this->playNextRound = $playNextRound;
+
         return $this;
     }
 
@@ -156,6 +161,7 @@ class Rover
     public function setAdjCases(array $adjCases): Rover
     {
         $this->adjCases = $adjCases;
+
         return $this;
     }
 
@@ -174,6 +180,7 @@ class Rover
     public function setNextX($nextX)
     {
         $this->nextX = $nextX;
+
         return $this;
     }
 
@@ -192,7 +199,77 @@ class Rover
     public function setNextY($nextY)
     {
         $this->nextY = $nextY;
+
         return $this;
+    }
+
+    public function requestIceCases()
+    {
+        return [
+            "2,3" => 16,
+            "1,9" => 3,
+            "4,6" => 14,
+            "3,0" => 21,
+            "8,2" => 27,
+            "9,9" => 24,
+        ];
+    }
+
+    /**
+     * @param int $x
+     * @param int $y
+     * @param int $radius
+     * @return Rover
+     * @throws \Exception
+     */
+    public function requestAdjCases($x, $y, $radius = 1)
+    {
+        //requête adjCases à l'API carte : position rover simulé : (x,y => z)
+        $width = 1000 - 1;
+        $height = 1000 - 1;
+
+        for ($i = 1 ; $i <= $radius ; $i++) {
+            if ($x + $i <= $width) {
+                $cases[$x + $i . ',' . $y] = random_int(-99, 99); // milieu droite
+            }
+            if ($x + $i < $width && $y + $i <= $height) {
+                $cases[($x + $i) . ',' . ($y + $i)] = random_int(-99, 99); // bas droite
+            }
+            if ($y + $i <= $height) {
+                $cases[$x . ',' . ($y + $i)] = random_int(-99, 99); // milieu bas
+            }
+            if ($x - $i >= 0 && $y + $i <= $height) {
+                $cases[($x - $i) . ',' . ($y + $i)] = random_int(-99, 99); // bas gauche
+            }
+            if ($x - $i >= 0) {
+                $cases[($x - $i) . ',' . $y] = random_int(-99, 99); // milieu gauche
+
+            }
+            if ($x - $i >= 0 && $y - $i >= 0) {
+                $cases[($x - $i) . ',' . ($y - $i)] = random_int(-99, 99); // haut gauche
+            }
+            if ($y - $i >= 0) {
+                $cases[$x . ',' . ($y - $i)] = random_int(-99, 99); // milieu haut
+            }
+            if ($x + $i <= $width && $y - $i >= 0) {
+                $cases[($x + $i) . ',' . ($y - $i)] = random_int(-99, 99); // haut droite
+            }
+
+        }
+
+        $this->setAdjCases($cases);
+
+        return $this;
+    }
+
+    public function requestGetZ($x, $y)
+    {
+        $x = round($x);
+        $y = round($y);
+        $parsed_json = json_decode(file_get_contents("../public/jsonmap.json"), true);
+//        dump($parsed_json);
+//        dump("z de $x,$y : ". $parsed_json[$y][$x][0]);
+        return $parsed_json[$y][$x][0];
     }
 
 
