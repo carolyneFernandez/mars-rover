@@ -58,6 +58,30 @@ class Rover
      */
     private $flags;
 
+
+    private $CONTENTS = array(
+        '1' => [0,'glace'],
+        '2' => [1.1,'roche'],
+        '3' => [1.5,'sable'],
+        '4' => [1.2,'minerai'],
+        '5' => [1.3,'argile'],
+        '6' => [1.2,'fer'],
+        '7' => [1,'inconnue'],
+    );
+
+    
+    private $BONUS = array(
+        '0' => 'coût x2, perd 1 tour',
+        '1' => '-3 d\'énergie, perd 1 tour',
+        '2' => 'recharge entre 20 et 60%',
+        '3' => 'coût -50% pour les 4 prochains tours.'
+    );
+
+    public function getContents(){
+        return $this->CONTENTS;
+    }
+
+
     public function __construct()
     {
         $this->flags = new ArrayCollection();
