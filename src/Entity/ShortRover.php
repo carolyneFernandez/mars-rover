@@ -81,7 +81,7 @@ class ShortRover extends Rover
             foreach ($x as $value ) {
               
                 if (isset($value['path'])) {
-                    $s .= '<td>'.$value['path'].$value[0].$value[1].'</td>';
+                    $s .= '<td>'.$value['path'].$value[0].'</td>';
                 }else{
                     $s .= "<td class='blanc'></td>";
                 }
@@ -100,54 +100,60 @@ class ShortRover extends Rover
 
     public function ligne_v($x, $y1, $y2,$energy ,$tab) 
     {
+        $tempX=$x;
         for($i = $y1 ; $i <= $y2; $i ++) {
-        
+
             if($energy < 4.5){
                  $this->deplacement=false;
              }
-             if($this->deplacement==true){
-               // $tab[$i][$x]['path'] = "V";
 
-            }
-            
              if($i ==  $y2){
                  $this->deplacement=false;
              }
             
             if($this->deplacement==true){
+                $z1=$tab[round($i)][$x][0];//hateur actualle
+                $z2=$tab[round($i+1)][$x][0];//hateur suivant
+                $mateialCost= $this->constEnergy[$tab[round($i)][$x][1]][0];
 
-
-
-                if($this->calculteMovimentV($tab,$i,$x,$energy)){
-                    $tab[$i][$x]['path'] = "V";
-                }else{
-                   
-                    $this->calculteMovimentV($tab,$i,$x+1,$energy);
+                $teppont=$this->calculateSlope($energy,$mateialCost,$z1,$z2);
+                switch($teppont){
+                    case 3:
+                        $x=$x+1;
+                        break;
+                    case 2:
+                        if($x!=$tempX)
+                            $x=$x-1;
+                    break;
                 }
-                                
+               
+                if($this->calculateSlope($energy,$mateialCost,$z1,$z2)){
+                    $tab[$i][$x]['path'] = "V";
+                }
+                
             }
+
         }
         return $tab;
     }
 
-
-    public function calculteMovimentV($tab,$i,$x,$energy){
-        $z1=$tab[round($i)][$x][0];//hateur actualle
-        $z2=$tab[round($i+1)][$x][0];//hateur suivant
-        $mateialCost= $this->constEnergy[$tab[round($i)][$x][1]][0];
+    
+    public function calculateSlope($energy,$mateialCost,$z1,$z2){
+       
         if($mateialCost==0){
             $energy+=15;
         }
        $pont=abs($z2-$z1)/$this->distance;//ponemos la pendiente con 2 decimales
-       echo $pont.' ';
+
        if($pont <3){
             $distanceCost=($this->distance*(1+$pont)*$mateialCost) ;  
             $energy=$energy-$distanceCost;
-            return true;                    
+            return $pont;                    
         }else{
            // $tab[$i][$y1]['path'] = "o";
-            return false;
+            return $pont;
         }
+
     }
 
  /**

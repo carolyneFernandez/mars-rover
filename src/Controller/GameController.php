@@ -36,10 +36,6 @@ class GameController extends AbstractController
         ]);
     }
 
-   
-
-
-
 }
 
 ?>
