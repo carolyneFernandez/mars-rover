@@ -1,0 +1,17 @@
+[
+  {
+    "type": "dumb",
+    "roverName": "XX - DUMP",
+    "pathImage": "./src/Assets/rover.png"
+  },
+  {
+    "type": "smart",
+    "roverName": "XX - SMART",
+    "pathImage": "./src/Assets/rover.png"
+  },
+  {
+    "type": "faster",
+    "roverName": "XX - FAST",
+    "pathImage": "./src/Assets/rover.png"
+  }
+]
