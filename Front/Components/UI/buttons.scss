@@ -64,6 +64,7 @@
     .usableButton{
       color: $colorOrange;
       text-shadow: 0 0 100px rgba($colorOrange, 1);
+      transition: 0.3s ease-in-out;
     }
   }
 }

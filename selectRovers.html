@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width">
     <link href="Front/Styles/styles.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Iceland&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="src/Assets/logo-mars.png" />
+    <link rel="icon" type="image/png" href="src/Assets/logo-mars.png"/>
     <title>Mars Rover - Rover</title>
 </head>
 <body>
@@ -18,27 +18,23 @@
 
         <div class="container-btn-box">
             <div class="fakeBorderTop"></div>
-                <h1 class="title">Choose your rover</h1>
+            <h1 class="title">Choose your rover</h1>
             <div class="fakeBorderBottom"></div>
         </div>
 
         <div class="wrapper">
-            <div class="wrapper-buttons-column">
-                <div class="buttonSelect-column">
-                    <div class="wrapper-imageItem"><img class="imageItem" src="src/Assets/rover.png" alt="rover"></div>
-                    <div class="nameItem title">
-                        XX - B9
-                    </div>
-                </div>
+            <div class="wrapper-buttons-column" id="roverContainer">
+                <!-- FETCH ROVER FROM THE API -->
             </div>
             <div class="wrapper-view">
                 <div><img class="imageRover" src="src/Assets/rover.png" alt="rover"></div>
+                <div class="title" id="selectedRoverName"></div>
             </div>
         </div>
 
         <div class="container-btn-box smallAction">
             <div class="fakeBorderTop"></div>
-                <a href="#" onclick="getMap()" class="title usableButton navLink">Choose</a>
+            <a href="#" class="title usableButton navLink">Choose</a>
             <div class="fakeBorderBottom"></div>
         </div>
     </div>
@@ -48,7 +44,7 @@
 
 <script src="Front/Components/Particles/particles.js"></script>
 <script src="Front/Components/Particles/app.js"></script>
-<script src="./selectMap.js"></script>
+<script src="selectRovers.js"></script>
 
 </body>
 </html>
