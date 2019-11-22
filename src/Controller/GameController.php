@@ -63,6 +63,7 @@ class GameController extends AbstractController
             }
             if (($request->get('posX') != null && $request->get('posY') != null)) {
                 $rover->setPosX($request->get('posX'))->setPosY($request->get('posY'));
+                $rover->setPosZ($rover->requestGetZ($rover->getPosX(), $rover->getPosY()) );
             } else {
                 $errors[] = "La position du rover n'est pas renseignée.";
             }
@@ -80,6 +81,7 @@ class GameController extends AbstractController
                 dump($errors);
                 die;
             }
+
             $iceCases = $rover->requestIceCases();
 //            dump($iceCases);
             dump($rover);

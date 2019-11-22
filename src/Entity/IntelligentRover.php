@@ -23,27 +23,39 @@ class IntelligentRover extends Rover
 
         $road = $this->brensenham($this->getPosX(),$this->getPosY(), 3,9  );
         dump($road);
+
         $i = 0;
         $pentes = [];
-        foreach ($road as $etape => $param){
+        $precedX = $this->getPosX();
+        $precedY = $this->getPosY();
+
+        foreach ($road as $y => $x){
+
             if($i!=0){
-                $coor = explode(",", $etape);
-//                $pentes[] = $this->calculPente($coor[0], $coor[1], $param[0]  );
+                $pentes[intval($y)][intval($x)] = $this->calculPente($this->getPosZ(), $this->requestGetZ(intval($x), intval($y)) , $this->calculDistance($precedX, $precedY, $x, $y)  );
             }
+
+            $precedX = $x;
+            $precedY = $y;
             $i++;
         }
+
         dump($pentes);
 
         return $road;
 
-
     }
 
 
-    public function calculs($distance, $x1Ori, $y1Ori, $x2Dest, $y2Dest)
+    public function calculDistance($xOr, $yOr, $xDest, $yDest)
     {
+        if($xOr == $xDest || $yOr == $yDest){
+            return 1;
+        }else{
+            return 1.4;
+        }
 
-        $pentes[$x2Dest . ',' . $y2Dest] = $this->calculPente($this->requestGetZ($x1Ori, $y1Ori), $this->requestGetZ($x2Dest, $y2Dest), $distance);
+//        $pentes[$x2Dest . ',' . $y2Dest] = $this->calculPente($this->requestGetZ($x1Ori, $y1Ori), $this->requestGetZ($x2Dest, $y2Dest), $distance);
 
     }
 
@@ -51,7 +63,7 @@ class IntelligentRover extends Rover
 
     public function calculPente($z1, $z2, $distance)
     {
-        return ($z2 - $z1) / $distance;
+        return (($z2 - $z1) / $distance);
     }
 
 

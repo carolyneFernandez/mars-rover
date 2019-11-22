@@ -29,6 +29,11 @@ class Rover
     /**
      * @ORM\Column(type="integer")
      */
+    private $posZ;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
     private $energy = 100;
 
     /**
@@ -104,6 +109,25 @@ class Rover
     public function setPosY($posY)
     {
         $this->posY = $posY;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPosZ()
+    {
+        return $this->posZ;
+    }
+
+    /**
+     * @param mixed $posZ
+     * @return Rover
+     */
+    public function setPosZ($posZ)
+    {
+        $this->posZ = $posZ;
 
         return $this;
     }
