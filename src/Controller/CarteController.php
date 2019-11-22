@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Doctrine\Migrations\Exception\DuplicateMigrationVersion;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -57,7 +58,7 @@ class CarteController extends AbstractController
       } else {
         $material = 7;
       }
-
+      
       return $material;
     }
 
@@ -75,6 +76,7 @@ class CarteController extends AbstractController
             $grille[$i][$j] = [0, 'NULL'];
           }
         }
+
         /** Initialisation de la profondeur à 50 */
         $profondeur = 50;
         /** En fonction de la difficulté, on augmente la profondeur de la carte */
@@ -104,9 +106,8 @@ class CarteController extends AbstractController
         $grille[0][$h - 1][0] = (int) mt_rand(-($profondeur), $profondeur);
         $grille[$h - 1][0][0] = (int) mt_rand(-($profondeur), $profondeur);
         $grille[$h - 1][$h - 1][0] = (int) mt_rand(-($profondeur), $profondeur);
-        var_dump($profondeur);
-        var_dump($grille[0][0][0]);
-        var_dump($grille[0][$h - 1][0]);
+        dump($grille);
+        die;
 
         $i = $h - 1;
 
@@ -148,7 +149,6 @@ class CarteController extends AbstractController
                 $somme = $somme + $grille[$x][$y + $id][0];
                 $n = $n + 1;
               }
-                set_time_limit(10);
                 $grille[$x][$y][0] = (int) ($somme / $n + mt_rand(-($id), $id));
                 if ($grille[$x][$y][0] > $profondeur || $grille[$x][$y][0] < -$profondeur ) {
                   $grille[$x][$y][0] = (int) ($n + mt_rand(-$profondeur, $profondeur));
@@ -172,9 +172,10 @@ class CarteController extends AbstractController
     //echo "<pre>";
     //print_r(json_encode($grille, JSON_FORCE_OBJECT));
     //echo "</pre>";
-    // // echo "<pre>";
-    // // var_dump($grille);
-    // // echo "</pre>";
+    // echo "<pre>";
+    // var_dump($grille);
+    // echo "</pre>";
+    // die;
     return $this->render('carte/index.html.twig', [
       'controller_name' => 'CarteController',
       'grille' => $grille
