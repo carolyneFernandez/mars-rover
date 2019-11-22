@@ -41,7 +41,7 @@ class CarteController extends AbstractController
       } else if ($z > -25 && $z <= -10) {
         $material = 3;
       } else if ($z > -10 && $z <= 10) {
-        $material =  ;
+        $material = 5;
       } else if ($z > 10 && $z <= 25) {
         $material = 3;
       } else if ($z > 25 && $z <= 45) {

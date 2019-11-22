@@ -1,44 +1,8 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     <h1>Formulaire carte</h1>
-    <form action="" method="GET">
-        <h3> Choix de difficulté : </h3>
-        <select name="difficulte">
-            <option value="easy" selected>Facile</option>
-            <option value="medium">Moyen</option>
-            <option value="hard">Difficile</option>
-        </select>
-
-        <br>
-        <label for="glace"> Glaces </label>
-        <input type="checkbox" name="glace">
-        <br>
-        
-        <label for="roche"> Roche </label>
-        <input type="checkbox" name="roche">
-        <br>
-
-        <label for="sable"> Sable </label>
-        <input type="checkbox" name="sable">
-        <br>
-
-        <label for="minerai"> Minerai </label>
-        <input type="checkbox" name="minerai">
-        <br>
-
-        <label for="argile"> Argile </label>
-        <input type="checkbox" name="argile">
-        <br>
-
-        <label for="fer"> Fer </label>
-        <input type="checkbox" name="fer">
-        <br>
-
-        <label for="inconnu"> Inconnu </label>
-        <input type="checkbox" name="inconnu">
-
-        <br>
-        <input type="submit" value="Valider">
-
-    </form>
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button type="submit">Créer</button>
+    {{ form_end(form) }}
 {% endblock body %}
