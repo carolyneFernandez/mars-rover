@@ -241,7 +241,10 @@ class DefaultController extends AbstractController
     }
 
     
-    dump($arrayMap);
+    var_dump(json_encode($arrayMap));
+    
+   
+    
     
     die;
  

@@ -3,11 +3,12 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CasesRepository")
  */
-class Cases
+class Cases implements JsonSerializable
 {
     /**
      * @ORM\Id()
@@ -104,5 +105,20 @@ class Cases
         $this->map = $map;
 
         return $this;
+    }
+
+    // public function __toString()
+    // {
+    //     return "123";
+    // }
+
+    public function jsonSerialize()
+    {
+        return [
+            "x" => $this->getPosX(),
+            "y" => $this->getPosY(),
+            "z" => $this->getPosZ(),
+            "material" => $this->getMaterials()
+        ];
     }
 }
