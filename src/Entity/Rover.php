@@ -34,6 +34,16 @@ class Rover
     /**
      * @ORM\Column(type="integer")
      */
+    private $destX;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $destY;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
     private $energy = 100;
 
     /**
@@ -128,6 +138,44 @@ class Rover
     public function setPosZ($posZ)
     {
         $this->posZ = $posZ;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDestX()
+    {
+        return $this->destX;
+    }
+
+    /**
+     * @param mixed $destX
+     * @return Rover
+     */
+    public function setDestX($destX)
+    {
+        $this->destX = $destX;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDestY()
+    {
+        return $this->destY;
+    }
+
+    /**
+     * @param mixed $destY
+     * @return Rover
+     */
+    public function setDestY($destY)
+    {
+        $this->destY = $destY;
 
         return $this;
     }
@@ -252,7 +300,7 @@ class Rover
         $width = 1000 - 1;
         $height = 1000 - 1;
 
-        for ($i = 1 ; $i <= $radius ; $i++) {
+        for ($i = 1; $i <= $radius; $i++) {
             if ($x + $i <= $width) {
                 $cases[$x + $i . ',' . $y] = random_int(-99, 99); // milieu droite
             }

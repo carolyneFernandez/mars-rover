@@ -38,7 +38,7 @@ class GameController extends AbstractController
          * string typeRover (short, intelligent, economic)
          * int energy
          * string map (nom de la map à utiliser)
-         * http://localhost:8000/game?posX=2&posY=4&typeRover=intelligent&energy=321&map=23144141212.json
+         * http://localhost:8000/game?posX=2&posY=4&typeRover=intelligent&energy=321&destX=8&destY=5&map=23144141212.json
          */
         /*
          * Réponse de la requête API :
@@ -69,18 +69,23 @@ class GameController extends AbstractController
             }
             if (($request->get('posX') != null && $request->get('posY') != null)) {
                 $rover->setPosX($request->get('posX'))->setPosY($request->get('posY'));
-                $rover->setPosZ($rover->requestGetZ($rover->getPosX(), $rover->getPosY()) );
+                $rover->setPosZ($rover->requestGetZ($rover->getPosX(), $rover->getPosY()));
             } else {
                 $errors[] = "La position du rover n'est pas renseignée.";
+            }
+            if (($request->get('destX') != null && $request->get('destY') != null)) {
+                $rover->setDestX($request->get('destX'))->setDestY($request->get('destY'));
+            } else {
+                $errors[] = "La destination du rover n'est pas renseignée.";
             }
             if ($request->get('energy')) {
                 $rover->setEnergy($request->get('energy'));
             } else {
                 $errors[] = "L'énergie du rover n'est pas renseignée.";
             }
-            if($request->get('map')){
+            if ($request->get('map')) {
                 $map = $request->get('map');
-            }else{
+            } else {
                 $errors[] = "La carte n'a pas été passée.";
             }
             if (!empty($errors)) {
@@ -91,15 +96,22 @@ class GameController extends AbstractController
             $iceCases = $rover->requestIceCases();
 //            dump($iceCases);
             dump($rover);
-            $road = $rover->choiceStep();
+            $result = $rover->choiceStep();
+
 //            dump($road);
-            $strJsonFileContents = file_get_contents("../public/".$map);
+            $strJsonFileContents = file_get_contents("../public/" . $map);
             $arrayMap = json_decode($strJsonFileContents, true);
             dump($arrayMap);
         }
         $typeRover = "intelligent";
 
 
-        return $this->render('game/index.html.twig', ['map' => $arrayMap, 'road' => $road, 'ice'=>$iceCases ]);
+        return $this->render('game/index.html.twig', [
+            'map' => $arrayMap,
+            'road' => $result['road'],
+            'ice' => $iceCases,
+            'costs' => $result['costs'],
+            'gradients' => $result['gradients']
+        ]);
     }
 }

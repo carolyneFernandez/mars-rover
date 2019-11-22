@@ -6,19 +6,27 @@
 
     <table>
 
-    {% for y in range(0, (map|length)-1) %}
-        <tr>
+        {% for y in range(0, (map|length)-1) %}
+            <tr>
 
-        {% for x in range(0, (map[y]|length)-1) %}
-            <td class="{% if ice[x~","~y] is defined %}ice{% endif %} {% if road[y][x] is defined %}black{% endif %} ">
-                ({{ x~","~y }})<br>
-                z={{ map[y][x][0] }}<br>
-                Mat={{ map[y][x][1] }}
-            </td>
+                {% for x in range(0, (map[y]|length)-1) %}
+                    <td class="{% if ice[x~","~y] is defined %}ice{% endif %} {% if road[y][x] is defined %}black{% endif %} ">
+                        ({{ x~","~y }})<br>
+                        z={{ map[y][x][0] }}<br>
+                        Mat={{ map[y][x][1] }}
+                        {% if gradients[y][x] is defined %}
+                            <br>Pente : {{ gradients[y][x] }}%
+                        {% endif %}
+                        {% if costs[y][x] is defined %}
+                            <br>Coùt : {{ costs[y][x] }}E
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
         {% endfor %}
-        </tr>
-    {% endfor %}
     </table>
+
+
 
 
 

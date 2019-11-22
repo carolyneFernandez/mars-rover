@@ -1,35 +1,38 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}
-            <style>
-                table{
-                    border-collapse: collapse;
-                }
-                table td{
-                    border: solid 1px black;
-                    width: 65px;
-                    height: 65px;
-                }
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    {% block stylesheets %}
+        <style>
+            table {
+                border-collapse: collapse;
+                font-size: 11px;
+            }
 
-                .ice{
-                    background-color: #5eb5e0;
-                }
-                .black{
-                    background-color: black;
-                    color: white !important;
-                }
+            table td {
+                border: solid 1px black;
+                width: 65px;
+                height: 65px;
+            }
 
-                .ice.black{
-                    background-color: darkblue;
-                }
-            </style>
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
-    </body>
+            .ice {
+                background-color: #5eb5e0;
+            }
+
+            .black {
+                background-color: black;
+                color: white !important;
+            }
+
+            .ice.black {
+                background-color: darkblue;
+            }
+        </style>
+    {% endblock %}
+</head>
+<body>
+{% block body %}{% endblock %}
+{% block javascripts %}{% endblock %}
+</body>
 </html>

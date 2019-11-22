@@ -22,275 +22,115 @@ class IntelligentRover extends Rover
 
         dump($this->getAdjCases());
 
-        $road = $this->brensenham($this->getPosX(),$this->getPosY(), 3,9  );
-        dump($road);
+        $road = $this->brensenham($this->getPosX(), $this->getPosY(), $this->getDestX(), $this->getDestY());
+//        dump($road);
 
         $i = 0;
-        $pentes = [];
-        $precedX = $this->getPosX();
-        $precedY = $this->getPosY();
+        $gradients = [];
+        $lastX = $this->getPosX();
+        $lastY = $this->getPosY();
+        $lastZ = $this->getPosZ();
+        $costs = [];
+        $gradientsPercent = [];
 
-        foreach ($road as $y => $array){
-            $x = array_keys($array)[0];
-            if($i!=0){
-                $distance = $this->calculDistance($precedX, $precedY, $x, $y);
-                $pente = $this->calculPente($this->getPosZ(), $this->requestGetZ(intval($x), intval($y)) , $distance );
-                $pentes[intval($y)][intval($x)] = $pente;
-                $couts[intval($y)][intval($x)] = $this->calculCout($x, $y, $pente, $distance );
+        foreach ($road as $y => $array) {
+            foreach ($array as $x => $value) {
+
+//            $x = array_keys($array)[0];
+                $z = $this->requestGetZ(intval($x), intval($y));
+                if ($i != 0) {
+                    $distance = $this->calculateDistance($lastX, $lastY, $x, $y);
+                    $gradientPercent = $this->calculateGradient($lastZ, $z, $distance, true);
+                    $gradient = $this->calculateGradient($lastZ, $this->requestGetZ(intval($x), intval($y)), $distance, false);
+                    $gradients[intval($y)][intval($x)] = $gradient;
+                    $gradientsPercent[intval($y)][intval($x)] = $gradientPercent;
+                    $costs[intval($y)][intval($x)] = $this->calculateCost($x, $y, $gradient, $distance);
+                }
+
+                $lastX = $x;
+                $lastY = $y;
+                $lastZ = $z;
+                $i++;
             }
-
-            $precedX = $x;
-            $precedY = $y;
-            $i++;
         }
 
-        dump($pentes);
-        dump($couts);
+        dump($gradients);
+        dump($gradientsPercent);
+        dump($costs);
 
-        return $road;
+        return [
+            'road' => $road,
+            'costs' => $costs,
+            'gradients' => $gradientsPercent,
+        ];
 
     }
 
 
-    public function calculDistance(int $xOr, int $yOr, int $xDest, int $yDest)
+    /**
+     * Calcul de distance entre 2 points donnés
+     * @param int $xOr
+     * @param int $yOr
+     * @param int $xDest
+     * @param int $yDest
+     * @return float|int
+     */
+    public function calculateDistance(int $xOr, int $yOr, int $xDest, int $yDest)
     {
-//        $yDest = $yDest+2;
-//        $xDest = $xDest+2;
-
-        if($xOr == $xDest){
-            // horizontale
-            $distance = abs($yDest - $yOr) * GameController::lineDistance ;
-        }elseif ($yOr == $yDest){
-            $distance = abs($xDest - $xOr) * GameController::lineDistance ;
-            // verticale
-        }else{
-            $distance = intval(round(sqrt(pow(abs($yDest - $yOr), 2) + pow(abs($xDest - $xOr), 2)))) * GameController::diagonaleDistance ;
+        if ($xOr == $xDest) {
+            $distance = abs($yDest - $yOr) * GameController::lineDistance; // horizontale
+        } elseif ($yOr == $yDest) {
+            $distance = abs($xDest - $xOr) * GameController::lineDistance; // verticale
+        } else {
+            $distance = intval(round(sqrt(pow(abs($yDest - $yOr), 2) + pow(abs($xDest - $xOr), 2)))) * GameController::diagonaleDistance; // diagonale
         }
+
         $distance = intval(round($distance));
-//    dump($distance);
+
         return $distance;
 
     }
 
     /**
      * Prend le cout de déplacement pour une distance de 1 ou 1.4 avec une pente en poucentage (0,03 pour 3%)
-     * @param int $xDest    utilisé pour connaitre la matière (costContent)
-     * @param int $yDest    utilisé pour connaitre la matière (costContent)
-     * @param int $pente    en pourcentage (p)
+     * @param int $xDest utilisé pour connaitre la matière (costContent)
+     * @param int $yDest utilisé pour connaitre la matière (costContent)
+     * @param int $gradient pas en pourcentage !!
      * @param int $distance 1 ou 1.4 (E)
      * @return float|int
      */
-    public function calculCout($xDest, $yDest, $pente, $distance){
-
+    public function calculateCost(int $xDest, int $yDest, float $gradient, int $distance)
+    {
         // E x (1+p) x costContent
+//        dump($gradient);
         $content = $this->requestGetContent($xDest, $yDest);
-        return ($distance * (1 + $pente/100) * GameController::CONTENTS[$content][0] );
-    }
-
-
-
-    public function calculPente($z1, $z2, $distance,  $percent = false)
-    {
-        if($percent == false){
-            return ($z2 - $z1) / $distance;
-        }else{
-            return ($z2 - $z1) / $distance * 100;
-
-        }
+        return round($distance / 100 * (1 + $gradient) * GameController::CONTENTS[$content][0], 2);
     }
 
 
     /**
-     * @param int $destX
-     * @param int $destY
-     * @param string $typeAction Défini si la fonction retourne toute la route ou seulement la case suivante
-     * @return mixed
+     * Calcul la pente entre 2 points sur une distance donnée. (attention, ne vérifie pas si variation de pente entre les points !!)
+     * @param int $z1
+     * @param int $z2
+     * @param int $distance
+     * @param bool $percent
+     * @return float|int
      */
-    public function calculRoad(int $destX, int $destY, string $typeAction="all")
+    public function calculateGradient(int $z1, int $z2, int $distance, bool $percent = false)
     {
-
-//        Initialisation des points :
-        $x1 = $this->getPosX();
-        $y1 = $this->getPosY();
-        $x2 = $destX;
-        $y2 = $destY;
-//        Bresenan fonctionne avec 8 cas. tranches de pi/4
-//        Si en absisse x2 est devant x1, on les inverse --> 4 cas en moins
-        if ($x2 < $x1) {
-            $c = $x1;
-            $d = $y1;
-            $x1 = $x2;
-            $y1 = $y2;
-            $x2 = $c;
-            $y2 = $d;
-        }
-
-
-// On colore le point de départ et d'arriver
-        $tableau[$x1 . "," . $y1] = [0];
-
-
-// $u et $v forme le curseur
-        $u = $x1;
-        $v = $y1;
-
-
-// Si c'est une droite verticale :
-        if ($x1 == $x2) {
-            if ($y2 > $y1) {
-//                droite verticale vers le bas
-                while ($v <= $y2) {
-                    $tableau[$x1 . "," . $v] = [1];
-
-
-                    $v++;
-                }
-            } else {
-//                droite verticale vers le haut. (en inversant les points)
-                $c = $x1;
-                $d = $y1;
-                $x1 = $x2;
-                $y1 = $y2;
-                $x2 = $c;
-                $y2 = $d;
-                $v = $y1;
-                while ($v <= $y2) {
-                    $tableau[$x1 . "," . $v] = [1];
-                    $v++;
-                }
-            }
-//sinon :
+        if ($percent == false) {
+            $gradient = ($z2 - $z1) / $distance;
         } else {
-            if ($y2 - $y1 != 0) {
-                $coeff = ($y2 - $y1) / ($x2 - $x1);
-            } else {
-                $coeff = 0;
-            }
-//            dump($coeff);
-            if ($coeff >= 2) {
-//                entre 3pi/2 et 7pi/4
-                $coeff = ($x2 - $x1) / ($y2 - $y1);
-                while ($v < $y2) {
-                    $v++;
-                    $u = $u + $coeff;
-                    $tableau[round($u) . ',' . $v] = [1.4];
-                }
-
-            } elseif ($coeff <= -2) {
-//                entre pi/4 et pi/2
-                $coeff = ($x2 - $x1) / ($y2 - $y1);
-                while ($v > $y2) {
-                    $v--;
-                    $u = $u - $coeff; // -- = +
-                    $tableau[round($u) . ',' . $v] = [1.4];
-                }
-            } elseif ($coeff > -2 && $coeff < 0) {
-//                entre 0 et pi/4
-                while ($u < $x2) {
-                    $u_preced = $u;
-                    dump("yoo");
-//                    $v_preced = round($v);
-                    $u++;
-                    $v_preced = $v;
-                    $v = $v + $coeff;
-
-
-//                    En fonction du coeff, si la position du curseur ne touche pas le point précédent, on place un point avant
-                    if ($coeff < -1 && $coeff > -2) {
-                        if (round($v) - $v_preced != 1 && $u_preced + $u != 1) {
-                            $tableau[$u . "," . (round($v_preced) - 1)] = [1];
-                        }
-                    }
-                    $tableau[$u . ',' . round($v)] = [1.4];
-                }
-
-            } elseif ($coeff > 0) {
-//                Sinon, dernier cas : entre 7pi/4 et 0 (ou 2pi)
-                while ($u < $x2) {
-                    $u_preced = $u;
-//                    $v_preced = round($v);
-                    $u++;
-                    $v_preced = $v;
-                    $v = $v + $coeff;
-
-                    $tableau[$u . ',' . round($v)] = [1.4];
-
-//                    En fonction du coeff, si la position du curseur ne touche pas le point précédent, on place un point avant
-                    if ($coeff > 1 && $coeff < 2) {
-                        if (round($v) - $v_preced != 1 && $u_preced - $u != 1) {
-                            $tableau[$u . "," . (round($v_preced) + 1)] = [1];
-                        }
-                    }
-
-                }
-            }
-//            switch ($coeff) {
-//
-//                case ($coeff>=2):
-//                    $coeff=($x2-$x1)/($y2-$y1);
-////            echo "coeff : ".$coeff."<br/>";
-//                    while ($v<$y2){
-//                        $v++;
-//                        $u=$u+$coeff;
-//                        $tableau[round($u).','.$v]=true;
-////                echo $u."<br/>";
-//                    }
-//                    break;
-//
-//                default:
-//                    while ($u<$x2){
-//                        $u_preced=$u;
-//                        $v_preced=round($v);
-//                        $u++;
-//                        $v_preced=$v;
-//                        $v=$v+$coeff;
-//
-//                        $tableau[$u.','.round($v)]=true;
-////                echo $v." (".$u.','.round($v).")<br/>";
-//
-//                        //En fonction du coeff, si la position du curseur ne touche pas le point précédent, on place un point avant
-//                        switch($coeff){
-//                            case ($coeff>1 && $coeff<2):
-//                                if(round($v)-$v_preced!=1 && $u_preced-$u!=1){
-//                                    $tableau[$u.",".(round($v_preced)+1)]=true;
-//                                }
-//                                break;
-//                            case ($coeff>2):
-//                                if(round($v)-$v_preced!=1 && $u_preced-$u!=1){
-//                                    $tableau[$u_preced.",".(round($v_preced)+1)]=true;
-//                                }
-//                                break;
-//                            case ($coeff>=1 && $coeff<2):
-//                                if(round($v)-$v_preced!=-1 && $u_preced-$u!=1){
-//                                    $tableau[$u_preced.",".(round($v_preced)-1)]=true;
-//                                }
-//                                break;
-//
-//                        }
-//
-//                    }
-//                    break;
-//            }
-
+            $gradient = ($z2 - $z1) / $distance * 100;
         }
 
-        // On color la case d'arrivée
-        $tableau[$x2 . "," . $y2] = true;
-
-        if ($typeAction == "first"){
-            $coor = array_keys($tableau);
-            $tab[$coor[0]] = $tableau[$coor[0]];
-            $tab[$coor[1]] = $tableau[$coor[1]];
-            $tableau = $tab;
-            dump($tab);
-        }
-
-        return $tableau;
+        return round($gradient, 2);
 
     }
 
 
     /**
+     * Algo de bresenham qui trace une ligne entre 2 points
      * @param $posX
      * @param $posY
      * @param $destX
@@ -299,7 +139,8 @@ class IntelligentRover extends Rover
      * @param bool $turn
      * @return mixed
      */
-    public function brensenham($posX, $posY, $destX, $destY, $direction = false, $turn = false){
+    public function brensenham($posX, $posY, $destX, $destY, $direction = false, $turn = false)
+    {
         $x = $posX;
         $y = $posY;
         $dx = $destX - $posX; //distance sur l'axe des abscisses
@@ -324,12 +165,12 @@ class IntelligentRover extends Rover
         $dy = abs($dy);
 
         //selon la pente du segment
-        if($dx > $dy){ //Si est plutot horizontale
+        if ($dx > $dy) { //Si est plutot horizontale
             $error = $dx / 2;
-            for ($i=1; $i <= $dx; $i++) { //pour chaque pixel sur la distance des absisses
+            for ($i = 1; $i <= $dx; $i++) { //pour chaque pixel sur la distance des absisses
                 $x += $xinc;
                 $error += $dy;
-                if($error >= $dx){
+                if ($error >= $dx) {
                     $error -= $dx;
                     $y += $yinc;
                 }
@@ -340,21 +181,21 @@ class IntelligentRover extends Rover
                     $path[$y][$x] = true;
                 }
                 //si on cherche une direction
-                if($direction == true && ($y-1 >= 0 && $y+1 <= 9)){
+                if ($direction == true && ($y - 1 >= 0 && $y + 1 <= 9)) {
                     if ($turn) {
-                        $path[$i][$y-1][$x] = true;
-                        $path[$i][$y+1][$x] = true;
+                        $path[$i][$y - 1][$x] = true;
+                        $path[$i][$y + 1][$x] = true;
                     }
-                    $path[$y-1][$x] = true;
-                    $path[$y+1][$x] = true;
+                    $path[$y - 1][$x] = true;
+                    $path[$y + 1][$x] = true;
                 }
             }
-        } else{ //Si est plutot verticale
+        } else { //Si est plutot verticale
             $error = $dy / 2;
-            for ($i=1; $i <= $dy; $i++) {
+            for ($i = 1; $i <= $dy; $i++) {
                 $y += $yinc;
                 $error += $dx;
-                if($error >= $dy){
+                if ($error >= $dy) {
                     $error -= $dy;
                     $x += $xinc;
                 }
@@ -364,13 +205,13 @@ class IntelligentRover extends Rover
                     $path[$y][$x] = true;
                 }
                 //si on cherche une direction
-                if($direction == true && ($x-1 >= 0 && $x+1 <= 9)){
+                if ($direction == true && ($x - 1 >= 0 && $x + 1 <= 9)) {
                     if ($turn) {
-                        $path[$i][$y][$x-1] = true;
-                        $path[$i][$y][$x+1] = true;
+                        $path[$i][$y][$x - 1] = true;
+                        $path[$i][$y][$x + 1] = true;
                     }
-                    $path[$y][$x-1] = true;
-                    $path[$y][$x+1] = true;
+                    $path[$y][$x - 1] = true;
+                    $path[$y][$x + 1] = true;
                 }
             }
         }
