@@ -21,12 +21,12 @@ class Rover
     /**
      * @ORM\Column(type="integer")
      */
-    private $posX;
+    private $posX=1;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $posY;
+    private $posY=1;
 
     /**
      * @ORM\Column(type="integer")

@@ -38,11 +38,11 @@ class ShortRover extends Rover
         $table = json_decode($data,true); //
 
         $x1=1;
-        $y1=0;
+        $y1=1;
         
         //flag point 
-        $x2=1;
-        $y2=9;
+        $x2=8;
+        $y2=1;
         // Si en absisse x2 est devant x1, on les inverse
       
        
@@ -94,67 +94,91 @@ class ShortRover extends Rover
     
     }
 
+
+
      /**
      * function that will find the way if the line is vertical
      */
 
     public function ligne_v($x, $y1, $y2,$energy ,$tab) 
     {
-        $tempX=$x;
         for($i = $y1 ; $i <= $y2; $i ++) {
-
+        
             if($energy < 4.5){
                  $this->deplacement=false;
              }
-
-             if($i ==  $y2){
-                 $this->deplacement=false;
-             }
             
-            if($this->deplacement==true){
-                $z1=$tab[round($i)][$x][0];//hateur actualle
-                $z2=$tab[round($i+1)][$x][0];//hateur suivant
-                $mateialCost= $this->constEnergy[$tab[round($i)][$x][1]][0];
-
-                $teppont=$this->calculateSlope($energy,$mateialCost,$z1,$z2);
-                switch($teppont){
-                    case 3:
-                        $x=$x+1;
-                        break;
-                    case 2:
-                        if($x!=$tempX)
-                            $x=$x-1;
-                    break;
-                }
-               
-                if($this->calculateSlope($energy,$mateialCost,$z1,$z2)){
-                    $tab[$i][$x]['path'] = "V";
-                }
-                
+            // si se trouve au meme emplacement
+            if($i ==  $y2){
+                $this->deplacement=false;
             }
+            
+             // si on se deplace, alors on calcule la pente
+            if($this->deplacement==true){
 
+                // ajoute les cases adjacentes au rover
+                $this->setUpAdjCases($tab);
+
+                // calcul pente
+                if($this->calculteMovimentV($tab,$i,$x,$energy)){
+                    $this->setPosY($i);
+                    $this->setPosX($x);
+                    $tab[$i][$x]['path'] = "V";
+                }else{
+                    // on va regarder pour chaque cases adjacentes si la pente est trop grande
+
+                    $adjCases = $this->getAdjCases();
+
+                    /**
+                     * ------------- a faire : ----------------------------------------
+                     *      trier les cases adjacentes ($adjCases) afin de commencer la boucle par les cases
+                     *      les plus proches de celle où se trouve le rover
+                     * ----------------------------------------------------------------
+                     */
+
+                    $caseFound = false; 
+                    foreach ($adjCases as $yAdj => $row) {
+                        foreach ($row as $xAdj => $value) {
+                            if ($this->calculteMovimentV($tab,$yAdj,$xAdj,$energy)) {
+                                // si on a toujours pas trouver la bonne case a renvoyer
+                                if ($caseFound === false) {
+                                    $tab[$yAdj][$xAdj]['path'] = "V";
+                                    $caseFound = true;
+                                }
+                            }
+                        }
+                    }
+
+                    $tab[$i][$x]['path'] = "Pente";
+                   
+                    // $this->calculteMovimentV($tab,$i,$x+1,$energy);
+                }
+                                
+            }
         }
         return $tab;
     }
 
-    
-    public function calculateSlope($energy,$mateialCost,$z1,$z2){
-       
+
+    public function calculteMovimentV($tab,$i,$x,$energy){
+        $z1=$tab[round($i)][$x][0];//hateur actualle
+        $z2=$tab[round($i+1)][$x][0];//hateur suivant
+        $mateialCost= $this->constEnergy[$tab[round($i)][$x][1]][0];
         if($mateialCost==0){
             $energy+=15;
         }
        $pont=abs($z2-$z1)/$this->distance;//ponemos la pendiente con 2 decimales
-
        if($pont <3){
             $distanceCost=($this->distance*(1+$pont)*$mateialCost) ;  
             $energy=$energy-$distanceCost;
-            return $pont;                    
+            return true;                    
         }else{
            // $tab[$i][$y1]['path'] = "o";
-            return $pont;
+            return false;
         }
-
     }
+
+
 
  /**
      * function that will find the way if the line is vertical
@@ -163,25 +187,97 @@ class ShortRover extends Rover
     {
         $constEnergy=GameController::CONTENTS;
         for($i = $x1 ; $i <= $x2; $i ++) {
-            $tab[$y][$i]['path'] = "o";
+            
+           // $tab[$y][$i]['path'] = "o";
 
             if($i<$x2){
-                $z1=$tab[$y][round($i)][0];//prender le valeur de hateur actuell
-                $z2=$tab[$y][round($i+1)][0];//prendrer le valueru de hateur suivante
-                $mateialCost= $constEnergy[$tab[round($y)][$i][1]][0]; //prender le valeur de materieux
-                $pont=($z2-$z1)/$this->distance;//ponemos la pendiente con 2 decimales
-                $pont=abs(round($pont,2)); 
 
-                if($pont <100){
-                    $distanceCost=round(($this->distance*(1+$pont)*$mateialCost),2) ;
-                    $energy=$energy-$distanceCost;
+                
+                if($this->calculteMovimentV($tab,$y,$i,$energy)){
+                    $this->setPosY($y);
+                    $this->setPosX($i);
+                    $tab[$y][$i]['path'] = "v";
+                }else{
+                    // on va regarder pour chaque cases adjacentes si la pente est trop grande
+
+                    // ajoute les cases adjacentes au rover
+                    $this->setUpAdjCases($tab);
+
+                    $adjCases = $this->getAdjCases();
+
+                    /**
+                     * ------------- a faire : ----------------------------------------
+                     *      trier les cases adjacentes ($adjCases) afin de commencer la boucle par les cases
+                     *      les plus proches de celle où se trouve le rover
+                     * ----------------------------------------------------------------
+                     */
+
+                    $caseFound = false; 
+                    foreach ($adjCases as $yAdj => $row) {
+                        foreach ($row as $xAdj => $value) {
+                            if ($this->calculteMovimentV($tab,$yAdj,$xAdj,$energy)) {
+                                // si on a toujours pas trouver la bonne case a renvoyer
+                                if ($caseFound === false) {
+                                    $tab[$yAdj][$xAdj]['path'] = "V";
+                                    $caseFound = true;
+                                }
+                            }
+                        }
+                    }
+                    $tab[$y][$i]['path'] = "Pente";
+
+                   // $tab[$i][$x]['path'] = "Pente";
+                   
+                    // $this->calculteMovimentV($tab,$i,$x+1,$energy);
                 }
+
               
             }
         }
         return $tab;
     }
 
+
+    /**
+     * Initialisation des cases adjacentes
+     */
+    public function setUpAdjCases($tab) {
+        $adjCases = array();
+        // Haut gauche
+        if (isset($tab[$this->getPosY() + 1][$this->getPosX() - 1])) {
+            $adjCases[$this->getPosY() + 1][$this->getPosX() - 1] = $tab[$this->getPosY() + 1][$this->getPosX() - 1];
+        }
+        // Haut
+        if (isset($tab[$this->getPosY() + 1][$this->getPosX()])) {
+            $adjCases[$this->getPosY() + 1][$this->getPosX()] = $tab[$this->getPosY() + 1][$this->getPosX()];
+        }
+        // Haut droite
+        if (isset($tab[$this->getPosY() + 1][$this->getPosX() + 1])) {
+            $adjCases[$this->getPosY() + 1][$this->getPosX() + 1] = $tab[$this->getPosY() + 1][$this->getPosX() + 1];
+        }
+        // Droite
+        if (isset($tab[$this->getPosY()][$this->getPosX() + 1])) {
+            $adjCases[$this->getPosY()][$this->getPosX() + 1] = $tab[$this->getPosY()][$this->getPosX() + 1];
+        }
+        // Bas droite
+        if (isset($tab[$this->getPosY() - 1][$this->getPosX() + 1])) {
+            $adjCases[$this->getPosY() - 1][$this->getPosX() + 1] = $tab[$this->getPosY() - 1][$this->getPosX() + 1];
+        }
+        // Bas
+        if (isset($tab[$this->getPosY() - 1][$this->getPosX()])) {
+            $adjCases[$this->getPosY() - 1][$this->getPosX()] = $tab[$this->getPosY() - 1][$this->getPosX()];
+        }
+        // Bas gauche
+        if (isset($tab[$this->getPosY() - 1][$this->getPosX() - 1])) {
+            $adjCases[$this->getPosY() - 1][$this->getPosX() - 1] = $tab[$this->getPosY() - 1][$this->getPosX() - 1];
+        }
+        // Gauche
+        if (isset($tab[$this->getPosY()][$this->getPosX() - 1])) {
+            $adjCases[$this->getPosY()][$this->getPosX() - 1] = $tab[$this->getPosY()][$this->getPosX() - 1];
+        }
+
+        $this->setAdjCases($adjCases);
+    }
 
 
     /**
@@ -260,92 +356,6 @@ class ShortRover extends Rover
         }
 
         return $tab;
-    }
-
-
-
-
-
-
-    public function brensenham($posX, $posY, $destX, $destY, $direction = false, $turn = false){
-        $x = $posX;
-        $y = $posY;
-        $dx = $destX - $posX; //distance sur l'axe des abscisses
-        $dy = $destY - $posY; //distance sur l'axe des ordonnees
-        //direction du segment
-        $xinc = $dx > 0 ? 1 : -1; 
-        $yinc = $dy > 0 ? 1 : -1; 
-        //              |
-        //              |
-        //   xinc: -1   |   xinc: 1
-        //   yinc: 1    |   yinc: 1
-        //              |
-        // --------------------------------             
-        //              |
-        //   xinc: -1   |   xinc: 1
-        //   yinc: -1   |   yinc: -1
-        //              |
-        //              |
-        
-        //convertion en valeur absolue pour evaluer la pente du segment
-        $dx = abs($dx);
-        $dy = abs($dy);
-        
-        //selon la pente du segment
-        if($dx > $dy){ //Si est plutot horizontale
-            $error = $dx / 2;
-            for ($i=1; $i <= $dx; $i++) { //pour chaque pixel sur la distance des absisses
-                $x += $xinc;
-                $error += $dy;
-                if($error >= $dx){
-                    $error -= $dx;
-                    $y += $yinc;
-                }
-                
-                if ($turn) {
-                    $path[$i][$y][$x] = true;
-                } else {
-                    $path[$y][$x] = true;
-                }
-                //si on cherche une direction
-                if($direction == true && ($y-1 >= 0 && $y+1 <= 9)){
-                    if ($turn) {
-                        $path[$i][$y-1][$x] = true;
-                        $path[$i][$y+1][$x] = true;
-                    }
-                    $path[$y-1][$x] = true;
-                    $path[$y+1][$x] = true;
-                }
-            }
-        } else{ //Si est plutot verticale
-            $error = $dy / 2;
-            for ($i=1; $i <= $dy; $i++) { 
-                $y += $yinc;
-                $error += $dx;
-                if($error >= $dy){
-                    $error -= $dy;
-                    $x += $xinc;
-                }
-                if ($turn) {
-                    $path[$i][$y][$x] = true;
-                } else {
-                    $path[$y][$x] = true;
-                }
-                //si on cherche une direction
-                if($direction == true && ($x-1 >= 0 && $x+1 <= 9)){
-                    if ($turn) {
-                        $path[$i][$y][$x-1] = true;
-                        $path[$i][$y][$x+1] = true;
-                    } 
-                    $path[$y][$x-1] = true;
-                    $path[$y][$x+1] = true;
-                }
-            }   
-        }
-
-
-
-        return $path;
     }
 
     
