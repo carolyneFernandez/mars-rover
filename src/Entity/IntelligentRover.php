@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Controller\GameController;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -29,10 +30,13 @@ class IntelligentRover extends Rover
         $precedX = $this->getPosX();
         $precedY = $this->getPosY();
 
-        foreach ($road as $y => $x){
-
+        foreach ($road as $y => $array){
+            $x = array_keys($array)[0];
             if($i!=0){
-                $pentes[intval($y)][intval($x)] = $this->calculPente($this->getPosZ(), $this->requestGetZ(intval($x), intval($y)) , $this->calculDistance($precedX, $precedY, $x, $y)  );
+                $distance = $this->calculDistance($precedX, $precedY, $x, $y);
+                $pente = $this->calculPente($this->getPosZ(), $this->requestGetZ(intval($x), intval($y)) , $distance );
+                $pentes[intval($y)][intval($x)] = $pente;
+                $couts[intval($y)][intval($x)] = $this->calculCout($x, $y, $pente, $distance );
             }
 
             $precedX = $x;
@@ -41,29 +45,58 @@ class IntelligentRover extends Rover
         }
 
         dump($pentes);
+        dump($couts);
 
         return $road;
 
     }
 
 
-    public function calculDistance($xOr, $yOr, $xDest, $yDest)
+    public function calculDistance(int $xOr, int $yOr, int $xDest, int $yDest)
     {
-        if($xOr == $xDest || $yOr == $yDest){
-            return 1;
+//        $yDest = $yDest+2;
+//        $xDest = $xDest+2;
+
+        if($xOr == $xDest){
+            // horizontale
+            $distance = abs($yDest - $yOr) * GameController::lineDistance ;
+        }elseif ($yOr == $yDest){
+            $distance = abs($xDest - $xOr) * GameController::lineDistance ;
+            // verticale
         }else{
-            return 1.4;
+            $distance = intval(round(sqrt(pow(abs($yDest - $yOr), 2) + pow(abs($xDest - $xOr), 2)))) * GameController::diagonaleDistance ;
         }
+        $distance = intval(round($distance));
+//    dump($distance);
+        return $distance;
 
-//        $pentes[$x2Dest . ',' . $y2Dest] = $this->calculPente($this->requestGetZ($x1Ori, $y1Ori), $this->requestGetZ($x2Dest, $y2Dest), $distance);
+    }
 
+    /**
+     * Prend le cout de déplacement pour une distance de 1 ou 1.4 avec une pente en poucentage (0,03 pour 3%)
+     * @param int $xDest    utilisé pour connaitre la matière (costContent)
+     * @param int $yDest    utilisé pour connaitre la matière (costContent)
+     * @param int $pente    en pourcentage (p)
+     * @param int $distance 1 ou 1.4 (E)
+     * @return float|int
+     */
+    public function calculCout($xDest, $yDest, $pente, $distance){
+
+        // E x (1+p) x costContent
+        $content = $this->requestGetContent($xDest, $yDest);
+        return ($distance * (1 + $pente/100) * GameController::CONTENTS[$content][0] );
     }
 
 
 
-    public function calculPente($z1, $z2, $distance)
+    public function calculPente($z1, $z2, $distance,  $percent = false)
     {
-        return (($z2 - $z1) / $distance);
+        if($percent == false){
+            return ($z2 - $z1) / $distance;
+        }else{
+            return ($z2 - $z1) / $distance * 100;
+
+        }
     }
 
 

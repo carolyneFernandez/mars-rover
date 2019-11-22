@@ -14,6 +14,12 @@ class GameController extends AbstractController
     const CONTENTS = array('1' => [0, 'glace'], '2' => [1.1, 'roche'], '3' => [1.5, 'sable'], '4' => [1.2, 'minerai'], '5' => [1.3, 'argile'], '6' => [1.2, 'fer'], '7' => [1, 'inconnue']
     );
 
+    const energyReload = 5; // taux d'énergie rechargé par tour passé (panneau solaire)
+
+    const lineDistance = 100; // distance horizontale et vertical pour parcourir une case en mètre
+
+    const diagonaleDistance = 140; // distance diagonale pour parcourir une case en mètre
+
 //    const COST_CONTENT = array('1' => 0, '2' => 1.1, '3' => 1.5, '4' => 1.2, '5' => 1.3, '6' => 1.2, '7' => 1);
 
 
