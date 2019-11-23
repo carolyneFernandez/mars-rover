@@ -1,0 +1,22 @@
+{
+  "name": "mars-rover",
+  "version": "1.0.0",
+  "description": "mars rover - projet 0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "watch": "webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.flo.secours14.fr/flodu141/mars-rover.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "sass-loader": "^8.0.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.9"
+  }
+}
