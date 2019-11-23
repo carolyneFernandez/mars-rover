@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link href="Front/Styles/styles.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Iceland&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="src/Assets/logo-mars.png" />
+    <title>Mars Rover - Customize your map</title>
+</head>
+
+<body>
+    <main>
+        <div class="container">
+
+            <div class="container-link-top ">
+                <a href="index.html" class="title navLink barAdd"><span>
+                        <</span>&nbsp;Back </a> </div> <div class="container-btn-box">
+                            <div class="fakeBorderTop"></div>
+                            <h1 class="title">Customize your map</h1>
+                            <div class="fakeBorderBottom"></div>
+            </div>
+
+            <div class="wrapper-form">
+                <form>
+                    <div class="centerForm">
+                        <div class="labelTab">
+                            <h2>Material</h2>
+                            <h2>Quantity</h2>
+                        </div>
+                        <div class="iceTab lightBack trLine">
+                            <p>Ice</p>
+                            <div class="radioContainer">
+                                <p>-</p>
+                                <div class="checkContainer">
+                                    <input name="ice" checked="checked" type="radio" class="selectBox moins"
+                                        value="moins">
+                                    <span class="checkmark"></span>
+                                </div>
+                                <div class="checkContainer">
+                                    <input name="ice" type="radio" class="selectBox plus" value="plus">
+                                    <span class="checkmark"></span>
+                                </div>
+                                <p>+</p>
+                            </div>
+                        </div>
+
+                        <div class="rockTab darkBack trLine">
+                            <p>Rock</p>
+                            <div class="radioContainer">
+                                <p>-</p>
+                                <div class="checkContainer">
+                                    <input name="rock" checked="checked" type="radio" class="selectBox moins"
+                                        value="moins">
+                                    <span class="checkmark"></span>
+                                </div>
+                                <div class="checkContainer">
+                                    <input name="rock" type="radio" class="selectBox plus" value="plus">
+                                    <span class="checkmark"></span>
+                                </div>
+                                <p>+</p>
+                            </div>
+                        </div>
+
+                        <div class="sandTab lightBack trLine">
+                            <p>Sand</p>
+                            <div class="radioContainer">
+                                <p>-</p>
+                                <div class="checkContainer">
+                                    <input name="sand" checked="checked" type="radio" class="selectBox moins"
+                                        value="moins">
+                                    <span class="checkmark"></span>
+                                </div>
+                                <div class="checkContainer">
+                                    <input name="sand" type="radio" class="selectBox plus" value="plus">
+                                    <span class="checkmark"></span>
+                                </div>
+                                <p>+</p>
+                            </div>
+                        </div>
+
+                        <div class="mineralsTab darkBack trLine">
+                            <p>Minerals</p>
+                            <div class="radioContainer">
+                                <p>-</p>
+                                <div class="checkContainer">
+                                    <input name="minerals" checked="checked" type="radio" class="selectBox moins"
+                                        value="moins">
+                                    <span class="checkmark"></span>
+                                </div>
+                                <div class="checkContainer">
+                                    <input name="minerals" type="radio" class="selectBox plus" value="plus">
+                                    <span class="checkmark"></span>
+                                </div>
+                                <p>+</p>
+                            </div>
+                        </div>
+
+                        <div class="clayTab lightBack trLine">
+                            <p>Clay</p>
+                            <div class="radioContainer">
+                                <p>-</p>
+                                <div class="checkContainer">
+                                    <input name="clay" checked="checked" type="radio" class="selectBox moins"
+                                        value="moins">
+                                    <span class="checkmark"></span>
+                                </div>
+                                <div class="checkContainer">
+                                    <input name="clay" type="radio" class="selectBox plus" value="plus">
+                                    <span class="checkmark"></span>
+                                </div>
+                                <p>+</p>
+                            </div>
+                        </div>
+
+                        <div class="ironTab darkBack trLine">
+                            <p>Iron</p>
+                            <div class="radioContainer">
+                                <p>-</p>
+                                <div class="checkContainer">
+                                    <input name="iron" checked="checked" type="radio" class="selectBox moins"
+                                        value="moins">
+                                    <span class="checkmark"></span>
+                                </div>
+                                <div class="checkContainer">
+                                    <input name="iron" type="radio" class="selectBox plus" value="plus">
+                                    <span class="checkmark"></span>
+                                </div>
+                                <p>+</p>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="container-btn-box">
+                <div class="fakeBorderTop"></div>
+                <a href="#" onclick="getQuantity()" class="title navLink">Play</a>
+                <div class="fakeBorderBottom"></div>
+            </div>
+        </div>
+    </main>
+
+    <div class="particles" id="particles-js"></div>
+
+    <script src="src/customMap/customMap.js"></script>
+    <script src="Front/Components/Particles/particles.js"></script>
+    <script src="Front/Components/Particles/app.js"></script>
+    <script src="src/quantityObject.js"></script>
+</body>
+
+</html>
