@@ -41,11 +41,10 @@ class ShortRover extends Rover
         $y1=1;
         
         //flag point 
-        $x2=8;
-        $y2=1;
+        $x2=1;
+        $y2=8;
         // Si en absisse x2 est devant x1, on les inverse
-      
-       
+
         if($x2 < $x1){
             $c=$x1;
             $d=$y1;
@@ -117,7 +116,7 @@ class ShortRover extends Rover
             if($this->deplacement==true){
 
                 // ajoute les cases adjacentes au rover
-                $this->setUpAdjCases($tab);
+                //$this->setUpAdjCases($tab);
 
                 // calcul pente
                 if($this->calculteMovimentV($tab,$i,$x,$energy)){
@@ -125,9 +124,13 @@ class ShortRover extends Rover
                     $this->setPosX($x);
                     $tab[$i][$x]['path'] = "V";
                 }else{
+
+                    dd($this->nextCase($x,$y1,$i,$y2));
+
                     // on va regarder pour chaque cases adjacentes si la pente est trop grande
 
-                    $adjCases = $this->getAdjCases();
+                   // $adjCases = $this->getAdjCases();
+                    $adjCases = $this->brensenham($x,$y1,$i,$y2);
 
                     /**
                      * ------------- a faire : ----------------------------------------
@@ -203,21 +206,23 @@ class ShortRover extends Rover
                     // ajoute les cases adjacentes au rover
                     $this->setUpAdjCases($tab);
 
-                    $adjCases = $this->getAdjCases();
-
+                  //  $adjCases = $this->getAdjCases();
+                   $adjCases = $this->brensenham($x1,$y,$x2,$i);
+                  
                     /**
                      * ------------- a faire : ----------------------------------------
                      *      trier les cases adjacentes ($adjCases) afin de commencer la boucle par les cases
                      *      les plus proches de celle où se trouve le rover
                      * ----------------------------------------------------------------
                      */
-
                     $caseFound = false; 
                     foreach ($adjCases as $yAdj => $row) {
                         foreach ($row as $xAdj => $value) {
+                           
                             if ($this->calculteMovimentV($tab,$yAdj,$xAdj,$energy)) {
                                 // si on a toujours pas trouver la bonne case a renvoyer
                                 if ($caseFound === false) {
+                    
                                     $tab[$yAdj][$xAdj]['path'] = "V";
                                     $caseFound = true;
                                 }
@@ -235,6 +240,21 @@ class ShortRover extends Rover
             }
         }
         return $tab;
+    }
+
+    public function nextCase ($x1,$y,$x2,$i) {
+
+      // position actuelle (x1, y1)
+        //position arrivée (x2, y2)
+        $chemin_direct = $this->brensenham($x1,$y,$x2,$i);
+
+        dd($chemin_direct);
+        //case suivante = premiere case chemin direct
+
+        //while case suivante == obstacle
+           // case suivante = case adj à la suivante (dans le carré accessible par le rover)
+
+        return $chemin_direct;
     }
 
 
@@ -347,9 +367,7 @@ class ShortRover extends Rover
                   
                    
                 }
-                
-
-               
+                               
                 $px += $diff_y;
 
             }
@@ -357,6 +375,91 @@ class ShortRover extends Rover
 
         return $tab;
     }
+
+
+
+
+    public function brensenham($posX, $posY, $destX, $destY, $direction = false, $turn = false){
+        $x = $posX;
+        $y = $posY;
+        $dx = $destX - $posX; //distance sur l'axe des abscisses
+        $dy = $destY - $posY; //distance sur l'axe des ordonnees
+        //direction du segment
+        $xinc = $dx > 0 ? 1 : -1; 
+        $yinc = $dy > 0 ? 1 : -1; 
+        //              |
+        //              |
+        //   xinc: -1   |   xinc: 1
+        //   yinc: 1    |   yinc: 1
+        //              |
+        // --------------------------------             
+        //              |
+        //   xinc: -1   |   xinc: 1
+        //   yinc: -1   |   yinc: -1
+        //              |
+        //              |
+        
+        //convertion en valeur absolue pour evaluer la pente du segment
+        $dx = abs($dx);
+        $dy = abs($dy);
+        
+        //selon la pente du segment
+        if($dx > $dy){ //Si est plutot horizontale
+            $error = $dx / 2;
+            for ($i=1; $i <= $dx; $i++) { //pour chaque pixel sur la distance des absisses
+                $x += $xinc;
+                $error += $dy;
+                if($error >= $dx){
+                    $error -= $dx;
+                    $y += $yinc;
+                }
+                
+                if ($turn) {
+                    $path[$i][$y][$x] = true;
+                } else {
+                    $path[$y][$x] = true;
+                }
+                //si on cherche une direction
+                if($direction == true && ($y-1 >= 0 && $y+1 <= 9)){
+                    if ($turn) {
+                        $path[$i][$y-1][$x] = true;
+                        $path[$i][$y+1][$x] = true;
+                    }
+                    $path[$y-1][$x] = true;
+                    $path[$y+1][$x] = true;
+                }
+            }
+        } else{ //Si est plutot verticale
+            $error = $dy / 2;
+            for ($i=1; $i <= $dy; $i++) { 
+                $y += $yinc;
+                $error += $dx;
+                if($error >= $dy){
+                    $error -= $dy;
+                    $x += $xinc;
+                }
+                if ($turn) {
+                    $path[$i][$y][$x] = true;
+                } else {
+                    $path[$y][$x] = true;
+                }
+                //si on cherche une direction
+                if($direction == true && ($x-1 >= 0 && $x+1 <= 9)){
+                    if ($turn) {
+                        $path[$i][$y][$x-1] = true;
+                        $path[$i][$y][$x+1] = true;
+                    } 
+                    $path[$y][$x-1] = true;
+                    $path[$y][$x+1] = true;
+                }
+            }   
+        }
+
+
+
+        return $path;
+    }
+
 
     
     
