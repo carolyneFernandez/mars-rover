@@ -81,12 +81,14 @@ class ShortRover extends Rover
         if($mateialCost==0){
             $energy+=15;
         }
-        echo $this->distance.' ';
        $pont=abs($z2-$z1)/$this->distance;//ponemos la pendiente con 2 decimales
+       echo $pont.' ';
+
        if($pont <3){
             $distanceCost=($this->distance*(1+$pont)*$mateialCost) ;  
             $energy=$energy-$distanceCost;
-            return true;                    
+            return true;                 
+
         }else{
             return false;
         }
