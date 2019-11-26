@@ -22,11 +22,11 @@ class ShortRover extends Rover
 
     private $constEnergy = GameController::CONTENTS;
     
-
-    public function getId(): ?int
+    public function getId():?int
     {
         return $this->id;
     }
+
 
 
     public function choiceStep()
@@ -42,7 +42,15 @@ class ShortRover extends Rover
         
         //flag point 
         $x2=1;
-        $y2=8;
+        $y2=6;
+
+        $path = $this->run($table, $x1, $y1, $x2, $y2);
+        foreach ($path as $case) {
+            $table[$case[1]][$case[0]]['path'] = 'X';
+        }
+
+        /*
+
         // Si en absisse x2 est devant x1, on les inverse
 
         if($x2 < $x1){
@@ -70,7 +78,7 @@ class ShortRover extends Rover
         }else{
             $table=$this->ligne($x1,$y1,$x2,$y2,$this->energy,$table);
         }
-    
+    */
         /**
          * creation de table
         **/
@@ -98,7 +106,7 @@ class ShortRover extends Rover
      /**
      * function that will find the way if the line is vertical
      */
-
+/*
     public function ligne_v($x, $y1, $y2,$energy ,$tab) 
     {
         for($i = $y1 ; $i <= $y2; $i ++) {
@@ -132,13 +140,7 @@ class ShortRover extends Rover
                    // $adjCases = $this->getAdjCases();
                     $adjCases = $this->brensenham($x,$y1,$i,$y2);
 
-                    /**
-                     * ------------- a faire : ----------------------------------------
-                     *      trier les cases adjacentes ($adjCases) afin de commencer la boucle par les cases
-                     *      les plus proches de celle où se trouve le rover
-                     * ----------------------------------------------------------------
-                     */
-
+                    
                     $caseFound = false; 
                     foreach ($adjCases as $yAdj => $row) {
                         foreach ($row as $xAdj => $value) {
@@ -161,12 +163,13 @@ class ShortRover extends Rover
         }
         return $tab;
     }
+*/
 
+    public function calculteMoviment ($table, $x1, $y1, $x2, $y2, $energy) {
 
-    public function calculteMovimentV($tab,$i,$x,$energy){
-        $z1=$tab[round($i)][$x][0];//hateur actualle
-        $z2=$tab[round($i+1)][$x][0];//hateur suivant
-        $mateialCost= $this->constEnergy[$tab[round($i)][$x][1]][0];
+        $z1=$table[$y1][$x1][0];//hateur actualle
+        $z2=$table[$y2][$x2][0];//hateur suivant
+        $mateialCost= $this->constEnergy[$table[$y1][$x1][1]][0];
         if($mateialCost==0){
             $energy+=15;
         }
@@ -176,7 +179,6 @@ class ShortRover extends Rover
             $energy=$energy-$distanceCost;
             return true;                    
         }else{
-           // $tab[$i][$y1]['path'] = "o";
             return false;
         }
     }
@@ -186,6 +188,7 @@ class ShortRover extends Rover
  /**
      * function that will find the way if the line is vertical
      */
+    /*
     public function ligne_h($y, $x1, $x2, $energy,$tab) 
     {
         $constEnergy=GameController::CONTENTS;
@@ -208,13 +211,7 @@ class ShortRover extends Rover
 
                   //  $adjCases = $this->getAdjCases();
                    $adjCases = $this->brensenham($x1,$y,$x2,$i);
-                  
-                    /**
-                     * ------------- a faire : ----------------------------------------
-                     *      trier les cases adjacentes ($adjCases) afin de commencer la boucle par les cases
-                     *      les plus proches de celle où se trouve le rover
-                     * ----------------------------------------------------------------
-                     */
+                 
                     $caseFound = false; 
                     foreach ($adjCases as $yAdj => $row) {
                         foreach ($row as $xAdj => $value) {
@@ -241,22 +238,94 @@ class ShortRover extends Rover
         }
         return $tab;
     }
+*/
+    public function run ($table, $x1, $y1, $x2, $y2) {
 
-    public function nextCase ($x1,$y,$x2,$i) {
+        $path = [
+            [$x1, $y1]
+        ];
 
-      // position actuelle (x1, y1)
-        //position arrivée (x2, y2)
-        $chemin_direct = $this->brensenham($x1,$y,$x2,$i);
+        while ($x1 !== $x2 || $y1 !== $y2) {
+            list($x1, $y1) = $this->nextCase($table, $x1, $y1, $x2, $y2);
+            $path[] = [$x1, $y1];
+        }
 
-        dd($chemin_direct);
-        //case suivante = premiere case chemin direct
-
-        //while case suivante == obstacle
-           // case suivante = case adj à la suivante (dans le carré accessible par le rover)
-
-        return $chemin_direct;
+        return $path;
     }
 
+    public function nextCase ($table, $x1, $y1, $x2, $y2) {
+
+        $chemin_direct = $this->brensenham($x1,$y1,$x2,$y2);
+        $y = array_keys($chemin_direct)[0];
+        $x = array_keys($chemin_direct[$y])[0];
+
+        if ($this->isObstacle($table, $x1, $y1, $x, $y)) {
+            $adjs = $this->getAdjCentered($table, $x1, $y1, $x, $y);
+
+            if (!$adjs) {
+                throw new \Exception('Seems rover is stuck, try to change map elevation');
+            }
+
+            list($x, $y) = $adjs[0];
+        }
+
+        return [$x, $y];
+    }
+
+    public function adjCases ($table, $x, $y) {
+
+        $allCases = [
+            [$x+1, $y], //right
+            [$x+1, $y-1],//right hauter
+            [$x, $y-1],//top
+            [$x-1, $y-1],//top left
+            [$x-1, $y],//left
+            [$x-1, $y+1],//down left
+            [$x, $y+1],//down 
+            [$x+1, $y+1]//down right
+        ];
+
+        $cases = [];
+        foreach ($allCases as $case) {
+            if (isset($table[$y][$x])) {
+                $cases[] = $case;
+            }
+        }
+
+        return $cases;
+    }
+
+    public function getAdjCentered ($table, $xc, $yc, $x, $y) {
+
+        $adjsc = $this->adjCases($table, $xc, $yc);
+        $adjscstr = [];
+        foreach ($adjsc as $case) {
+            $adjscstr[] = implode('-', $case);
+        }
+
+        $adjs = $this->adjCases($table, $x, $y);
+        $adjsstr = [];
+        foreach ($adjs as $case) {
+            $adjsstr[] = implode('-', $case);
+        }
+
+        $interstr = array_intersect($adjscstr, $adjsstr);
+        $inter = [];
+        foreach ($interstr as $case) {
+            list($cx, $cy) = explode('-', $case);
+            if (!$this->isObstacle($table, $xc, $yc, $cx, $cy)) {
+                $inter[] = [$cx, $cy];
+            }
+        }
+
+        shuffle($inter);
+        return $inter;
+    }
+
+    public function isObstacle ($table, $x1, $y1, $x2, $y2) {
+        // return false;
+        return !$this->calculteMoviment($table, $x1, $y1, $x2, $y2, $this->energy);
+    }
 
     /**
      * Initialisation des cases adjacentes
