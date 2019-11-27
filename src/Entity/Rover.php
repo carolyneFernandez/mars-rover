@@ -26,12 +26,12 @@ class Rover
     /**
      * @ORM\Column(type="integer")
      */
-    private $posY=1;
+    private $posY=3;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $energy=25;
+    private $energy=10000;
 
     /**
      * @ORM\Column(type="boolean")

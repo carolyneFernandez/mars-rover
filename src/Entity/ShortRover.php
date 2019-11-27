@@ -16,18 +16,17 @@ class ShortRover extends Rover
      * @ORM\Column(type="integer")
      */
     private $id;
-    private $distance=1;
-    private $deplacement=true;
+
 
     private $constEnergy = GameController::CONTENTS;
 
     private $path;
+    private $culDeSacs = [];
 
     public function getId():?int
     {
         return $this->id;
     }
-
 
 
     public function choiceStep()
@@ -42,7 +41,7 @@ class ShortRover extends Rover
         
         //flag point 
         $x2=9;
-        $y2=9;
+        $y2=3;
   
         $this->run($table, $x1, $y1, $x2, $y2);
         $pathStr = '';
@@ -55,11 +54,12 @@ class ShortRover extends Rover
         foreach ($table as $y => $x) {
             $s .= '<tr>';
             foreach ($x as $value ) {
-                if (isset($value['path'])) {
-                    $s .= '<td >'.$value['path'].$value[0].'</td>';
-                }else{
-                    $s .= "<td class='blanc'></td>";
-                }
+                $s .= '<td ' . (isset($value['path']) ? 'style="background-color:rgb(136, 146, 191);"' : '') .'>'.$value[0].'</td>';
+                // if () {
+                //     $s .= '<td >'.$value['path'].$value[0].'</td>';
+                // }else{
+                //     $s .= "<td class='blanc'></td>";
+                // }
             }
             $s .= '</tr>';
         }
@@ -71,29 +71,34 @@ class ShortRover extends Rover
     }
 
    
+    public function calculEnergy($table, $x1, $y1, $x2, $y2){
 
-    public function calculteMoviment ($table, $x1, $y1, $x2, $y2) {
-
-        $z1=$table[$y1][$x1][0];//hateur actualle
-        $z2=$table[$y2][$x2][0];//hateur suivant
-        
         $mateialCost= $this->constEnergy[$table[$y1][$x1][1]][0];
+        $pendent=$this->calcultPendent($table, $x1, $y1, $x2, $y2);
+
+        if($mateialCost==0){
+            $this->setEnergy(10000);
+        }
 
         $distance = $this->distanceBetweenCase($x1, $y1, $x2, $y2);
-echo $distance ." ";
-       $pendent=(abs($z2-$z1)) / $distance; //ponemos la pendiente con 2 decimales
-       if($pendent <3){
+      //  echo $distance.'<br>';
 
-            $distanceCost=($distance*(1+$pendent)*$mateialCost) ; 
-          
-            $this->setEnergy($this->getEnergy()-$distanceCost);
-            
-            return true;                 
+        $distanceCost=($distance*(1+$pendent)*$mateialCost) ; 
+        
+        $this->setEnergy($this->getEnergy()-$distanceCost);
+            echo 's'. ($this->getEnergy());
+        return $this->getEnergy();
 
-        }else{
-          
-            return false;
-        }
+    }
+
+
+    public function calcultPendent ($table, $x1, $y1, $x2, $y2) {
+        $z1=$table[$y1][$x1][0];//hateur actualle
+        $z2=$table[$y2][$x2][0];//hateur suivant
+        $distance = $this->distanceBetweenCase($x1, $y1, $x2, $y2);
+        $pendent=abs($z2-$z1) / $distance; //ponemos la pendiente con 2 decimales
+        return $pendent;
+
     }
 
     public function distanceBetweenCase ($x1, $y1, $x2, $y2) {
@@ -106,37 +111,16 @@ echo $distance ." ";
         $this->path = [
             [$x1, $y1]
         ];
-       
+        
 
-        while (($x1 !== $x2 || $y1 !== $y2)&& $this->getEnergy()> 4.5) {
-            $mateialCost= $this->constEnergy[$table[$y1][$x1][1]][0];
-            if($mateialCost==0){
-                echo "s";
-                $this->setEnergy(15);
-            }
-            echo $this->getEnergy().' ';
-
+        while (($x1 !== $x2 || $y1 !== $y2) && $this->getEnergy() > 4.5 ) {
             list($x1, $y1) = $this->nextCase($table, $x1, $y1, $x2, $y2);
             $this->path[] = [$x1, $y1];
+            $this->calculEnergy($table,$x1,$y1,$x2,$y2);
 
         }
         
-
-
     }
-
-    
-    // public function pathLength ($brensenham) {
-
-    //     $length = 0;
-    //     foreach ($brensenham as $y) {
-    //         foreach ($y as $x) {
-    //             $length++;
-    //         }
-    //     }
-
-    //     return $length;
-    // }
 
     public function pathLength ($path) {
 
@@ -153,56 +137,78 @@ echo $distance ." ";
         return $length;
     }
 
-    public function isVisited ($x, $y) {
+    public function isInList (array $list, $x, $y) {
 
-        foreach ($this->path as $case)
+        foreach ($list as $case)
             if ($case[0] === $x && $case[1] === $y)
                 return true;
 
         return false;
     }
 
+    public function isVisited ($x, $y) {
+
+        return $this->isInList($this->path, $x, $y);
+    }
+
+    public function isCulDeSac ($x, $y) {
+
+        return $this->isInList($this->culDeSacs, $x, $y);
+    }
+
     public function nextCase ($table, $x1, $y1, $x2, $y2) {
 
         $allAdjs = $this->adjCases($table, $x1, $y1);
 
+      //  $culSac =allAdjs
         $adjs = [];
         foreach ($allAdjs as $case) {
-            if (!$this->isObstacle($table, $x1, $y1, $case[0], $case[1])) {
+            if (!$this->isObstacle($table, $x1, $y1, $case[0], $case[1]) && !$this->isCulDeSac($case[0], $case[1])) {
                 $adjs[] = [$case[0], $case[1]];
             }
-            
         }
-
-        usort($adjs, function ($a, $b) use ($x2, $y2) {
-
-            $pathA = $this->brensenham($a[0], $a[1], $x2, $y2);
-            $pathB = $this->brensenham($b[0], $b[1], $x2, $y2);
-
-            $lengthA = $this->pathLength($pathA);
-            $lengthB = $this->pathLength($pathB);
-
-            if ($lengthA === $lengthB) return 0;
-
-            return $lengthA < $lengthB ? -1 : 1;
-        });
-
-        usort($adjs, function ($a, $b) {
-
-            $visitedA = $this->isVisited($a[0], $a[1]) ? 1 : 0;
-            $visitedB = $this->isVisited($b[0], $b[1]) ? 1 : 0;
-
-            if ($visitedA === $visitedB) return 0;
-
-            return $visitedA < $visitedB ? -1 : 1;
-        });
+        // var_dump(count($adjs));
 
         if (!$adjs) {
             throw new \Exception('Seems rover is stuck, try to change map elevation');
         }
 
-        return $adjs[0];
+        // Current case is a cul-de-sac
+        if (count($adjs) === 1) {
+            $this->culDeSacs[] = [$x1, $y1];
+            echo "<pre>";
+            var_dump($this->culDeSacs); 
+            echo "</pre>";
 
+        }
+        // If multiple opportunities, then sort by preference
+        else {
+
+            usort($adjs, function ($a, $b) use ($x2, $y2) {
+
+                $pathA = $this->brensenham($a[0], $a[1], $x2, $y2);
+                $pathB = $this->brensenham($b[0], $b[1], $x2, $y2);
+
+                $lengthA = $this->pathLength($pathA);
+                $lengthB = $this->pathLength($pathB);
+
+                if ($lengthA === $lengthB) return 0;
+
+                return $lengthA < $lengthB ? -1 : 1;
+            });
+
+            usort($adjs, function ($a, $b) {
+
+                $visitedA = $this->isVisited($a[0], $a[1]) ? 1 : 0;
+                $visitedB = $this->isVisited($b[0], $b[1]) ? 1 : 0;
+
+                if ($visitedA === $visitedB) return 0;
+
+                return $visitedA < $visitedB ? -1 : 1;
+            });
+        }
+
+        return $adjs[0];
     }
 
     public function adjCases ($table, $x, $y) {
@@ -230,7 +236,7 @@ echo $distance ." ";
 
     public function isObstacle ($table, $x1, $y1, $x2, $y2) {
         
-        return !$this->calculteMoviment($table, $x1, $y1, $x2, $y2);
+        return $this->calcultPendent($table, $x1, $y1, $x2, $y2) > 3;
     }
 
 
