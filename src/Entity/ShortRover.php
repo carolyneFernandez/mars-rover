@@ -42,7 +42,7 @@ class ShortRover extends Rover
         $y1=1;//$this->getPosY();
         
         //flag point 
-        $x2=1;
+        $x2=9;
         $y2=9;
 
         $this->run($table, $x1, $y1, $x2, $y2);
@@ -54,7 +54,11 @@ class ShortRover extends Rover
         foreach ($table as $y => $x) {
             $s .= '<tr>';
             foreach ($x as $value ) {
-              
+                
+              if($x==1 && $value==1){
+                $s .= "<td class='inicial'>".$value['path'].$value[0]."</td>";
+
+              }
                 if (isset($value['path'])) {
                     $s .= '<td>'.$value['path'].$value[0].'</td>';
                 }else{
@@ -82,7 +86,6 @@ class ShortRover extends Rover
             $energy+=15;
         }
        $pont=abs($z2-$z1)/$this->distance;//ponemos la pendiente con 2 decimales
-       echo $pont.' ';
 
        if($pont <3){
             $distanceCost=($this->distance*(1+$pont)*$mateialCost) ;  
@@ -90,6 +93,10 @@ class ShortRover extends Rover
             return true;                 
 
         }else{
+          
+
+            echo 'pendent :' .$pont.' ';
+
             return false;
         }
     }
@@ -310,5 +317,8 @@ td {
 .blanc{
     background: white;
 
+}
+.inicial{
+    background:red;
 }
 </style>
