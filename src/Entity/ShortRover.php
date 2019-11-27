@@ -79,9 +79,12 @@ class ShortRover extends Rover
         
         $mateialCost= $this->constEnergy[$table[$y1][$x1][1]][0];
 
-       $pendent=(abs($z2-$z1))/$this->distance;//ponemos la pendiente con 2 decimales
+        $distance = $this->distanceBetweenCase($x1, $y1, $x2, $y2);
+echo $distance ." ";
+       $pendent=(abs($z2-$z1)) / $distance; //ponemos la pendiente con 2 decimales
        if($pendent <3){
-            $distanceCost=($this->distance*(1+$pendent)*$mateialCost) ; 
+
+            $distanceCost=($distance*(1+$pendent)*$mateialCost) ; 
           
             $this->setEnergy($this->getEnergy()-$distanceCost);
             
@@ -93,6 +96,11 @@ class ShortRover extends Rover
         }
     }
 
+    public function distanceBetweenCase ($x1, $y1, $x2, $y2) {
+
+        return $x1 === $x2 || $y1 === $y2 ? 1 : 1.4;
+    }
+
 
     public function run ($table, $x1, $y1, $x2, $y2) {
         $this->path = [
@@ -100,7 +108,7 @@ class ShortRover extends Rover
         ];
        
 
-        while (($x1 !== $x2 || $y1 !== $y2)&& $this->getEnergy()) {
+        while (($x1 !== $x2 || $y1 !== $y2)&& $this->getEnergy()> 4.5) {
             $mateialCost= $this->constEnergy[$table[$y1][$x1][1]][0];
             if($mateialCost==0){
                 echo "s";
@@ -117,6 +125,7 @@ class ShortRover extends Rover
 
     }
 
+    
     // public function pathLength ($brensenham) {
 
     //     $length = 0;
@@ -136,7 +145,7 @@ class ShortRover extends Rover
         foreach ($path as $case) {
             
             if ($prevCase)
-                $length += $prevCase[0] === $case[0] || $prevCase[1] === $case[1] ? 1 : 1.4;
+                $length += $this->distanceBetweenCase($prevCase[0], $prevCase[1], $case[0], $case[1]);
 
             $prevCase = $case;
         }
