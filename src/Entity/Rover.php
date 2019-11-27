@@ -31,7 +31,7 @@ class Rover
     /**
      * @ORM\Column(type="integer")
      */
-    private $energy;
+    private $energy=25;
 
     /**
      * @ORM\Column(type="boolean")
@@ -102,6 +102,8 @@ class Rover
     {
         return $this->energy;
     }
+
+   
 
     public function setEnergy(int $energy): self
     {

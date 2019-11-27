@@ -16,7 +16,6 @@ class ShortRover extends Rover
      * @ORM\Column(type="integer")
      */
     private $id;
-    private $energy=100;
     private $distance=1;
     private $deplacement=true;
 
@@ -38,29 +37,26 @@ class ShortRover extends Rover
         $data = file_get_contents($url); // put the contents of the file into a variable
         $table = json_decode($data,true); //
 
-        $x1=1;//$this->getPosX();
-        $y1=1;//$this->getPosY();
+        $x1=$this->getPosX();
+        $y1=$this->getPosY();
         
         //flag point 
         $x2=9;
         $y2=9;
-
+  
         $this->run($table, $x1, $y1, $x2, $y2);
+        $pathStr = '';
         foreach ($this->path as $case) {
             $table[$case[1]][$case[0]]['path'] = 'X';
+            $pathStr .= '(' . implode(',', $case) . ') ';
         }
 
         $s = '<table border="1">';
         foreach ($table as $y => $x) {
             $s .= '<tr>';
             foreach ($x as $value ) {
-                
-              if($x==1 && $value==1){
-                $s .= "<td class='inicial'>".$value['path'].$value[0]."</td>";
-
-              }
                 if (isset($value['path'])) {
-                    $s .= '<td>'.$value['path'].$value[0].'</td>';
+                    $s .= '<td >'.$value['path'].$value[0].'</td>';
                 }else{
                     $s .= "<td class='blanc'></td>";
                 }
@@ -70,58 +66,79 @@ class ShortRover extends Rover
         $s .= '</table>';
         echo $s;
         
-    
+        echo 'Longueur du chemin = ' . $this->pathLength($this->path) . '<br/>';
+        echo 'Chemin =' . $pathStr;
     }
 
+   
 
-
-    public function calculteMoviment ($table, $x1, $y1, $x2, $y2, $energy) {
-
+    public function calculteMoviment ($table, $x1, $y1, $x2, $y2) {
 
         $z1=$table[$y1][$x1][0];//hateur actualle
         $z2=$table[$y2][$x2][0];//hateur suivant
         
         $mateialCost= $this->constEnergy[$table[$y1][$x1][1]][0];
-        if($mateialCost==0){
-            $energy+=15;
-        }
-       $pont=abs($z2-$z1)/$this->distance;//ponemos la pendiente con 2 decimales
 
-       if($pont <3){
-            $distanceCost=($this->distance*(1+$pont)*$mateialCost) ;  
-            $energy=$energy-$distanceCost;
+       $pendent=(abs($z2-$z1))/$this->distance;//ponemos la pendiente con 2 decimales
+       if($pendent <3){
+            $distanceCost=($this->distance*(1+$pendent)*$mateialCost) ; 
+          
+            $this->setEnergy($this->getEnergy()-$distanceCost);
+            
             return true;                 
 
         }else{
           
-
-            echo 'pendent :' .$pont.' ';
-
             return false;
         }
     }
 
 
     public function run ($table, $x1, $y1, $x2, $y2) {
-
         $this->path = [
             [$x1, $y1]
         ];
+       
 
-        while ($x1 !== $x2 || $y1 !== $y2) {
+        while (($x1 !== $x2 || $y1 !== $y2)&& $this->getEnergy()) {
+            $mateialCost= $this->constEnergy[$table[$y1][$x1][1]][0];
+            if($mateialCost==0){
+                echo "s";
+                $this->setEnergy(15);
+            }
+            echo $this->getEnergy().' ';
+
             list($x1, $y1) = $this->nextCase($table, $x1, $y1, $x2, $y2);
             $this->path[] = [$x1, $y1];
+
         }
+        
+
 
     }
 
-    public function pathLength ($brensenham) {
+    // public function pathLength ($brensenham) {
+
+    //     $length = 0;
+    //     foreach ($brensenham as $y) {
+    //         foreach ($y as $x) {
+    //             $length++;
+    //         }
+    //     }
+
+    //     return $length;
+    // }
+
+    public function pathLength ($path) {
 
         $length = 0;
-        foreach ($brensenham as $y) {
-            foreach ($y as $x) {
-                $length++;
-            }
+        $prevCase = null;
+        foreach ($path as $case) {
+            
+            if ($prevCase)
+                $length += $prevCase[0] === $case[0] || $prevCase[1] === $case[1] ? 1 : 1.4;
+
+            $prevCase = $case;
         }
 
         return $length;
@@ -145,6 +162,7 @@ class ShortRover extends Rover
             if (!$this->isObstacle($table, $x1, $y1, $case[0], $case[1])) {
                 $adjs[] = [$case[0], $case[1]];
             }
+            
         }
 
         usort($adjs, function ($a, $b) use ($x2, $y2) {
@@ -203,16 +221,7 @@ class ShortRover extends Rover
 
     public function isObstacle ($table, $x1, $y1, $x2, $y2) {
         
-        $isObstacle = !$this->calculteMoviment($table, $x1, $y1, $x2, $y2, $this->energy);
-
-        // if ($isObstacle) {
-        //     $this->badMoves[] = [
-        //         [$x1, $y1],
-        //         [$x2, $y2]
-        //     ];
-        // }
-
-        return $isObstacle;
+        return !$this->calculteMoviment($table, $x1, $y1, $x2, $y2);
     }
 
 
@@ -220,6 +229,8 @@ class ShortRover extends Rover
     public function brensenham($posX, $posY, $destX, $destY, $direction = false, $turn = false){
 
         if ($posX === $destX && $posY === $destY) return [];
+
+        $path = [];
 
         $x = $posX;
         $y = $posY;
@@ -258,7 +269,8 @@ class ShortRover extends Rover
                 if ($turn) {
                     $path[$i][$y][$x] = true;
                 } else {
-                    $path[$y][$x] = true;
+                    // $path[$y][$x] = true;
+                    $path[] = [$x, $y];
                 }
                 //si on cherche une direction
                 if($direction == true && ($y-1 >= 0 && $y+1 <= 9)){
@@ -266,8 +278,10 @@ class ShortRover extends Rover
                         $path[$i][$y-1][$x] = true;
                         $path[$i][$y+1][$x] = true;
                     }
-                    $path[$y-1][$x] = true;
-                    $path[$y+1][$x] = true;
+                    // $path[$y-1][$x] = true;
+                    // $path[$y+1][$x] = true;
+                    $path[] = [$x, $y-1];
+                    $path[] = [$x, $y+1];
                 }
             }
         } else{ //Si est plutot verticale
@@ -282,7 +296,8 @@ class ShortRover extends Rover
                 if ($turn) {
                     $path[$i][$y][$x] = true;
                 } else {
-                    $path[$y][$x] = true;
+                    // $path[$y][$x] = true;
+                    $path[] = [$x, $y];
                 }
                 //si on cherche une direction
                 if($direction == true && ($x-1 >= 0 && $x+1 <= 9)){
@@ -290,13 +305,13 @@ class ShortRover extends Rover
                         $path[$i][$y][$x-1] = true;
                         $path[$i][$y][$x+1] = true;
                     } 
-                    $path[$y][$x-1] = true;
-                    $path[$y][$x+1] = true;
+                    // $path[$y][$x-1] = true;
+                    // $path[$y][$x+1] = true;
+                    $path[] = [$x-1, $y];
+                    $path[] = [$x+1, $y];
                 }
             }   
         }
-
-
 
         return $path;
     }
