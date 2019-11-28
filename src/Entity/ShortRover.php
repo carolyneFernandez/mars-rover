@@ -46,6 +46,8 @@ class ShortRover extends Rover
         $this->run($table, $x1, $y1, $x2, $y2);
         $pathStr = '';
         foreach ($this->path as $case) {
+    
+
             $table[$case[1]][$case[0]]['path'] = 'X';
             $pathStr .= '(' . implode(',', $case) . ') ';
         }
@@ -86,7 +88,7 @@ class ShortRover extends Rover
         $distanceCost=($distance*(1+$pendent)*$mateialCost) ; 
         
         $this->setEnergy($this->getEnergy()-$distanceCost);
-            echo 's'. ($this->getEnergy());
+          
         return $this->getEnergy();
 
     }
@@ -114,6 +116,12 @@ class ShortRover extends Rover
         
 
         while (($x1 !== $x2 || $y1 !== $y2) && $this->getEnergy() > 4.5 ) {
+            $distance = $this->calculateDistance($x1, $y1, $x2, $y2);
+            echo "distance:". $distance."fin dis";
+           // $gradientPercent = $this->calculateGradient($lastZ, $z, $distance, true);
+            //$gradient = $this->calculateGradient($lastZ, $this->requestGetZ(intval($x), intval($y)), $distance, false);
+
+
             list($x1, $y1) = $this->nextCase($table, $x1, $y1, $x2, $y2);
             $this->path[] = [$x1, $y1];
             $this->calculEnergy($table,$x1,$y1,$x2,$y2);
@@ -176,9 +184,7 @@ class ShortRover extends Rover
         // Current case is a cul-de-sac
         if (count($adjs) === 1) {
             $this->culDeSacs[] = [$x1, $y1];
-            echo "<pre>";
-            var_dump($this->culDeSacs); 
-            echo "</pre>";
+
 
         }
         // If multiple opportunities, then sort by preference
@@ -241,6 +247,80 @@ class ShortRover extends Rover
 
 
 
+
+ /**
+     * Calcul de distance entre 2 points donnés
+     * @param int $xOr
+     * @param int $yOr
+     * @param int $xDest
+     * @param int $yDest
+     * @return float|int
+     */
+    public function calculateDistance(int $xOr, int $yOr, int $xDest, int $yDest)
+    {
+        if ($xOr == $xDest) {
+            $distance = abs($yDest - $yOr) * GameController::lineDistance; // horizontale
+        } elseif ($yOr == $yDest) {
+            $distance = abs($xDest - $xOr) * GameController::lineDistance; // verticale
+        } else {
+            $distance = intval(round(sqrt(pow(abs($yDest - $yOr), 2) + pow(abs($xDest - $xOr), 2)))) * GameController::diagonaleDistance; // diagonale
+        }
+
+        $distance = intval(round($distance));
+
+        return $distance;
+
+    }
+
+    /**
+     * Prend le cout de déplacement pour une distance de 1 ou 1.4 avec une pente en poucentage (0,03 pour 3%)
+     * @param int $xDest utilisé pour connaitre la matière (costContent)
+     * @param int $yDest utilisé pour connaitre la matière (costContent)
+     * @param int $gradient pas en pourcentage !!
+     * @param int $distance 1 ou 1.4 (E)
+     * @return float|int
+     */
+    public function calculateCost(int $xDest, int $yDest, float $gradient, int $distance)
+    {
+        $content = $this->requestGetContent($xDest, $yDest);
+        return round($distance / 100 * (1 + $gradient) * GameController::CONTENTS[$content][0], 2);
+    }
+
+
+    /**
+     * Calcul la pente entre 2 points sur une distance donnée. (attention, ne vérifie pas si variation de pente entre les points !!)
+     * @param int $z1
+     * @param int $z2
+     * @param int $distance
+     * @param bool $percent
+     * @return float|int
+     */
+    public function calculateGradient(int $z1, int $z2, int $distance, bool $percent = false)
+    {
+        if ($percent == false) {
+            $gradient = ($z2 - $z1) / $distance;
+        } else {
+            $gradient = ($z2 - $z1) / $distance * 100;
+        }
+        echo $gradient;
+        return round($gradient, 2);
+
+    }
+
+
+
+
+
+  /**
+     * Algo de bresenham qui trace une ligne entre 2 points
+     * @param $posX
+     * @param $posY
+     * @param $destX
+     * @param $destY
+     * @param bool $direction
+     * @param bool $turn
+     * @return mixed
+     */
     public function brensenham($posX, $posY, $destX, $destY, $direction = false, $turn = false){
 
         if ($posX === $destX && $posY === $destY) return [];
