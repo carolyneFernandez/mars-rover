@@ -19,6 +19,7 @@ npm-debug.log
 yarn-error.log
 /.DS_Store
 /.idea
+/.vscode
 ###< symfony/webpack-encore-bundle ###
 /Front/Components/.DS_Store
 /Front/.DS_Store

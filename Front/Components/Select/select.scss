@@ -119,7 +119,17 @@
 
 .logoSelectedFill{
   fill: $colorOrange !important;
+}
 
-  
+.roverSelected{
+  border-color: $colorOrange;
+  box-shadow: 0 0 10px 5px rgba($colorOrange, 0.2);
+  transform: scale(0.95);
+  color: $colorOrange;
+  text-shadow: 0 0 100px rgba($colorOrange, 1);
+  .title{
+    color: $colorOrange;
+    text-shadow: 0 0 15px $colorOrange;
+  }
 }
 
