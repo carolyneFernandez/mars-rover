@@ -19,7 +19,6 @@ class ShortRover extends Rover
 
 
     private $constEnergy = GameController::CONTENTS;
-
     private $path;
     private $culDeSacs = [];
 
@@ -32,31 +31,37 @@ class ShortRover extends Rover
     public function choiceStep()
     {
 
+
         $url = './../assets/json/carte/map.json'; // path to your JSON file
         $data = file_get_contents($url); // put the contents of the file into a variable
         $table = json_decode($data,true); //
+  
 
-        $x1=$this->getPosX();
-        $y1=$this->getPosY();
+        $x1=1;//$this->getPosX();
+        $y1=2;//$this->getPosY();
         
         //flag point 
-        $x2=9;
-        $y2=3;
+        $x2=8;
+        $y2=2;
   
         $this->run($table, $x1, $y1, $x2, $y2);
         $pathStr = '';
         foreach ($this->path as $case) {
     
 
-            $table[$case[1]][$case[0]]['path'] = 'X';
+            // $table[$case[1]][$case[0]]['path'] = 'X';
             $pathStr .= '(' . implode(',', $case) . ') ';
         }
 
         $s = '<table border="1">';
-        foreach ($table as $y => $x) {
+        foreach ($table as $y => $xs) {
             $s .= '<tr>';
-            foreach ($x as $value ) {
-                $s .= '<td ' . (isset($value['path']) ? 'style="background-color:rgb(136, 146, 191);"' : '') .'>'.$value[0].'</td>';
+            foreach ($xs as $x => $value ) {
+
+                $color = $this->isCulDeSac($x, $y) ? 'rgb(255, 0, 0)' : (
+                    $this->isVisited($x, $y) ? 'rgb(136, 146, 191)' : 'white');
+
+                $s .= '<td style="background-color:' . $color . ';">'.$value[0].'</td>';
                 // if () {
                 //     $s .= '<td >'.$value['path'].$value[0].'</td>';
                 // }else{
@@ -76,60 +81,65 @@ class ShortRover extends Rover
     public function calculEnergy($table, $x1, $y1, $x2, $y2){
 
         $mateialCost= $this->constEnergy[$table[$y1][$x1][1]][0];
-        $pendent=$this->calcultPendent($table, $x1, $y1, $x2, $y2);
+        $pendentPorcentaje=$this->porcentagePendent($table, $x1, $y1, $x2, $y2);
+        $distanceMetre = $this->distanceBetweenCase($x1, $y1, $x2, $y2);
+
+        $pendent=round($pendentPorcentaje/100,2);
+        $distance=round($distanceMetre/100,2);
 
         if($mateialCost==0){
-            $this->setEnergy(10000);
+            $this->setEnergy(100000);
         }
+        if($pendent !=0){
+            $distanceCost=($distance)*(1+($pendent))*$mateialCost ; 
 
-        $distance = $this->distanceBetweenCase($x1, $y1, $x2, $y2);
-      //  echo $distance.'<br>';
+        }else{
+            $distanceCost=$distance*$mateialCost; 
 
-        $distanceCost=($distance*(1+$pendent)*$mateialCost) ; 
-        
+        }
         $this->setEnergy($this->getEnergy()-$distanceCost);
-          
         return $this->getEnergy();
+        
 
     }
 
 
-    public function calcultPendent ($table, $x1, $y1, $x2, $y2) {
+    public function porcentagePendent ($table, $x1, $y1, $x2, $y2) {
         $z1=$table[$y1][$x1][0];//hateur actualle
         $z2=$table[$y2][$x2][0];//hateur suivant
         $distance = $this->distanceBetweenCase($x1, $y1, $x2, $y2);
-        $pendent=abs($z2-$z1) / $distance; //ponemos la pendiente con 2 decimales
+        $pendent=(abs($z2-$z1)/$distance) *100;
+    
         return $pendent;
-
     }
 
     public function distanceBetweenCase ($x1, $y1, $x2, $y2) {
 
-        return $x1 === $x2 || $y1 === $y2 ? 1 : 1.4;
+        return $x1 === $x2 || $y1 === $y2 ? 100 : 140;
     }
 
 
     public function run ($table, $x1, $y1, $x2, $y2) {
+
+
+
         $this->path = [
             [$x1, $y1]
         ];
-        
 
         while (($x1 !== $x2 || $y1 !== $y2) && $this->getEnergy() > 4.5 ) {
-            $distance = $this->calculateDistance($x1, $y1, $x2, $y2);
-            echo "distance:". $distance."fin dis";
-           // $gradientPercent = $this->calculateGradient($lastZ, $z, $distance, true);
-            //$gradient = $this->calculateGradient($lastZ, $this->requestGetZ(intval($x), intval($y)), $distance, false);
+          
+            $case = $this->nextCase($table, $x1, $y1, $x2, $y2);
 
+            if (!$case) break; // Rover is stuck
 
-            list($x1, $y1) = $this->nextCase($table, $x1, $y1, $x2, $y2);
-            $this->path[] = [$x1, $y1];
-            $this->calculEnergy($table,$x1,$y1,$x2,$y2);
-
+            echo $this->calculEnergy($table,$x1,$y1,$case[0],$case[1]) ."<br>";
+            list($x1, $y1) = $case;
+            $this->path[] = $case;
         }
-        
     }
 
+    /** Compute length of path according to straight/diagonal moves */
     public function pathLength ($path) {
 
         $length = 0;
@@ -165,20 +175,24 @@ class ShortRover extends Rover
     }
 
     public function nextCase ($table, $x1, $y1, $x2, $y2) {
+        
 
         $allAdjs = $this->adjCases($table, $x1, $y1);
 
       //  $culSac =allAdjs
         $adjs = [];
         foreach ($allAdjs as $case) {
+
             if (!$this->isObstacle($table, $x1, $y1, $case[0], $case[1]) && !$this->isCulDeSac($case[0], $case[1])) {
                 $adjs[] = [$case[0], $case[1]];
+
             }
         }
         // var_dump(count($adjs));
 
         if (!$adjs) {
-            throw new \Exception('Seems rover is stuck, try to change map elevation');
+            // throw new \Exception('Seems rover is stuck, try to change map elevation');
+            return false;
         }
 
         // Current case is a cul-de-sac
@@ -197,6 +211,8 @@ class ShortRover extends Rover
 
                 $lengthA = $this->pathLength($pathA);
                 $lengthB = $this->pathLength($pathB);
+             
+                // if ($a[0] === 8 && $a[1] === 2) var_dump('B', $lengthA);
 
                 if ($lengthA === $lengthB) return 0;
 
@@ -242,70 +258,11 @@ class ShortRover extends Rover
 
     public function isObstacle ($table, $x1, $y1, $x2, $y2) {
         
-        return $this->calcultPendent($table, $x1, $y1, $x2, $y2) > 3;
+        return $this->porcentagePendent($table, $x1, $y1, $x2, $y2) >= 100;
     }
 
 
 
-
- /**
-     * Calcul de distance entre 2 points donnés
-     * @param int $xOr
-     * @param int $yOr
-     * @param int $xDest
-     * @param int $yDest
-     * @return float|int
-     */
-    public function calculateDistance(int $xOr, int $yOr, int $xDest, int $yDest)
-    {
-        if ($xOr == $xDest) {
-            $distance = abs($yDest - $yOr) * GameController::lineDistance; // horizontale
-        } elseif ($yOr == $yDest) {
-            $distance = abs($xDest - $xOr) * GameController::lineDistance; // verticale
-        } else {
-            $distance = intval(round(sqrt(pow(abs($yDest - $yOr), 2) + pow(abs($xDest - $xOr), 2)))) * GameController::diagonaleDistance; // diagonale
-        }
-
-        $distance = intval(round($distance));
-
-        return $distance;
-
-    }
-
-    /**
-     * Prend le cout de déplacement pour une distance de 1 ou 1.4 avec une pente en poucentage (0,03 pour 3%)
-     * @param int $xDest utilisé pour connaitre la matière (costContent)
-     * @param int $yDest utilisé pour connaitre la matière (costContent)
-     * @param int $gradient pas en pourcentage !!
-     * @param int $distance 1 ou 1.4 (E)
-     * @return float|int
-     */
-    public function calculateCost(int $xDest, int $yDest, float $gradient, int $distance)
-    {
-        $content = $this->requestGetContent($xDest, $yDest);
-        return round($distance / 100 * (1 + $gradient) * GameController::CONTENTS[$content][0], 2);
-    }
-
-
-    /**
-     * Calcul la pente entre 2 points sur une distance donnée. (attention, ne vérifie pas si variation de pente entre les points !!)
-     * @param int $z1
-     * @param int $z2
-     * @param int $distance
-     * @param bool $percent
-     * @return float|int
-     */
-    public function calculateGradient(int $z1, int $z2, int $distance, bool $percent = false)
-    {
-        if ($percent == false) {
-            $gradient = ($z2 - $z1) / $distance;
-        } else {
-            $gradient = ($z2 - $z1) / $distance * 100;
-        }
-        echo $gradient;
-        return round($gradient, 2);
-
-    }
 
 
 
