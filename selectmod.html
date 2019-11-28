@@ -24,7 +24,7 @@
 
         <div class="wrapper">
             <div class="wrapper-buttons-row">
-                <div class="buttonSelect-row smallAction">
+                <div id="1" class="buttonSelect-row smallAction" onclick="selectedButton(0)">
                     <div>
                         <a>
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="211.292" height="189.816" viewBox="0 0 211.292 189.816">
@@ -57,12 +57,10 @@
                                   </svg>
                         </a>
                     </div>
-                    <div class="nameItem title usableButton">
-                        Capture the flag
-                    </div>
+                    <div class="nameItem title usableButton">Capture the flag</div>
                    
                 </div>
-                <div class="buttonSelect-row smallAction">
+                <div id="2" class="buttonSelect-row smallAction" onclick="selectedButton(1)">
                     <div>
                         <a>
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="189" height="189" viewBox="0 0 189 189">
@@ -93,9 +91,7 @@
                             </svg>
                         </a>
                     </div>
-                    <div class="nameItem title usableButton">
-                        Race
-                    </div>
+                    <div class="nameItem title usableButton">Race</div>
                 </div>
             </div>
         </div>
@@ -103,7 +99,7 @@
                 <div class="container-link-bottom-center">
                 <div class="fakeBorderTop"></div>
                 
-                   <a href="selectRovers.html" class="title navLink usableButton">choose</a>
+                   <a href="#" onclick="getSelectedMod()" class="title navLink usableButton">choose</a>
                 <div class="fakeBorderBottom"></div>
             </div>
         </div>
@@ -114,5 +110,8 @@
 
 <script src="Front/Components/Particles/particles.js"></script>
 <script src="Front/Components/Particles/app.js"></script>
+<script src="src/main.js"></script>
+<script src="src/selectMod/selectMod.js"></script>
+<script src="src/modObject.js"></script>
 </body>
 </html>

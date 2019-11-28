@@ -8,5 +8,6 @@ function getQuantity(){
         }
     }
     window.localStorage.setItem('quantity', JSON.stringify(inputQuantity));
-    console.log(localStorage.getItem('quantity'));
+
+    movePage('quantity', './selectDifficulty.html');
 }

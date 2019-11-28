@@ -75,10 +75,12 @@
     &:hover .logoSelect{
       fill: $colorOrange;
     }
-    &:hover svg filter{
+    &:hover svg defs > filter > feFlood{
       display: none;
     }
+
   }
+
   &-column{
     border: 5px solid $colorBlueNeon;
     padding: 15px 20px;
@@ -96,6 +98,38 @@
       border-color: $colorOrange;
       box-shadow: 0 0 10px 5px rgba($colorOrange, 0.2);
     }
+  }
+}
+
+
+.logoSelected{
+  border-color: $colorOrange;
+  box-shadow: 0 0 10px 5px rgba($colorOrange, 0.2);
+  transform: scale(0.95);
+  color: $colorOrange;
+  text-shadow: 0 0 100px rgba($colorOrange, 1);
+  svg defs > filter > feFlood{
+    display: none;
+  }
+  .nameItem{
+    color: $colorOrange;
+    text-shadow: 0 0 15px $colorOrange;
+  }
+}
+
+.logoSelectedFill{
+  fill: $colorOrange !important;
+}
+
+.roverSelected{
+  border-color: $colorOrange;
+  box-shadow: 0 0 10px 5px rgba($colorOrange, 0.2);
+  transform: scale(0.95);
+  color: $colorOrange;
+  text-shadow: 0 0 100px rgba($colorOrange, 1);
+  .title{
+    color: $colorOrange;
+    text-shadow: 0 0 15px $colorOrange;
   }
 }
 
