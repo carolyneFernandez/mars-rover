@@ -21,17 +21,17 @@ class Rover
     /**
      * @ORM\Column(type="integer")
      */
-    private $posX=1;
+    private $posX=0;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $posY=2;
+    private $posY=0;  //
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $energy=1000;
+    private $energy=100;
 
     /**
      * @ORM\Column(type="boolean")

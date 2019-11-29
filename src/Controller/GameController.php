@@ -13,7 +13,7 @@ class GameController extends AbstractController
     const lineDistance = 100; // distance horizontale et vertical pour parcourir une case en mètre
     const diagonaleDistance = 140; // distance diagonale pour parcourir une case en mètre
     
-    const energyTotal = 1000000000; // distance diagonale pour parcourir une case en mètre
+    const energyTotal = 100; // distance diagonale pour parcourir une case en mètre
 
     const CONTENTS = array(
         '1' => [0,'glace'],

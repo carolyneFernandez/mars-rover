@@ -37,12 +37,12 @@ class ShortRover extends Rover
         $table = json_decode($data,true); //
   
 
-        $x1=1;//$this->getPosX();
-        $y1=2;//$this->getPosY();
+        $x1=$this->getPosX();
+        $y1=$this->getPosY();
         
         //flag point 
-        $x2=8;
-        $y2=2;
+        $x2=9;
+        $y2=9;
   
         $this->run($table, $x1, $y1, $x2, $y2);
         $pathStr = '';
@@ -58,8 +58,8 @@ class ShortRover extends Rover
             $s .= '<tr>';
             foreach ($xs as $x => $value ) {
 
-                $color = $this->isCulDeSac($x, $y) ? 'rgb(255, 0, 0)' : (
-                    $this->isVisited($x, $y) ? 'rgb(136, 146, 191)' : 'white');
+                $color = $this->isCulDeSac($x, $y) ? 'blue' : (
+                    $this->isVisited($x, $y) ? 'red' : 'white');
 
                 $s .= '<td style="background-color:' . $color . ';">'.$value[0].'</td>';
                 // if () {
@@ -88,7 +88,7 @@ class ShortRover extends Rover
         $distance=round($distanceMetre/100,2);
 
         if($mateialCost==0){
-            $this->setEnergy(100000);
+            $this->setEnergy(GameController::energyTotal);
         }
         if($pendent !=0){
             $distanceCost=($distance)*(1+($pendent))*$mateialCost ; 
@@ -114,7 +114,6 @@ class ShortRover extends Rover
     }
 
     public function distanceBetweenCase ($x1, $y1, $x2, $y2) {
-
         return $x1 === $x2 || $y1 === $y2 ? 100 : 140;
     }
 
@@ -145,9 +144,11 @@ class ShortRover extends Rover
         $length = 0;
         $prevCase = null;
         foreach ($path as $case) {
-            
-            if ($prevCase)
+
+            if ($prevCase){
                 $length += $this->distanceBetweenCase($prevCase[0], $prevCase[1], $case[0], $case[1]);
+
+            }
 
             $prevCase = $case;
         }
