@@ -118,7 +118,7 @@ class Cases implements JsonSerializable
             "x" => $this->getPosX(),
             "y" => $this->getPosY(),
             "z" => $this->getPosZ(),
-            "material" => $this->getMaterials()
+            "material" => $this->getMaterials()->getLabel()
         ];
     }
 }

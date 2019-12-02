@@ -240,9 +240,9 @@ class DefaultController extends AbstractController
           $i = $id;
     }
 
-    
-    var_dump(json_encode($arrayMap));
-    
+    echo "<pre>";
+    print_r(json_encode($arrayMap));
+    echo "</pre>";
    
     
     

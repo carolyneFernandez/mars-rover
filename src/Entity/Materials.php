@@ -10,7 +10,7 @@ use JsonSerializable;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\MaterialsRepository")
  */
-class Materials implements JsonSerializable
+class Materials
 {
     /**
      * @ORM\Id()
@@ -82,10 +82,4 @@ class Materials implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize()
-    {
-        return [
-            "label" => $this->getLabel()
-        ];
-    }
 }
