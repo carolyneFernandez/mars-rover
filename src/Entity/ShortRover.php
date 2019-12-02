@@ -202,7 +202,6 @@ class ShortRover extends Rover
         if (!$adjs) {//Seems rover is stuck, try to change map elevation
             return false;
         }
-        echo count($adjs);
         if($this->countVisit[$x1.'-'.$y1]==count($adjs)){
             $this->culDeSacs[] = [$x1, $y1];
 
