@@ -75,11 +75,11 @@ class ShortRover extends Rover
         $s .= '</table>';
         echo $s;
         
-        echo 'Longueur du chemin = ' . $this->pathLength($this->path) . '<br/>';
+     /*   echo 'Longueur du chemin = ' . $this->pathLength($this->path) . '<br/>';
         echo 'Chemin =' . $pathStr;
         echo '<pre>';
         var_dump ($this->countVisit);
-         echo '</pre>';
+         echo '</pre>';*/
     }
 
    
