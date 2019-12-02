@@ -20,6 +20,8 @@ class ShortRover extends Rover
 
     private $constEnergy = GameController::CONTENTS;
     private $path;
+    private $visitited;
+
     private $culDeSacs = [];
 
     public function getId():?int
@@ -75,6 +77,9 @@ class ShortRover extends Rover
         
         echo 'Longueur du chemin = ' . $this->pathLength($this->path) . '<br/>';
         echo 'Chemin =' . $pathStr;
+        echo '<pre>';
+        var_dump ($this->countVisit);
+         echo '</pre>';
     }
 
    
@@ -109,7 +114,6 @@ class ShortRover extends Rover
         $z2=$table[$y2][$x2][0];//hateur suivant
         $distance = $this->distanceBetweenCase($x1, $y1, $x2, $y2);
         $pendent=(abs($z2-$z1)/$distance) *100;
-    
         return $pendent;
     }
 
@@ -119,23 +123,29 @@ class ShortRover extends Rover
 
 
     public function run ($table, $x1, $y1, $x2, $y2) {
-
-
-
         $this->path = [
             [$x1, $y1]
+        ];
+        $this->countVisit = [
+            $x1.'-'.$y1=>0
         ];
 
         while (($x1 !== $x2 || $y1 !== $y2) && $this->getEnergy() > 4.5 ) {
           
             $case = $this->nextCase($table, $x1, $y1, $x2, $y2);
-
+            
             if (!$case) break; // Rover is stuck
 
-            echo $this->calculEnergy($table,$x1,$y1,$case[0],$case[1]) ."<br>";
+             $this->calculEnergy($table,$x1,$y1,$case[0],$case[1]);
             list($x1, $y1) = $case;
             $this->path[] = $case;
+
+            $this->countVisit[$x1.'-'.$y1] = isset( $this->countVisit[$x1.'-'.$y1]) ?  $this->countVisit[$x1.'-'.$y1] + 1 : 0;
+
+
         }
+       
+
     }
 
     /** Compute length of path according to straight/diagonal moves */
@@ -147,7 +157,6 @@ class ShortRover extends Rover
 
             if ($prevCase){
                 $length += $this->distanceBetweenCase($prevCase[0], $prevCase[1], $case[0], $case[1]);
-
             }
 
             $prevCase = $case;
@@ -175,36 +184,40 @@ class ShortRover extends Rover
         return $this->isInList($this->culDeSacs, $x, $y);
     }
 
+   
     public function nextCase ($table, $x1, $y1, $x2, $y2) {
         
 
         $allAdjs = $this->adjCases($table, $x1, $y1);
 
-      //  $culSac =allAdjs
         $adjs = [];
         foreach ($allAdjs as $case) {
 
             if (!$this->isObstacle($table, $x1, $y1, $case[0], $case[1]) && !$this->isCulDeSac($case[0], $case[1])) {
                 $adjs[] = [$case[0], $case[1]];
-
             }
-        }
-        // var_dump(count($adjs));
 
-        if (!$adjs) {
-            // throw new \Exception('Seems rover is stuck, try to change map elevation');
+
+        }
+        if (!$adjs) {//Seems rover is stuck, try to change map elevation
             return false;
         }
 
+        if($this->countVisit[$x1.'-'.$y1]==6){
+            echo 's';
+            $this->culDeSacs[] = [$x1, $y1];
+
+        }
+       // $this->countVisit[$x1.'-'.$y1] = isset( $this->countVisit[$x1.'-'.$y1]) ?  $this->countVisit[$x1.'-'.$y1] + 1 : 0;
+
+     //   echo count($adjs)."<br>";
         // Current case is a cul-de-sac
         if (count($adjs) === 1) {
             $this->culDeSacs[] = [$x1, $y1];
-
-
         }
         // If multiple opportunities, then sort by preference
         else {
-
+            
             usort($adjs, function ($a, $b) use ($x2, $y2) {
 
                 $pathA = $this->brensenham($a[0], $a[1], $x2, $y2);
@@ -213,8 +226,6 @@ class ShortRover extends Rover
                 $lengthA = $this->pathLength($pathA);
                 $lengthB = $this->pathLength($pathB);
              
-                // if ($a[0] === 8 && $a[1] === 2) var_dump('B', $lengthA);
-
                 if ($lengthA === $lengthB) return 0;
 
                 return $lengthA < $lengthB ? -1 : 1;
