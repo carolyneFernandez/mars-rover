@@ -67,6 +67,11 @@ class Rover
     private $nextY = null;
 
     /**
+     * @ORM\Column(type="array")
+     */
+    private $memory = [];
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -274,6 +279,26 @@ class Rover
 
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public function getMemory(): array
+    {
+        return $this->memory;
+    }
+
+    /**
+     * @param array $memory
+     * @return Rover
+     */
+    public function setMemory(array $memory): Rover
+    {
+        $this->memory = $memory;
+
+        return $this;
+    }
+
 
     public function requestIceCases()
     {

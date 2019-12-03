@@ -99,13 +99,21 @@ class GameController extends AbstractController
 
             // result est un array avec comme paramètre nextX, nextY, energyRest et memory
             $result = $rover->choiceStep();
+            $response = json_encode($result);
+            dump($response);
+
 
 //            dump($road);
             $strJsonFileContents = file_get_contents("../public/" . $map);
             $arrayMap = json_decode($strJsonFileContents, true);
             dump($arrayMap);
+
+
+
+
+
+//            return $response;
         }
-        $typeRover = "intelligent";
 
 
         return $this->render('game/index.html.twig', [

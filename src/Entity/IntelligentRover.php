@@ -23,7 +23,7 @@ class IntelligentRover extends Rover
         dump($this->getAdjCases());
 
         $road = $this->brensenham($this->getPosX(), $this->getPosY(), $this->getDestX(), $this->getDestY());
-//        dump($road);
+        dump($road);
 
         $i = 0;
         $gradients = [];
@@ -34,8 +34,9 @@ class IntelligentRover extends Rover
         $gradientsPercent = [];
 
         foreach ($road as $y => $array) {
-            foreach ($array as $x => $value) {
 
+            foreach ($array as $x => $value) {
+                dump($x.",".$y);
 //            $x = array_keys($array)[0];
                 $z = $this->requestGetZ(intval($x), intval($y));
                 if ($i != 0) {
@@ -50,13 +51,25 @@ class IntelligentRover extends Rover
                 $lastX = $x;
                 $lastY = $y;
                 $lastZ = $z;
+                if($i == 1){
+                    break;
+                }
                 $i++;
+//                break;
             }
+            break;
         }
 
         dump($gradients);
         dump($gradientsPercent);
         dump($costs);
+
+        return [
+          'nextX'=>$x,
+          'nextY'=>$y,
+          'energyRest' => $this->getEnergy()-$costs[intval($y)][intval($x)],
+          'memory'=>[]
+        ];
 
         return [
             'road' => $road,
