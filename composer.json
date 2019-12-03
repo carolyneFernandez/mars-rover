@@ -21,7 +21,8 @@
         "symfony/web-server-bundle": "4.3.*",
         "symfony/webpack-encore-bundle": "^1.6",
         "symfony/yaml": "4.3.*",
-        "ext-json": "*"
+        "ext-json": "*",
+      "ext-curl": "*"
     },
     "require-dev": {
         "symfony/profiler-pack": "^1.0"
