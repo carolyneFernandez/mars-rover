@@ -15,5 +15,13 @@ class EcoRover extends Rover
     public function choiceStep()
     {
 
+        return [
+            'nextX' => 2,
+            'nextY' => 5,
+            'energyRest' => 33.21,
+            'memory' => []
+        ];
+
     }
+
 }
