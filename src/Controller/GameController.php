@@ -96,6 +96,8 @@ class GameController extends AbstractController
             $iceCases = $rover->requestIceCases();
 //            dump($iceCases);
             dump($rover);
+
+            // result est un array avec comme paramètre nextX, nextY, energyRest et memory
             $result = $rover->choiceStep();
 
 //            dump($road);

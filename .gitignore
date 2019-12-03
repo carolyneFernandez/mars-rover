@@ -19,4 +19,9 @@ npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
 /.idea/
+<<<<<<< HEAD
 *.DS_Store
+=======
+*.DS_Store
+
+>>>>>>> b6d8ea13e67d222f7c50cb379037bc155a09486d
