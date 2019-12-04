@@ -2,10 +2,17 @@
 
 namespace App\Service;
 
+use App\Controller\GameController;
+
 class EcoRoverService {
 
+    /**
+     * Initialise les cases adjacentes.
+     * @param array $map
+     * @param Rover $rover
+     * @return Rover
+     */
     private function setUpAdjCases($map, $rover) {
-        //Initialisation des cases adjacentes
         $adjCases = array();
         // Haut gauche
         if (isset($map[$rover->getPosY() + 1][$rover->getPosX() - 1])) {
@@ -46,9 +53,15 @@ class EcoRoverService {
 
 
     
-
+    /**
+     * Détermine la longueur du chemin jusqu'à la case de glace pour chaque case adjacente, triant les chemins du plus court au plus long.
+     * @param Rover $rover
+     * @param array $nextIceCase : coordonnées X et Y
+     * @param array $direction : cases adjacentes pratiquables ou non
+     * @param array $destination : coordonnées X et Y
+     * @return array
+     */
     public function orderAdjCases($rover, $nextIceCase, $direction, $destination) {
-        // détermine la longueur du chemin jusqu'à la case de glace pour chaque case adjacente afin de savoir lesquels sont les plus courts
         $orderedAdjCases = array();
         foreach ($rover->getAdjCases() as $y => $case) {
             foreach ($case as $x => $value) {
@@ -82,31 +95,25 @@ class EcoRoverService {
         return $orderedAdjCases;
     }
 
+    /**
+     * Recupère les blocs de glace qui se trouvent dans la bonne direction. Si aucune glace n'est trouvé, continue sur le chemin initial.
+     * @param array $direction : cases adjacentes pratiquables ou non
+     * @param array $map
+     * @param array $destination : coordonnées X et Y
+     * @param Rover $rover
+     * @return array
+     */
     private function getNextIceCase($direction, $map, $destination, $rover) {
-        // recupere les blocs de glace qui se trouvent dans la bonne direction
-        $caseFound = false;
         foreach ($direction as $y => $case) {
             foreach ($case as $x => $value) {
-                // ---> DETERMINATION COUT DE LA COMPOSITION DU SOL
-                
-                //scan sur adjacent !!!!!!!! finalement : pas compter comme un scan car les blocs de glaces seront transmis par l'api
-                // if (isset($rover->getAdjCases()[$y][$x]))
-                // {
-                //     $cost += 0.2;
-                // } else {
-                //     $cost += 0.4;
-                // }
-                
                 // si aucune case n'a été trouvé, que c'est une case de glace et qu'elle n'a pas été consummée
-                if ($caseFound == false && (isset($map[$y][$x]['content']) && $map[$y][$x]['content'] == 1) && !isset($rover->getIceConsumed()[$y][$x])) {
+                if ((isset($map[$y][$x]['content']) && $map[$y][$x]['content'] == 1) && !isset($rover->getIceConsumed()[$y][$x])) {
                     $nextIceCase['x'] = $x;
                     $nextIceCase['y'] = $y;
-                    $caseFound = true;
                 }
             }
         }
-
-        // si aucune case de glace dans la direction, la prochaine direction est la destination
+        // si aucune case de glace est dans la direction, la prochaine direction est la destination
         if (!isset($nextIceCase)) {
             $nextIceCase['x'] = $destination['x'];
             $nextIceCase['y'] = $destination['y'];
@@ -115,12 +122,19 @@ class EcoRoverService {
         return $nextIceCase;
     }
 
+    /** Choix définitif de la prochaine case du rover. Choisit en fonction de la composition (le sable est évité) et de la pente pratiquable.
+     * @param Rover $rover
+     * @param array $nextIceCase : coordonnées X et Y
+     * @param array $direction : cases adjacentes pratiquables ou non
+     * @param array $map
+     * @param array $orderedAdjCases
+
+     * @return array
+     */
     private function getNextCase($rover, $nextIceCase, $direction, $map, $orderedAdjCases) {
-        
-        // choix de la case : si une case n'est pas praticable alors on la place dans ignoredCases et on la retire de orderedAdjCases. On essaye alors de se déplacer sur la premiere case de orderedAdjCases, si ce n'est pas possible on réitère l'opération.
-
+        // Si une case n'est pas praticable alors on la place dans ignoredCases et on la retire de orderedAdjCases. 
+        //On essaye alors de se déplacer sur la premiere case de orderedAdjCases, si ce n'est pas possible on réitère l'opération.
         $cost = 0; //a remove
-
         $nextCase = $rover->brensenham($rover->getPosX(), $rover->getPosY(), $nextIceCase['x'], $nextIceCase['y'], false, true)[1];
         $ignoredAdjCases = array();
 
@@ -129,16 +143,20 @@ class EcoRoverService {
             foreach ($row as $x => $value) {
                 // si la case de glace n'a pas été consommée
                 if (!isset($rover->getIceConsumed()[$y][$x])) {
-                    // si la pente est trop abrupte : A DEFINIR
-                    // ---> DETERMINATION DE LA PENTE
-                    //definir si la case scanné est horizontale/verticale ou diagonale
-                    $cost += 1;
+                    // ---> VERIFICATION D'UNE PENTE CORRECTE
+                    //TODO
+                    $dist = $this->calculateDistance($rover->getPosX(), $rover->getPosY(), $x, $y);
+                    $percentGradiant = $this->calculateGradient($rover->requestGetZ($rover->getPosX(), $rover->getPosY()), $rover->requestGetZ($x, $y), $dist, true);
+                    if($percentGradiant >= 150 || $percentGradiant <= 150){
+                        array_push($ignoredAdjCases, ['x' => $x, 'y' => $y]);
+                    }
+                    dump("PG $percentGradiant");
+
                     if (isset($map[$y][$x]['z-index'])) {
                         array_push($ignoredAdjCases, ['x' => $x, 'y' => $y]);
                     } else {
                         //par defaut : 1  A DEFINIR !!
-                        $cost += 1;
-                        dump($cost);
+                        //TODO
                         $rover->setEnergy($rover->getEnergy() - $cost);
                         return ['x' => $x, 'y' => $y, 'direction' => $direction];
                     }
@@ -152,16 +170,22 @@ class EcoRoverService {
                 foreach ($row as $x => $value) {
                     // si la case de glace n'a pas été consommée
                     if (!isset($rover->getIceConsumed()[$y][$x])) {
-                        // ---> DETERMINATION DE LA PENTE
-                        //definir si la case scanné est horizontale/verticale ou diagonale
+                        // ---> VERIFICATION D'UNE PENTE CORRECTE
+                        //TODO
+                        $dist = $this->calculateDistance($rover->getPosX(), $rover->getPosY(), $x, $y);
+                        $percentGradiant = $this->calculateGradient($rover->requestGetZ($rover->getPosX(), $rover->getPosY()), $rover->requestGetZ($x, $y), $dist, true);
+                        if($percentGradiant >= 150 || $percentGradiant <= 150){
+                            array_push($ignoredAdjCases, ['x' => $x, 'y' => $y]);
+                        }
+                        dump("PG $percentGradiant");
+                        
                         $cost += 1;
                         if (isset($map[$y][$x]['z-index'])) {
                             array_push($ignoredAdjCases, ['x' => $x, 'y' => $y]);
                         } else {
                             // ---> DETERMINATION DE LA DIRECTION
                             //par defaut : 1  A DEFINIR !!
-                            $cost += 1;
-                            dump($cost);
+                            //TODO
                             $rover->setEnergy($rover->getEnergy() - $cost);
                             return ['x' => $x, 'y' => $y, 'direction' => $direction];
                         }
@@ -170,9 +194,15 @@ class EcoRoverService {
             }
         }
     }
+
     
-    public function move($map, $rover, $destination)
-    {
+    /** Fonction principale. Retourne la prochaine case du Rover.
+     * @param array $map
+     * @param Rover $rover
+     * @param array $destination : coordonnées X et Y
+     * @return array
+     */
+    public function move($map, $rover, $destination) {
         $cost = 0;
 
         $rover = $this->setUpAdjCases($map, $rover);
@@ -197,11 +227,71 @@ class EcoRoverService {
         } else { //sinon c'est que les cases ont été correctent triées
             $orderedAdjCases = $res;
         }
-
-        
-
+    
         $res = $this->getNextCase($rover, $nextIceCase, $direction, $map, $orderedAdjCases);
 
         return $res;
+    }
+
+#################################################################################################################################################
+
+    
+    /**
+     * Calcul de distance entre 2 points donnés.
+     * @param int $xOr
+     * @param int $yOr
+     * @param int $xDest
+     * @param int $yDest
+     * @return float|int
+     */
+    public function calculateDistance(int $xOr, int $yOr, int $xDest, int $yDest)
+    {
+        if ($xOr == $xDest) {
+            $distance = abs($yDest - $yOr) * GameController::lineDistance; // horizontale
+        } elseif ($yOr == $yDest) {
+            $distance = abs($xDest - $xOr) * GameController::lineDistance; // verticale
+        } else {
+            $distance = intval(round(sqrt(pow(abs($yDest - $yOr), 2) + pow(abs($xDest - $xOr), 2)))) * GameController::diagonaleDistance; // diagonale
+        }
+        $distance = intval(round($distance));
+
+        return $distance;
+
+    }
+
+    /**
+     * Prend le cout de déplacement pour une distance de 1 ou 1.4 avec une pente en poucentage (0,03 pour 3%)
+     * @param int $xDest utilisé pour connaitre la matière (costContent)
+     * @param int $yDest utilisé pour connaitre la matière (costContent)
+     * @param int $gradient pas en pourcentage !!
+     * @param int $distance 1 ou 1.4 (E)
+     * @return float|int
+     */ /*
+    public function calculateCost(int $xDest, int $yDest, float $gradient, int $distance)
+    {
+        // E x (1+p) x costContent
+        // dump($gradient);
+        $content = $this->requestGetContent($xDest, $yDest);
+        return round($distance / 100 * (1 + $gradient) * GameController::CONTENTS[$content][0], 2);
+    } */
+
+    /**
+     * Calcul la pente entre 2 points sur une distance donnée. (attention, ne vérifie pas si variation de pente entre les points !!)
+     * @param int $z1
+     * @param int $z2
+     * @param int $distance
+     * @param bool $percent
+     * @return float|int
+     */
+    public function calculateGradient(int $z1, int $z2, int $distance, bool $percent = false)
+    {
+        if ($percent == false) {
+            $gradient = ($z2 - $z1) / $distance;
+        } else {
+            $gradient = ($z2 - $z1) / $distance * 100;
+        }
+
+        return round($gradient, 2);
+
     }
 }

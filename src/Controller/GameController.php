@@ -7,7 +7,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\EcoRover;
 use App\Service\EcoRoverService;
 
-class EcoRoverController extends AbstractController
+class GameController extends AbstractController
 {
     const CONTENTS = array(
         '1' => 'glace',
@@ -35,6 +35,12 @@ class EcoRoverController extends AbstractController
         '2' => 'recharge entre 20 et 60%',
         '3' => 'coût -50% pour les 4 prochains tours.'
     );
+
+    const energyReload = 5; // taux d'énergie rechargé par tour passé (panneau solaire)
+
+    const lineDistance = 100; // distance horizontale et vertical pour parcourir une case en mètre
+
+    const diagonaleDistance = 140; // distance diagonale pour parcourir une case en mètre
 
     /**
      * @Route("/ecoRover", name="eco_rover")
@@ -117,7 +123,7 @@ class EcoRoverController extends AbstractController
 
 
         return $this->render('eco_rover/index.html.twig', [
-            'controller_name' => 'EcoRoverController',
+            'controller_name' => 'GameController',
             'map' => $map
         ]);
     }

@@ -195,5 +195,23 @@ class Rover
         return $this;
     }
 
+    public function requestGetZ($x, $y)
+    {
+        $x = round($x);
+        $y = round($y);
+        $parsed_json = json_decode(file_get_contents("../assets/json/map.json"), true);
+        //        dump($parsed_json);
+        //dump("z de $x,$y : " . $parsed_json[$y][$x][0]);
+        return $parsed_json[$y][$x][0];
+    }
 
+    public function requestGetContent($x, $y)
+    {
+        $x = round($x);
+        $y = round($y);
+        $parsed_json = json_decode(file_get_contents("../assets/json/map.json"), true);
+        //        dump($parsed_json);
+        //dump("z de $x,$y : " . $parsed_json[$y][$x][0]);
+        return $parsed_json[$y][$x][1];
+    }
 }
