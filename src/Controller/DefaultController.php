@@ -2,16 +2,18 @@
 
 namespace App\Controller;
 
-use App\Entity\Cases;
 use App\Entity\Map;
-use App\Entity\Materials;
+use App\Entity\Cases;
 use App\Entity\ParamMap;
+use App\Entity\Materials;
 use App\Form\ParametersMapType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-class DefaultController extends AbstractController
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+class DefaultController extends AbstractController
 {
   /**
    * @Route("/", name="index")
@@ -48,14 +50,17 @@ class DefaultController extends AbstractController
       $map->setSizeX(100);      
       $map->setSizeY(100);
       
-      $this->map_gen( $map->getSizeX(), $map->getSizeY(), $profondeur);
+      $arrayMap = $this->map_gen( $map->getSizeX(), $map->getSizeY(), $profondeur);
       
+      $arrayMap = json_encode($arrayMap);
+      return new JsonResponse($arrayMap, 200, [], true);
     }
 
     return $this->render('index.html.twig', [
         'controller_name' => 'DefaultController',
         'form'=>$form->createView()
     ]);
+
   }
 
 
@@ -240,16 +245,8 @@ class DefaultController extends AbstractController
           $i = $id;
     }
 
-    echo "<pre>";
-    print_r(json_encode($arrayMap));
-    echo "</pre>";
-   
-    
-    
-    die;
- 
     return $arrayMap;
-
+    
   }
 
 }
