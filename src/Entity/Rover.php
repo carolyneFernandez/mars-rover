@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\RoverRepository")
@@ -29,6 +30,16 @@ class Rover
     /**
      * @ORM\Column(type="integer")
      */
+    private $destX;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $destY;
+
+    /**
+     * @ORM\Column(type="float")
+     */
     private $energy = 100;
 
     /**
@@ -50,6 +61,68 @@ class Rover
      * @ORM\Column(type="int")
      */
     private $nextY = null;
+
+    /**
+     * @ORM\Column(type="integer")
+    */
+    private $posZ;
+
+    /**
+     * @return mixed
+     */
+    public function getDestX()
+    {
+        return $this->destX;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPosZ()
+    {
+        return $this->posZ;
+    }
+
+    /**
+     * @param mixed $posZ
+     * @return Rover
+     */
+    public function setPosZ($posZ)
+    {
+        $this->posZ = $posZ;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $destX
+     * @return Rover
+     */
+    public function setDestX($destX)
+    {
+        $this->destX = $destX;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDestY()
+    {
+        return $this->destY;
+    }
+
+    /**
+     * @param mixed $destY
+     * @return Rover
+     */
+    public function setDestY($destY)
+    {
+        $this->destY = $destY;
+
+        return $this;
+    }
 
     /**
      * @return mixed

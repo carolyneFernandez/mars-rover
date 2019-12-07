@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Service\EcoRoverService;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EcoRoverRepository")
@@ -31,7 +32,24 @@ class EcoRover extends Rover
      */
     public function choiceStep()
     {
-
+        $ecoRoverService = new EcoRoverService();
+        $result = $ecoRoverService->move($this);
+        if (isset($result['cost'])) {
+            $this->setEnergy($this->getEnergy() - $result['cost']);
+        }
+        //for testing
+        if (isset($result['arrived'])) {
+            $arrived = true;
+        } else {
+            $arrived = false;
+        }
+        return [
+            'nextX' => $result['x'],
+            'nextY' => $result['y'],
+            'energyRest' => $this->getEnergy(),
+            'memory' => [],
+            'arrived' => $arrived //for testing
+        ];
     }
 
     public function brensenham($posX, $posY, $destX, $destY, $direction = false, $turn = false){
