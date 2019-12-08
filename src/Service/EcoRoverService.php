@@ -3,8 +3,15 @@
 namespace App\Service;
 
 use App\Controller\GameController;
+use App\Service\Bresenham;
 
 class EcoRoverService {
+
+    function __construct() {
+        $this->bresenham = new Bresenham();
+    }
+
+    private $bresenham;
 
     private $cost = 0;
 
@@ -134,17 +141,21 @@ class EcoRoverService {
                         $dist = $this->calculateDistance($rover->getPosX(), $rover->getPosY(), $x, $y);
                         $gradient = $this->calculateGradient($rover->requestGetZ($rover->getPosX(), $rover->getPosY()), $rover->requestGetZ($x, $y), $dist);
                         $this->cost += $this->movementCost($x, $y, $gradient, $dist, $rover);
-                        return ['x' => $x, 'y' => $y, 'arrived' => true, 'cost' => $this->cost];
+                        return ['x' => $x, 'y' => $y, 'arrived' => true, 'cost' => $this->cost, 'memory' => [
+                            'iceConsumed' => $rover->getIceConsumed()
+                        ]];
                     }
                     // si un des blocs adjacents est le bloc de glace alors c'est la prochaine case
                     if ($x === $nextIceCase['x'] && $y === $nextIceCase['y']) {
                         $rover->addIceConsumed($x, $y);
                         $this->cost = $rover->getEnergy() - 100; //cost négatif pour faire gagner au rover la difference d'energie jusqu'à 100.
-                        return ['x' => $x, 'y' => $y, 'direction' => $direction, 'cost' => $this->cost];
+                        return ['x' => $x, 'y' => $y, 'direction' => $direction, 'cost' => $this->cost, 'memory' => [
+                            'iceConsumed' => $rover->getIceConsumed()
+                        ]];
                     }
                     // calcul longueur chemin
                     $pathLength = 0;
-                    $pathToIce = $rover->brensenham($x, $y, $nextIceCase['x'], $nextIceCase['y']);
+                    $pathToIce = $this->bresenham->run($x, $y, $nextIceCase['x'], $nextIceCase['y']);
                     foreach ($pathToIce as $case) {
                         foreach ($case as $value) {
                             $pathLength++;
@@ -212,7 +223,7 @@ class EcoRoverService {
     private function getNextCase($rover, $nextIceCase, $direction, $orderedAdjCases) {
         // Si une case n'est pas praticable alors on la place dans ignoredCases et on la retire de orderedAdjCases. 
         //On essaye alors de se déplacer sur la premiere case de orderedAdjCases, si ce n'est pas possible on réitère l'opération.
-        $nextCase = $rover->brensenham($rover->getPosX(), $rover->getPosY(), $nextIceCase['x'], $nextIceCase['y'], false, true)[1];
+        $nextCase = $this->bresenham->run($rover->getPosX(), $rover->getPosY(), $nextIceCase['x'], $nextIceCase['y'], false, true)[1];
         $ignoredAdjCases = array();
         // chemin le plus direct
         foreach ($nextCase as $y => $row) {
@@ -232,7 +243,9 @@ class EcoRoverService {
                         $gradient = $this->calculateGradient($rover->requestGetZ($rover->getPosX(), $rover->getPosY()), $rover->requestGetZ($x, $y), $dist);
                         $this->cost += $this->movementCost($x, $y, $gradient, $dist, $rover);
                         // $rover->setEnergy($rover->getEnergy() - $cost);
-                        return ['x' => $x, 'y' => $y, 'direction' => $direction, 'cost' => $this->cost];
+                        return ['x' => $x, 'y' => $y, 'direction' => $direction, 'cost' => $this->cost, 'memory' => [
+                            'iceConsumed' => $rover->getIceConsumed()
+                        ]];
                     }
                 }
             }
@@ -258,7 +271,9 @@ class EcoRoverService {
                             $gradient = $this->calculateGradient($rover->requestGetZ($rover->getPosX(), $rover->getPosY()), $rover->requestGetZ($x, $y), $dist);
                             $this->cost += $this->movementCost($x, $y, $gradient, $dist, $rover);
                             // $rover->setEnergy($rover->getEnergy() - $cost);
-                            return ['x' => $x, 'y' => $y, 'direction' => $direction, 'energy' => $this->cost];
+                            return ['x' => $x, 'y' => $y, 'direction' => $direction, 'energy' => $this->cost, 'memory' => [
+                                'iceConsumed' => $rover->getIceConsumed()
+                            ]];
                         }
                     }
                 }
@@ -286,7 +301,7 @@ class EcoRoverService {
         // $map = $this->requestAdjCases($rover, 1);
 
         // recupere toutes les cases (rayon de 3) dans la direction de la destination
-        $direction = $rover->brensenham($rover->getPosX(), $rover->getPosY(), $destination['x'], $destination['y'], true);
+        $direction = $this->bresenham->run($rover->getPosX(), $rover->getPosY(), $destination['x'], $destination['y'], true);
 
         $iceCases = $this->requestIceCases();
         // pour ne pas manquer les cases de glace adjacente, ajoute les cases adjacente a la direction

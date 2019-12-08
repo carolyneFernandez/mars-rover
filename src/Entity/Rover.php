@@ -68,6 +68,11 @@ class Rover
     private $posZ;
 
     /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $memory = [];
+
+    /**
      * @return mixed
      */
     public function getDestX()
@@ -286,5 +291,17 @@ class Rover
         //        dump($parsed_json);
         //dump("z de $x,$y : " . $parsed_json[$y][$x][0]);
         return $parsed_json[$y][$x][1];
+    }
+
+    public function getMemory(): ?array
+    {
+        return $this->memory;
+    }
+
+    public function setMemory(?array $memory): self
+    {
+        $this->memory = $memory;
+
+        return $this;
     }
 }

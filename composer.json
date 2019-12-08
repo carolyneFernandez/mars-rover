@@ -23,6 +23,7 @@
         "symfony/yaml": "4.3.*"
     },
     "require-dev": {
+        "symfony/http-client": "4.3.*",
         "symfony/profiler-pack": "^1.0",
         "symfony/var-dumper": "4.3.*"
     },

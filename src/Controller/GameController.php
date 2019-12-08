@@ -47,82 +47,102 @@ class GameController extends AbstractController
     const diagonaleDistance = 140; // distance diagonale pour parcourir une case en mètre
 
     /**
-     * @Route("/ecoRover", name="eco_rover")
+     * @Route("/game", name="game")
      */
     public function index(EcoRoverService $ecoRoverService)
     {
+        //recuperation de la map et des cases de glace -- simulation api
         $file = file_get_contents("../assets/json/map.json");
         $iceFile = file_get_contents("../assets/json/ice.json");
         $iceCasesJSON = json_decode($iceFile);
-        //Initialise le tableau avec les cases de glace
+        $map = json_decode($file, true);
+
+        //Initialise un tableau avec les cases de glace 
         foreach ($iceCasesJSON as $key => $case) {
             $res = explode(",", $case[0]);
             $iceCases[$res[1]][$res[0]] = $case[1];
         }
-        $map = json_decode($file, true);
-        $rover = new EcoRover();
-
+        // place les cases de glace sur la carte pour la vue
+        foreach ($iceCases as $y => $case) {
+            foreach ($case as $x => $value) {
+                $map[$y][$x]['content'] = 1; //1 = glace
+            }
+        }
+        
         // définition de la position de départ et d'arrivé
         $posX = rand(0,8);
-        // $posX = 3;
         $posY = rand(0,8);
-        // $posY = 3;
-        $rover->setPosX($posX)->setPosY($posY);
         $destX = rand(0,8);
-        // $destX = 5;
         $destY = rand(0,8);
-        // $destY = 8;
-        // dump($posX, $posY, $destX, $destY);
-        $rover->setDestX($destX);
-        $rover->setDestY($destY);
+        // evite que la destination soit la meme case que le départ
+        while($posX == $destX && $posY == $destY) {
+            $posX = rand(0,8);
+            $posY = rand(0,8);
+            $destX = rand(0,8);
+            $destY = rand(0,8);
+        }
+        // $posX = 0;
+        // $posY = 5; 
+        // $destX = 9;
+        // $destY = 5;
+        
         $map[$posY][$posX]['start'] = true;
         $map[$destY][$destX]['end'] = true;
         $destination['x'] = $destX;
         $destination['y'] = $destY;
         
 
-        // place les cases de glace sur la carte
-        foreach ($iceCases as $y => $case) {
-            foreach ($case as $x => $value) {
-                $map[$y][$x]['content'] = 1; //1 = glace
-            }
-        }
+       
 
-        // pour chaque renvoie de la fonction de déplacement voulu
-
-        // utiliser cette boucle pour debug
-        // for ($i=0; $i < 5; $i++) { 
-        //     // dd($destination);
-        //     $nextCase = $this->move($map, $rover, $destination);
-        //     $rover->setPosX($nextCase['x']);
-        //     $rover->setPosY($nextCase['y']);
-        //     // dump($nextCase);
-        //     $path[$nextCase['y']][$nextCase['x']] = true;
-        // }
-
-        // boucle pour la version de prod
+        //set up requete HTTP POST
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "http://localhost/public/post-response");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        
+        //set up avant le traitement du chemin
+        $rover = new EcoRover();
         $arrived = false;
+        $rover->setEnergy(100);
+        $rover->setMemory([]);
+        $rover->setPosX($posX)->setPosY($posY);
+        $rover->setDestX($destX)->setDestY($destY);
+        
+        // boucle pour la version de prod
         while ($arrived === false) {
-            $nextCase = $rover->choiceStep();
-            // dump($nextCase);
+           
+            // requete POST
+            $fields = [
+                'posX' => $rover->getPosX(),
+                'posY' => $rover->getPosY(),
+                'typeRover' => 'economic',
+                'energy' => $rover->getEnergy(),
+                'destX' => $rover->getDestX(),
+                'destY' => $rover->getDestY(),
+                'map' => 'map.json',
+                'memory' => $rover->getMemory()
+            ];
+            $json = json_encode($fields);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+
+            //traitement reponse
+            $response = curl_exec($ch);
+            $nextCase = json_decode($response, true);
+            // $nextCase = $rover->choiceStep(); //test sans passer par l'api
+
             $rover->setPosX($nextCase['nextX']);
             $rover->setPosY($nextCase['nextY']);
-            if (isset($nextCase['cost'])) {
-                $rover->setEnergy('energyRest');
-            }
-            
+            $rover->setEnergy($nextCase['energyRest']);
+            $rover->setMemory($nextCase['memory']);
+
+            //ajout du chemin pour la vue
             $path[$nextCase['nextY']][$nextCase['nextX']] = true;
+
+            //stop le rover s'il est arrive
             if (isset($nextCase['arrived']) && $nextCase['arrived'] === true) {
                 $arrived = true;
             }
         }
-
-        // trace la direction du scan sur la carte, décommenter quand effectué avec la boucle FOR
-        // foreach ($nextCase['direction'] as $y => $value) {
-        //     foreach ($value as $x => $v) {
-        //         $map[$y][$x]['path'] = true;
-        //     }
-        // }
 
         // trace le chemin parcouru sur la carte
         foreach ($path as $y => $row) {
@@ -131,38 +151,133 @@ class GameController extends AbstractController
             }
         }
 
-
         return $this->render('eco_rover/index.html.twig', [
-            'controller_name' => 'GameController',
             'map' => $map
         ]);
     }
 
     /**
-     * @Route("/game", name="game")
+     * @Route("/post-response", name="post_response")
      * @throws \Exception
      */
-    public function response(Request $request)
+    public function postResponse(Request $request)
     {
-
+        $json = $request->getContent();
+        $parameters = json_decode($json, true);
         $errors = array();
+
         /*
-         * Requête du front vers l'API avec la méthode GET :
-         * int posX,
-         * int posY,
-         * string typeRover (short, intelligent, economic)
-         * int energy
-         * string map (nom de la map à utiliser)
-         * http://localhost:8000/game?posX=2&posY=4&typeRover=economic&energy=100&destX=8&destY=5&map=map.json
-         */
+        * Requête du front vers l'API avec la méthode POST :
+        * int posX,
+        * int posY,
+        * int destX, 
+        * int destY,
+        * string typeRover (short, intelligent, economic)
+        * int energyRest
+        * string map (nom de la map à utiliser)
+        * array memory
+        * http://localhost:8000/post_response
+        */
+
         /*
-         * Réponse de la requête API :
-         * int nextX -> prochain X du rover,
-         * int nextY -> prochain Y du rover,
-         * restEnergy -> restant d'énergie après le déplacement,
-         * array analyse ( ['x,y','x,y'] -> implicitera le fait qu'on procède à des analyses de sols ).
-         * array action ( ['move','stay', ... ] -> la décision du rover )
-         */
+        * Réponse de la requête API :
+        * int nextX -> prochain X du rover,
+        * int nextY -> prochain Y du rover,
+        * restEnergy -> restant d'énergie après le déplacement,
+        * array momery ( array -> un tableau renvoyer sans traitement par le front ).
+        */
+        if ($request->isMethod('POST')) {
+            if (isset($parameters['typeRover'])) {
+                switch ($parameters['typeRover']) {
+                    case 'short':
+                        $rover = new ShortRover();
+                        break;
+                    case 'intelligent':
+                        $rover = new IntelligentRover();
+                        break;
+                    case 'economic':
+                        $rover = new EcoRover();
+                        break;
+                    default:
+                        $errors[] = "Le type de rover n'existe pas.";
+                }
+            } else {
+                $errors[] = "Le type de rover n'est pas renseigné.";
+
+            }
+            if (isset($parameters['posX']) && isset($parameters['posY'])) {
+                $rover->setPosX($parameters['posX'])->setPosY($parameters['posY']);
+                $rover->setPosZ($rover->requestGetZ($rover->getPosX(), $rover->getPosY()));
+            } else {
+                $errors[] = "La position du rover n'est pas renseignée.";
+            }
+            if (isset($parameters['destX']) && isset($parameters['destY'])) {
+                $rover->setDestX($parameters['destX'])->setDestY($parameters['destY']);
+            } else {
+                $errors[] = "La destination du rover n'est pas renseignée.";
+            }
+            if (isset($parameters['energy'])) {
+                $rover->setEnergy($parameters['energy']);
+            } else {
+                $errors[] = "L'énergie du rover n'est pas renseignée.";
+            }
+            if (isset($parameters['map'])) {
+                $map = $parameters['map'];
+            } else {
+                $errors[] = "La carte n'a pas été passée.";
+            }
+            if ($parameters['memory']) {
+                $rover->setMemory($parameters['memory']);
+            }
+            if (!empty($errors)) {
+                dump($errors);
+                die;
+            }
+
+            // result est un array avec comme paramètre nextX, nextY, energyRest et memory
+            $result = $rover->choiceStep();
+            $response = json_encode($result);
+      
+        }
+        $jsonResponse = new Response();
+        $jsonResponse->setContent($response);
+        $jsonResponse->headers->set('Content-Type', 'application/json');
+
+        return $jsonResponse;
+      
+    }
+
+    /**
+     * @Route("/get-response", name="get_response")
+     * @throws \Exception
+     */
+    public function getResponse(Request $request)
+    {
+       
+        $errors = array();
+
+        //!!!!!! aucune gestion de la memoire du rover !!!!!!
+
+        /*
+        * Requête du front vers l'API avec la méthode GET :
+        * int posX,
+        * int posY,
+        * int destX, 
+        * int destY,
+        * string typeRover (short, intelligent, economic)
+        * int energyRest
+        * string map (nom de la map à utiliser)
+        * http://localhost:8000/get-response?posX=2&posY=4&typeRover=economic&energy=100&destX=8&destY=5&map=map.json
+        */
+
+        /*
+        * Réponse de la requête API :
+        * int nextX -> prochain X du rover,
+        * int nextY -> prochain Y du rover,
+        * restEnergy -> restant d'énergie après le déplacement,
+        * array analyse ( ['x,y','x,y'] -> implicitera le fait qu'on procède à des analyses de sols ).
+        * array action ( ['move','stay', ... ] -> la décision du rover )
+        */
         if ($request->isMethod('GET')) {
             if ($request->get('typeRover')) {
                 switch ($request->get('typeRover')) {
@@ -208,39 +323,19 @@ class GameController extends AbstractController
                 die;
             }
 
-            // $iceCases = $rover->requestIceCases();
-//            dump($iceCases);
-            // dump($rover);
-
             // result est un array avec comme paramètre nextX, nextY, energyRest et memory
             $result = $rover->choiceStep();
             $response = json_encode($result);
-            // dump($response);
 
-
-//            dump($road);
-            // $strJsonFileContents = file_get_contents("../public/" . $map);
-            // $arrayMap = json_decode($strJsonFileContents, true);
-            // dump($arrayMap);
-
-
-
-
-
-        //    return $response;
         }
         $jsonResponse = new Response();
-        $jsonResponse->setContent($response);
+        
         $jsonResponse->headers->set('Content-Type', 'application/json');
+        $jsonResponse->setContent($response);
 
         return $jsonResponse;
-
-        // return $this->render('game/index.html.twig', [
-        //     'map' => $arrayMap,
-        //     'road' => $result['road'],
-        //     'ice' => $iceCases,
-        //     'costs' => $result['costs'],
-        //     'gradients' => $result['gradients']
-        // ]);
+   
     }
+
+   
 }
