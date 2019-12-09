@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\EcoRover;
 use App\Entity\IntelligentRover;
+use App\Entity\Rover;
 use App\Entity\ShortRover;
 use App\Service\EcoRoverService;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,19 +19,26 @@ class GameController extends AbstractController
     const lineDistance = 100; // distance horizontale et vertical pour parcourir une case en mètre
     const diagonaleDistance = 140; // distance diagonale pour parcourir une case en mètre
 
-    const energyTotal = 10000; // distance diagonale pour parcourir une case en mètre
+    const energyTotal = 10000; // energy max possible pour recharge complete
 
     const CONTENTS = array(
-        '1' =>
-            [0,'glace'
-        ],
-        '2' =>
-            [1.1,'roche'],
-        '3' => [1.5,'sable'],
-        '4' => [1.2,'minerai'],
-        '5' => [1.3,'argile'],
-        '6' => [1.2,'fer'],
-        '7' => [1,'inconnue'],
+        '1' => 'glace',
+        '2' => 'roche',
+        '3' => 'sable',
+        '4' => 'minerai',
+        '5' => 'argile',
+        '6' => 'fer',
+        '7' => 'inconnue'
+    );
+
+    const COST_CONTENT = array(
+        '1' => 0,
+        '2' => 1.1,
+        '3' => 1.5,
+        '4' => 1.2,
+        '5' => 1.3,
+        '6' => 1.2,
+        '7' => 1
     );
 
     const BONUS = array(
@@ -42,14 +50,13 @@ class GameController extends AbstractController
 
     const energyReload = 5; // taux d'énergie rechargé par tour passé (panneau solaire)
 
-    const lineDistance = 100; // distance horizontale et vertical pour parcourir une case en mètre
-
-    const diagonaleDistance = 140; // distance diagonale pour parcourir une case en mètre
-
     /**
      * @Route("/game", name="game")
+     * @param EcoRoverService $ecoRoverService
+     * @param Request $request
+     * @return Response
      */
-    public function index(EcoRoverService $ecoRoverService)
+    public function index(EcoRoverService $ecoRoverService, Request $request)
     {
         //recuperation de la map et des cases de glace -- simulation api
         $file = file_get_contents("../assets/json/map.json");
@@ -70,28 +77,26 @@ class GameController extends AbstractController
         }
 
         // définition de la position de départ et d'arrivé
-        $posX = rand(0,8);
-        $posY = rand(0,8);
-        $destX = rand(0,8);
-        $destY = rand(0,8);
-        // evite que la destination soit la meme case que le départ
-        while($posX == $destX && $posY == $destY) {
-            $posX = rand(0,8);
-            $posY = rand(0,8);
-            $destX = rand(0,8);
-            $destY = rand(0,8);
-        }
-        // $posX = 0;
-        // $posY = 5;
-        // $destX = 9;
-        // $destY = 5;
+//        $posX = rand(0,8);
+//        $posY = rand(0,8);
+//        $destX = rand(0,8);
+//        $destY = rand(0,8);
+//        // evite que la destination soit la meme case que le départ
+//        while($posX == $destX && $posY == $destY) {
+//            $posX = rand(0,8);
+//            $posY = rand(0,8);
+//            $destX = rand(0,8);
+//            $destY = rand(0,8);
+//        }
+        $posX = 1;
+        $posY = 1;
+        $destX = 9;
+        $destY = 9;
 
         $map[$posY][$posX]['start'] = true;
         $map[$destY][$destX]['end'] = true;
         $destination['x'] = $destX;
         $destination['y'] = $destY;
-
-
 
 
         //set up requete HTTP POST
@@ -101,20 +106,39 @@ class GameController extends AbstractController
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
 
-
         //set up avant le traitement du chemin
-        $rover = new EcoRover();
+
+        if ($request->get('typeRover')) {
+            switch ($request->get('typeRover')) {
+                case 'short':
+                    $rover = new ShortRover();
+                    break;
+                case 'intelligent':
+                    $rover = new IntelligentRover();
+                    break;
+                case 'economic':
+                    $rover = new EcoRover();
+                    break;
+                default:
+                    $errors[] = "Le type de rover n'existe pas.";
+            }
+        } else {
+            $errors[] = "Le type de rover n'est pas renseigné.";
+
+        }
+//        $rover = new EcoRover();
+
+
         $arrived = false;
         $rover->setEnergy(100);
         $rover->setMemory([]);
         $rover->setPosX($posX)->setPosY($posY);
         $rover->setDestX($destX)->setDestY($destY);
-
         // requete POST
         $fields = [
             'posX' => $rover->getPosX(),
             'posY' => $rover->getPosY(),
-            'typeRover' => 'economic',
+            'typeRover' => $request->get('typeRover'),
             'energy' => $rover->getEnergy(),
             'destX' => $rover->getDestX(),
             'destY' => $rover->getDestY(),
@@ -126,7 +150,7 @@ class GameController extends AbstractController
         $response = curl_exec($ch);
         $nextCase = json_decode($response, true);
 //        dd($nextCase);
-
+        $round = 0;
         // boucle pour la version de prod
         while ($arrived === false) {
 
@@ -134,7 +158,7 @@ class GameController extends AbstractController
             $fields = [
                 'posX' => $rover->getPosX(),
                 'posY' => $rover->getPosY(),
-                'typeRover' => 'economic',
+                'typeRover' => $request->get('typeRover'),
                 'energy' => $rover->getEnergy(),
                 'destX' => $rover->getDestX(),
                 'destY' => $rover->getDestY(),
@@ -146,13 +170,28 @@ class GameController extends AbstractController
 
             //traitement reponse
             $response = curl_exec($ch);
+//            dump($response);
+            if ($response == null) {
+                dump($ch);
+                die;
+            }
+//            if ($round > 50) {
+//                die;
+//            }
+
+            $round++;
             $nextCase = json_decode($response, true);
+
+//            dump($nextCase);
             // $nextCase = $rover->choiceStep(); //test sans passer par l'api
 
             $rover->setPosX($nextCase['nextX']);
             $rover->setPosY($nextCase['nextY']);
             $rover->setEnergy($nextCase['energyRest']);
             $rover->setMemory($nextCase['memory']);
+
+//            dump($rover);
+//            die;
 
             //ajout du chemin pour la vue
             $path[$nextCase['nextY']][$nextCase['nextX']] = true;
@@ -249,12 +288,12 @@ class GameController extends AbstractController
                 $rover->setMemory($parameters['memory']);
             }
             if (!empty($errors)) {
-                dump($errors);
-                die;
+//                dump($errors);
+//                die;
             }
-
             // result est un array avec comme paramètre nextX, nextY, energyRest et memory
             $result = $rover->choiceStep();
+            $result['errors'] = $errors;
             $response = json_encode($result);
 
         }
@@ -344,6 +383,7 @@ class GameController extends AbstractController
 
             // result est un array avec comme paramètre nextX, nextY, energyRest et memory
             $result = $rover->choiceStep();
+            dd($result);
             $response = json_encode($result);
 
         }

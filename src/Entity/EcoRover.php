@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Controller\GameController;
 use Doctrine\ORM\Mapping as ORM;
 use App\Service\EcoRoverService;
 
@@ -47,7 +48,7 @@ class EcoRover extends Rover
             if(($this->getEnergy() - $result['cost']) <= 0) {
                 $result['x'] = $this->getPosX();
                 $result['y'] = $this->getPosY();
-                $this->setEnergy($this->getEnergy()+5);
+                $this->setEnergy($this->getEnergy()+GameController::energyReload);
             }
             else {
                 $this->setEnergy($this->getEnergy() - $result['cost']);

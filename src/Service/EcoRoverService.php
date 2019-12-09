@@ -105,6 +105,8 @@ class EcoRoverService {
             }
         }
 
+        /** @todo reformater la réponse de la carte */
+
         return $adjCases;
     }
 
