@@ -90,16 +90,18 @@ class GameController extends AbstractController
         $map[$destY][$destX]['end'] = true;
         $destination['x'] = $destX;
         $destination['y'] = $destY;
-        
 
-       
+
+
 
         //set up requete HTTP POST
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://localhost/public/post-response");
+        curl_setopt($ch, CURLOPT_URL, "http://localhost/post-response");
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        
+
+
+
         //set up avant le traitement du chemin
         $rover = new EcoRover();
         $arrived = false;
@@ -107,6 +109,23 @@ class GameController extends AbstractController
         $rover->setMemory([]);
         $rover->setPosX($posX)->setPosY($posY);
         $rover->setDestX($destX)->setDestY($destY);
+
+        // requete POST
+        $fields = [
+            'posX' => $rover->getPosX(),
+            'posY' => $rover->getPosY(),
+            'typeRover' => 'economic',
+            'energy' => $rover->getEnergy(),
+            'destX' => $rover->getDestX(),
+            'destY' => $rover->getDestY(),
+            'map' => 'map.json',
+            'memory' => $rover->getMemory()
+        ];
+        $json = json_encode($fields);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+        $response = curl_exec($ch);
+        $nextCase = json_decode($response, true);
+        dd($nextCase);
         
         // boucle pour la version de prod
         while ($arrived === false) {
