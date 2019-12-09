@@ -41,6 +41,13 @@ class EcoRover extends Rover
         $ecoRoverService = new EcoRoverService();
         $result = $ecoRoverService->move($this);
 
+        //si null, alors le rover n'a trouvé aucune case et il est bloqué
+        if ($result == null) {
+            $result['x'] = $this->getPosX();
+            $result['y'] = $this->getPosY();
+            $result['arrived'] = true;
+        }
+
         //definition de l'energie restante
         if (isset($result['cost'])) {
             //Si il ne reste pas assez d'énergie pour le déplacement, on reste sur place
@@ -52,7 +59,7 @@ class EcoRover extends Rover
             else {
                 $this->setEnergy($this->getEnergy() - $result['cost']);
             }
-        }
+        } 
 
         //propriete arrived pour tester le rover
         if (isset($result['arrived'])) {
