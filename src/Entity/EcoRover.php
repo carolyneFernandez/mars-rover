@@ -43,9 +43,17 @@ class EcoRover extends Rover
 
         //definition de l'energie restante
         if (isset($result['cost'])) {
-            $this->setEnergy($this->getEnergy() - $result['cost']);
-        }
-
+            //Si il ne reste pas assez d'énergie pour le déplacement, on reste sur place
+            if(($this->getEnergy() - $result['cost']) <= 0) {
+                $result['x'] = $this->getPosX();
+                $result['y'] = $this->getPosY();
+                $this->setEnergy($this->getEnergy()+5);
+            }
+            else {
+                $this->setEnergy($this->getEnergy() - $result['cost']);
+            }
+        }  
+        
         //propriete arrived pour tester le rover
         if (isset($result['arrived'])) {
             $arrived = true;
