@@ -112,7 +112,7 @@ class DefaultController extends AbstractController
       $case->setMaterials($sable);
 
     } else if ($case->getPosZ() > 25 && $case->getPosZ() <= 45) {
-      $case->setMaterials($roche);
+      $case->setMaterials($glace);
 
     } else if ($case->getPosZ() > 45 && $case->getPosZ() <= 50) {
       $case->setMaterials($minerai);
@@ -244,6 +244,8 @@ class DefaultController extends AbstractController
           }
           $i = $id;
     }
+
+
 
     return $arrayMap;
     

@@ -121,4 +121,12 @@ class Cases implements JsonSerializable
             "material" => $this->getMaterials()->getLabel()
         ];
     }
+
+    public function hasIce()
+    {
+        if( $this.getMaterials()->getLabel() == "glace" ){
+            return true;
+        }
+        return false;
+    }
 }
