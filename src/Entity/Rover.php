@@ -81,22 +81,13 @@ class Rover
     }
 
     /**
-     * @return mixed
+     * @ORM\OneToMany(targetEntity="App\Entity\Flag", mappedBy="hasFlag")
      */
-    public function getPosZ()
-    {
-        return $this->posZ;
-    }
+    private $flags;
 
-    /**
-     * @param mixed $posZ
-     * @return Rover
-     */
-    public function setPosZ($posZ)
+    public function __construct()
     {
-        $this->posZ = $posZ;
-
-        return $this;
+        $this->flags = new ArrayCollection();
     }
 
     /**
@@ -106,6 +97,21 @@ class Rover
     public function setDestX($destX)
     {
         $this->destX = $destX;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPosZ()
+    {
+        return $this->posZ;
+    }
+
+    public function setPosZ($posZ)
+    {
+        $this->posZ = $posZ;
 
         return $this;
     }

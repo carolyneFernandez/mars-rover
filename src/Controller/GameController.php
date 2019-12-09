@@ -13,38 +13,24 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class GameController extends AbstractController
 {
+
+
+    const lineDistance = 100; // distance horizontale et vertical pour parcourir une case en mètre
+    const diagonaleDistance = 140; // distance diagonale pour parcourir une case en mètre
+
+    const energyTotal = 10000; // distance diagonale pour parcourir une case en mètre
+
     const CONTENTS = array(
         '1' =>
-            'glace'
-        ,
+            [0,'glace'
+        ],
         '2' =>
-            'roche'
-        ,
-        '3' =>
-            'sable'
-        ,
-        '4' =>
-            'minerai'
-        ,
-        '5' =>
-            'argile'
-        ,
-        '6' =>
-            'fer'
-        ,
-        '7' =>
-            'inconnue'
-
-    );
-
-    const COST_CONTENT = array(
-        '1' => 0,
-        '2' => 1.1,
-        '3' => 1.5,
-        '4' => 1.2,
-        '5' => 1.3,
-        '6' => 1.2,
-        '7' => 1
+            [1.1,'roche'],
+        '3' => [1.5,'sable'],
+        '4' => [1.2,'minerai'],
+        '5' => [1.3,'argile'],
+        '6' => [1.2,'fer'],
+        '7' => [1,'inconnue'],
     );
 
     const BONUS = array(
@@ -372,3 +358,5 @@ class GameController extends AbstractController
 
 
 }
+
+?>
