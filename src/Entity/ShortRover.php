@@ -46,12 +46,9 @@ class ShortRover extends Rover
         $x2=9;
         $y2=9;
   
-        $this->run($table, $x1, $y1, $x2, $y2);
+        $result = $this->run($table, $x1, $y1, $x2, $y2);
         $pathStr = '';
         foreach ($this->path as $case) {
-    
-
-            // $table[$case[1]][$case[0]]['path'] = 'X';
             $pathStr .= '(' . implode(',', $case) . ') ';
         }
 
@@ -123,6 +120,7 @@ class ShortRover extends Rover
 
 
     public function run ($table, $x1, $y1, $x2, $y2) {
+        $result = [];
         $this->path = [
             [$x1, $y1]
         ];
@@ -130,20 +128,39 @@ class ShortRover extends Rover
             $x1.'-'.$y1=>0
         ];
 
+        $compteur = 0;
+    
+
         while (($x1 !== $x2 || $y1 !== $y2) && $this->getEnergy() > 4.5 ) {
-          
+        
+
             $case = $this->nextCase($table, $x1, $y1, $x2, $y2);
             
             if (!$case) break; // Rover is stuck
 
-             $this->calculEnergy($table,$x1,$y1,$case[0],$case[1]);
+            $this->calculEnergy($table,$x1,$y1,$case[0],$case[1]);
             list($x1, $y1) = $case;
             $this->path[] = $case;
 
-            $this->countVisit[$x1.'-'.$y1] = isset( $this->countVisit[$x1.'-'.$y1]) ?  $this->countVisit[$x1.'-'.$y1] + 1 : 0;
+           $this->countVisit[$x1.'-'.$y1] = isset( $this->countVisit[$x1.'-'.$y1]) ?  $this->countVisit[$x1.'-'.$y1] + 1 : 0;
+          
+            if($compteur == 0){
+                $result = [
+                'nextX'=>$case[0],
+                'nextY'=>$case[1],
+                'energyRest' => $this->getEnergy(),
+                'memory'=>[]
+                ];
+                return $result;
+            }
+           /*   return [
+                
+            ];*/
+            $compteur++;
 
+       }
 
-        }
+       
        
 
     }

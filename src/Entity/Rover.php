@@ -31,7 +31,7 @@ class Rover
     /**
      * @ORM\Column(type="integer")
      */
-    private $energy=100;
+    private $energy=10000;
 
     /**
      * @ORM\Column(type="boolean")
