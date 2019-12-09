@@ -51,6 +51,10 @@ class DefaultController extends AbstractController
       $map->setSizeY(100);
       
       $arrayMap = $this->map_gen( $map->getSizeX(), $map->getSizeY(), $profondeur);
+
+      $carteTemp = fopen('carte.txt', 'a+');
+      fputs($carteTemp, json_encode($arrayMap));
+      fclose($carteTemp);
       
       $arrayMap = json_encode($arrayMap);
       return new JsonResponse($arrayMap, 200, [], true);

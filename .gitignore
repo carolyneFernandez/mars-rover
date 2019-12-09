@@ -20,3 +20,4 @@ yarn-error.log
 ###< symfony/webpack-encore-bundle ###
 
 .php-version
+public/carte.txt
