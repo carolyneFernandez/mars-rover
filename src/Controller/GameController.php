@@ -5,9 +5,6 @@ namespace App\Controller;
 use App\Entity\EcoRover;
 use App\Entity\IntelligentRover;
 use App\Entity\ShortRover;
-use App\Entity\EcoRover;
-use App\Entity\ShortRover;
-use App\Entity\IntelligentRover;
 use App\Service\EcoRoverService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -142,7 +139,7 @@ class GameController extends AbstractController
         curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
         $response = curl_exec($ch);
         $nextCase = json_decode($response, true);
-        dd($nextCase);
+//        dd($nextCase);
 
         // boucle pour la version de prod
         while ($arrived === false) {
