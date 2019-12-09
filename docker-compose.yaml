@@ -1,0 +1,11 @@
+version: '3'
+services:
+  web:
+    container_name: web_mars-rover
+    build: ./
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www/html
+#      - ./apache2.conf:/etc/apache2/apache2.conf
+

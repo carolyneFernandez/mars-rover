@@ -25,7 +25,9 @@
       "ext-curl": "*"
     },
     "require-dev": {
-        "symfony/profiler-pack": "^1.0"
+        "symfony/http-client": "4.3.*",
+        "symfony/profiler-pack": "^1.0",
+        "symfony/var-dumper": "4.3.*"
     },
     "config": {
         "preferred-install": {

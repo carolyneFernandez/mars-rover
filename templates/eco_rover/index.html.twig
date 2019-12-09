@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello GameController!{% endblock %}
+
+{% block body %}
+<style>
+    .pixel{
+        width:50px;
+        height: 50px;
+        background-color:white;
+        border: solid 1px black;
+    }
+
+    .z-3{
+        background-color:   #072F5F;
+    }
+    .z-2{
+        background-color:   #1261A0;
+    }
+    .z-1{
+        background-color:   #3895D3;
+    }
+    .z0{
+        background-color:   #e77d11;
+    }
+    .z1{
+        background-color:   #AF6E4D;
+    }
+    .z2{
+        background-color:   #965A3E;
+    }
+    .z3{
+        background-color:   #5E3927;
+    }
+    .green{
+        background-color: green;
+    }
+    .red{
+        background-color:red;
+    }
+    .blue{
+        background-color:blue;
+    }
+    .glace{
+        background-color: #33DDFF;
+    }
+    .wall{
+        background-color: brown;
+    }
+</style>
+
+ <div class="row">
+    <div class="col-md-12">
+        <h1 class="text-center">ROVER MARS</h1>
+        
+        
+        <div class="d-flex flex-wrap mr-5 mt-5 justify-content-center" style="width:500px">
+            {# Pour chaque Y dans la carte #}
+            {% for y in map %}
+                {# Pour chaque X dans la carte #}
+                {% for value in y %}
+                    {% if value['start'] is defined %} {# case de départ #}
+                        <div class="pixel green">
+                            {{ value[0] }} | {{ value[1]}}
+                        </div> 
+                    {# {% elseif value['path'] is defined %}
+                        <div class="pixel blue">
+                            {{ value[0] }}
+                        </div> #}
+                    {% elseif value['isPath'] is defined %} {# case de d'arrivée #}
+                        <div class="pixel green">
+                            {{ value[0] }} | {{ value[1]}}
+                        </div>
+                    {% elseif value['end'] is defined %} {# case de d'arrivée #}
+                        <div class="pixel red">
+                            {{ value[0] }} | {{ value[1]}}
+                        </div>
+                    {% elseif value['content'] is defined and value['content'] == 1 %}
+                        <div class="pixel glace">
+                            {{ value[0] }} | {{ value[1]}}
+                        </div>
+                    {% elseif value['z-index'] is defined and value['z-index'] > 40 %}
+                        <div class="pixel wall">
+                            {{ value[0] }} | {{ value[1]}}
+                        </div>
+                    {% else %} {# toutes les autres cases #}
+                        <div class="pixel">
+                            {{ value[0] }} | {{ value[1]}}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
