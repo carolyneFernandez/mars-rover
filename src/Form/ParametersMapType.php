@@ -28,6 +28,7 @@ class ParametersMapType extends AbstractType
             ->add('sable')
             ->add('inconnu')
             ->add('roche')
+            ->setMethod('GET')
         ;
     }
 
@@ -35,6 +36,7 @@ class ParametersMapType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ParamMap::class,
+            'csrf_protection' => false,
         ]);
     }
 }
