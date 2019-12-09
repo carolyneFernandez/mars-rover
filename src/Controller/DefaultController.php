@@ -52,7 +52,7 @@ class DefaultController extends AbstractController
       
       $arrayMap = $this->map_gen( $map->getSizeX(), $map->getSizeY(), $profondeur);
 
-      $carteTemp = fopen('carte.txt', 'a+');
+      $carteTemp = fopen('carte.txt', 'w+');
       fputs($carteTemp, json_encode($arrayMap));
       fclose($carteTemp);
       
@@ -255,4 +255,22 @@ class DefaultController extends AbstractController
     
   }
 
+  /**
+   * @Route("/api/", name="getIceCase")
+   */
+  public function getIceCase(){
+    $carteTemp = file_get_contents('carte.txt');
+    $carteTemp = json_decode($carteTemp, true);
+    $iceCases = [];
+
+    foreach ($carteTemp as $lineKey => $line) {
+      foreach ($line as $caseKkey => $case) {
+        if($case['material'] == "glace")
+          $iceCases[$lineKey][$caseKkey] = $case;
+      }
+    }
+    
+    $iceCases = json_encode($iceCases);
+      return new JsonResponse($iceCases, 200, [], true);
+  }
 }
