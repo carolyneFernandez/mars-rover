@@ -15,330 +15,336 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class DefaultController extends AbstractController
 {
-  /**
-   * @Route("/", name="index")
-   */
-  public function index(Request $request)
-  {
-    $paramMap = new ParamMap();
-    $form = $this->createForm(ParametersMapType::class, $paramMap);
-    $form->handleRequest($request);
+    /**
+     * @Route("/", name="index")
+     */
+    public function index(Request $request)
+    {
+        $paramMap = new ParamMap();
+        $form = $this->createForm(ParametersMapType::class, $paramMap);
+        $form->handleRequest($request);
 
-    if($form->isSubmitted() && $form->isValid()){
-      $map = new Map;
-      $level = $paramMap->getDifficulty();
-      $paramMap->setMap($map);
-      /**
-       * En fonction de la difficulté, on set la profondeur de la case
-       */
-      switch($level){
-        case "Facile":
-          $profondeur = 50;
-        break;
+        if ($form->isSubmitted() && $form->isValid()) {
+            $map = new Map;
+            $level = $paramMap->getDifficulty();
+            $paramMap->setMap($map);
+            /**
+             * En fonction de la difficulté, on set la profondeur de la case
+             */
+            switch ($level) {
+                case "Facile":
+                    $profondeur = 50;
+                    break;
 
-        case "Moyen":
-          $profondeur = 70;
-        break;
+                case "Moyen":
+                    $profondeur = 70;
+                    break;
 
-        case "Difficile":
-          $profondeur = 100;
-        break;
-      }
-      /**
-       * Taille de la map
-       */
-      $map->setSizeX(100);      
-      $map->setSizeY(100);
-      
-      $arrayMap = $this->map_gen( $map->getSizeX(), $map->getSizeY(), $profondeur);
+                case "Difficile":
+                    $profondeur = 100;
+                    break;
+            }
+            /**
+             * Taille de la map
+             */
+            $map->setSizeX(100);
+            $map->setSizeY(100);
 
-      $carteTemp = fopen('carte'.time().'.txt', 'w+');  //generates a new map every time, so don't forget to delete them
-      // dump(stream_get_meta_data($carteTemp)["uri"]);die;
-      fputs($carteTemp, json_encode($arrayMap));
-      $mapName = stream_get_meta_data($carteTemp)["uri"];
-      fclose($carteTemp);
+            $arrayMap = $this->map_gen($map->getSizeX(), $map->getSizeY(), $profondeur);
 
-      $arrayMap = [
-        "mapName" => $mapName,
-        "difficulty" => $level,
-        "materials" => $paramMap->getMaterials(),
-        "map" => $arrayMap
-      ];
-      $arrayMap = json_encode($arrayMap);
-      return new JsonResponse($arrayMap, 200, [], true);
+            $carteTemp = fopen('carte' . time() . '.txt', 'w+');  //generates a new map every time, so don't forget to delete them
+            // dump(stream_get_meta_data($carteTemp)["uri"]);die;
+            fputs($carteTemp, json_encode($arrayMap));
+            $mapName = stream_get_meta_data($carteTemp)["uri"];
+            fclose($carteTemp);
+
+            $arrayMap = [
+                "mapName" => $mapName,
+                "difficulty" => $level,
+                "materials" => $paramMap->getMaterials(),
+                "map" => $arrayMap
+            ];
+            $arrayMap = json_encode($arrayMap);
+
+            return new JsonResponse($arrayMap, 200, [], true);
+        }
+
+        return $this->render('index.html.twig', [
+            'controller_name' => 'DefaultController',
+            'form' => $form->createView()
+        ]);
+
     }
 
-    return $this->render('index.html.twig', [
-        'controller_name' => 'DefaultController',
-        'form'=>$form->createView()
-    ]);
 
-  }
+    public function setCaseMaterial(Cases $case)
+    {
 
+        $glace = new Materials;
+        $glace->setLabel("glace");
 
-  public function setCaseMaterial(Cases $case){
+        $roche = new Materials;
+        $roche->setLabel("roche");
 
-    $glace  = new Materials;
-    $glace->setLabel("glace");
+        $sable = new Materials;
+        $sable->setLabel("sable");
 
-    $roche  = new Materials;
-    $roche->setLabel("roche");
+        $minerai = new Materials;
+        $minerai->setLabel("minerai");
 
-    $sable  = new Materials;
-    $sable->setLabel("sable");
+        $fer = new Materials;
+        $fer->setLabel("fer");
 
-    $minerai  = new Materials;
-    $minerai->setLabel("minerai");
+        $inconnu = new Materials;
+        $inconnu->setLabel("inconnu");
 
-    $fer  = new Materials;
-    $fer->setLabel("fer");
+        $argile = new Materials;
+        $argile->setLabel("argile");
 
-    $inconnu  = new Materials;
-    $inconnu->setLabel("inconnu");
+        if ($case->getPosZ() >= -100 && $case->getPosZ() <= -85) {
+            $case->setMaterials($glace);
 
-    $argile  = new Materials;
-    $argile->setLabel("argile");
+        } else if ($case->getPosZ() > -85 && $case->getPosZ() <= -75) {
+            $case->setMaterials($fer);
 
-    if ($case->getPosZ() >= -100 && $case->getPosZ() <= -85) {
-      $case->setMaterials($glace);
+        } else if ($case->getPosZ() > -75 && $case->getPosZ() <= -50) {
+            $case->setMaterials($roche);
 
-    } else if ($case->getPosZ() > -85 && $case->getPosZ() <= -75) {
-      $case->setMaterials($fer);
+        } else if ($case->getPosZ() > -50 && $case->getPosZ() <= -45) {
+            $case->setMaterials($minerai);
 
-    } else if ($case->getPosZ() > -75 && $case->getPosZ() <= -50) {
-      $case->setMaterials($roche);
+        } else if ($case->getPosZ() > -45 && $case->getPosZ() <= -25) {
+            $case->setMaterials($argile);
 
-    } else if ($case->getPosZ() > -50 && $case->getPosZ() <= -45) {
-      $case->setMaterials($minerai);
+        } else if ($case->getPosZ() > -25 && $case->getPosZ() <= -10) {
+            $case->setMaterials($sable);
 
-    } else if ($case->getPosZ() > -45 && $case->getPosZ() <= -25) {
-      $case->setMaterials($argile);
+        } else if ($case->getPosZ() > -10 && $case->getPosZ() <= 10) {
+            $case->setMaterials($argile);
 
-    } else if ($case->getPosZ() > -25 && $case->getPosZ() <= -10) {
-      $case->setMaterials($sable);
+        } else if ($case->getPosZ() > 10 && $case->getPosZ() <= 25) {
+            $case->setMaterials($sable);
 
-    } else if ($case->getPosZ() > -10 && $case->getPosZ() <= 10) {
-      $case->setMaterials($argile);
+        } else if ($case->getPosZ() > 25 && $case->getPosZ() <= 45) {
+            $case->setMaterials($glace);
 
-    } else if ($case->getPosZ() > 10 && $case->getPosZ() <= 25) {
-      $case->setMaterials($sable);
+        } else if ($case->getPosZ() > 45 && $case->getPosZ() <= 50) {
+            $case->setMaterials($minerai);
 
-    } else if ($case->getPosZ() > 25 && $case->getPosZ() <= 45) {
-      $case->setMaterials($glace);
+        } else if ($case->getPosZ() > 50 && $case->getPosZ() <= 75) {
+            $case->setMaterials($roche);
 
-    } else if ($case->getPosZ() > 45 && $case->getPosZ() <= 50) {
-      $case->setMaterials($minerai);
+        } else if ($case->getPosZ() > 75 && $case->getPosZ() <= 85) {
+            $case->setMaterials($fer);
 
-    } else if ($case->getPosZ() > 50 && $case->getPosZ() <= 75) {
-      $case->setMaterials($roche);
+        } else if ($case->getPosZ() > 85 && $case->getPosZ() <= 100) {
+            $case->setMaterials($glace);
 
-    } else if ($case->getPosZ() > 75 && $case->getPosZ() <= 85) {
-      $case->setMaterials($fer);
-
-    } else if ($case->getPosZ() > 85 && $case->getPosZ() <= 100) {
-      $case->setMaterials($glace);
-      
-    } else {
-      $case->setMaterials($inconnu);
+        } else {
+            $case->setMaterials($inconnu);
+        }
     }
-  }
 
 
-  public function map_gen($x, $y, $z)
-  { 
-    $h = $x;
+    public function map_gen($x, $y, $z)
+    {
+        $h = $x;
 
-    $map = new Map;
-    $map->setSizeX($x);
-    $map->setSizeY($y);
-    $arrayMap = array();
+        $map = new Map;
+        $map->setSizeX($x);
+        $map->setSizeY($y);
+        $arrayMap = array();
 
 
-    $firstCase = new Cases;
-    $firstCase->setPosX(0);
-    $firstCase->setPosY(0);
-    $firstCase->setPosZ(mt_rand(-$z, $z));
-    $this->setCaseMaterial($firstCase);
-    $arrayMap[0][0] = $firstCase;
+        $firstCase = new Cases;
+        $firstCase->setPosX(0);
+        $firstCase->setPosY(0);
+        $firstCase->setPosZ(mt_rand(-$z, $z));
+        $this->setCaseMaterial($firstCase);
+        $arrayMap[0][0] = $firstCase;
 
-    $secondCase = new Cases;
-    $secondCase->setPosX($x-1);
-    $secondCase->setPosY(0);
-    $secondCase->setPosZ(mt_rand(-$z, $z));
-    $this->setCaseMaterial($secondCase);
-    $arrayMap[$x-1][0] = $secondCase;
+        $secondCase = new Cases;
+        $secondCase->setPosX($x - 1);
+        $secondCase->setPosY(0);
+        $secondCase->setPosZ(mt_rand(-$z, $z));
+        $this->setCaseMaterial($secondCase);
+        $arrayMap[$x - 1][0] = $secondCase;
 
-    $thirdCase = new Cases;
-    $thirdCase->setPosX(0);
-    $thirdCase->setPosY($y-1);
-    $thirdCase->setPosZ(mt_rand(-$z, $z));
-    $this->setCaseMaterial($thirdCase);
-    $arrayMap[0][$y-1] = $thirdCase;
+        $thirdCase = new Cases;
+        $thirdCase->setPosX(0);
+        $thirdCase->setPosY($y - 1);
+        $thirdCase->setPosZ(mt_rand(-$z, $z));
+        $this->setCaseMaterial($thirdCase);
+        $arrayMap[0][$y - 1] = $thirdCase;
 
-    $fourthCase = new Cases;
-    $fourthCase->setPosX($x-1);
-    $fourthCase->setPosY($y-1);
-    $fourthCase->setPosZ(mt_rand(-$z, $z));
-    $this->setCaseMaterial($fourthCase);
-    $arrayMap[$x-1][$y-1] = $fourthCase;
-    
+        $fourthCase = new Cases;
+        $fourthCase->setPosX($x - 1);
+        $fourthCase->setPosY($y - 1);
+        $fourthCase->setPosZ(mt_rand(-$z, $z));
+        $this->setCaseMaterial($fourthCase);
+        $arrayMap[$x - 1][$y - 1] = $fourthCase;
+
+
+        /**
+         * En fonction de la taille de la map,
+         * - création des cases avec attribution de position et des profondeurs gérer aléatoirement en fonction de la difficuté
+         * - attribution du material en fonction de la profondeur
+         * - ajout des cases dans la map
+         */
+        for ($i = 0 ; $i < $x ; $i++) {
+            for ($j = 0 ; $j < $y ; $j++) {
+                $case = new Cases;
+                $case->setPosX($i);
+                $case->setPosY($j);
+                $case->setPosZ(mt_rand(-$z, $z));
+                $this->setCaseMaterial($case);
+                $arrayMap[$j][$i] = $case;
+                $map->addCase($case);
+            }
+        }
+
+        // dump($arrayMap);
+        // die;
+
+
+        $i = $h - 1;
+
+        while ($i > 1) {
+            $id = $i / 2;
+
+            for ($x = $id ; $x < $h - 1 ; $x += $i) {
+                for ($y = $id ; $y < $h - 1 ; $y = $y + $i) {
+                    $moyenne = ($arrayMap[$x - $id][$y - $id]->getPosZ() + $arrayMap[$x - $id][$y + $id]->getPosZ() + $arrayMap[$x + $id][$y + $id]->getPosZ() + $arrayMap[$x + $id][$y - $id]->getPosZ()) / 4;
+                    $arrayMap[$x][$y]->setPosZ((int)($moyenne + mt_rand(-($id), $id)));
+                    $this->setCaseMaterial($arrayMap[$x][$y]);
+                }
+            }
+
+            $decalage = 0;
+            for ($x = 0 ; $x < $h ; $x = $x + $id) {
+                if ($decalage == 0) {
+                    $decalage = $id;
+                } else {
+                    $decalage = 0;
+                }
+                for ($y = $decalage ; $y < $h ; $y = $y + $i) {
+                    $somme = 0;
+                    $n = 0;
+                    if ($x >= $id) {
+                        $somme = $somme + $arrayMap[$x - $id][$y]->getPosZ();
+                        $n = $n + 1;
+                    }
+                    if ($x + $id < $h) {
+                        $somme = $somme + $arrayMap[$x + $id][$y]->getPosZ();
+                        $n = $n + 1;
+                    }
+                    if ($y >= $id) {
+                        $somme = $somme + $arrayMap[$x][$y - $id]->getPosZ();
+                        $n = $n + 1;
+                    }
+                    if ($y + $id < $h) {
+                        $somme = $somme + $arrayMap[$x][$y + $id]->getPosZ();
+                        $n = $n + 1;
+                    }
+                    $arrayMap[$x][$y]->setPosZ((int)($somme / $n + mt_rand(-($id), $id)));
+
+                    if ($arrayMap[$x][$y]->getPosZ() > $z || $arrayMap[$x][$y]->getPosZ() < -$z) {
+                        $arrayMap[$x][$y]->setPosZ((int)($n + mt_rand(-$z, $z)));
+                    }
+
+                    $this->setCaseMaterial($arrayMap[$x][$y]);
+                    //var_dump($arrayMap[$x][$y][0]);
+                }
+            }
+            $i = $id;
+        }
+
+
+        return $arrayMap;
+
+    }
 
     /**
-     * En fonction de la taille de la map, 
-     * - création des cases avec attribution de position et des profondeurs gérer aléatoirement en fonction de la difficuté
-     * - attribution du material en fonction de la profondeur
-     * - ajout des cases dans la map
+     * @Route("/api/getIceCase", name="getIceCase")
      */
-    for($i = 0; $i < $x; $i++){
-      for($j = 0; $j < $y; $j++){
-        $case = new Cases;
-        $case->setPosX($i);
-        $case->setPosY($j);
-        $case->setPosZ( mt_rand(-$z, $z) );
-        $this->setCaseMaterial($case);
-        $arrayMap[$j][$i] = $case; 
-        $map->addCase($case);
-      }
+    public function getIceCase()
+    {
+        if (!isset($_GET['mapName']) || $_GET['mapName'] == null) {
+            print("need more params, ex: /api/getIceCase?mapName=carte4206664269");
+            die;
+        }
+        $carteTemp = file_get_contents($_GET['mapName'] . '.txt');
+        $carteTemp = json_decode($carteTemp, true);
+        $iceCases = [];
+
+        foreach ($carteTemp as $lineKey => $line) {
+            foreach ($line as $caseKey => $case) {
+                if ($case['material'] == "glace")
+                    $iceCases[$lineKey][$caseKey] = $case;
+            }
+        }
+
+        $iceCases = json_encode($iceCases);
+
+        return new JsonResponse($iceCases, 200, [], true);
     }
 
-    // dump($arrayMap);
-    // die;
-
-  
-    $i = $h - 1;
-
-    while($i > 1){
-      $id = $i / 2;
-      
-      for ($x = $id; $x < $h - 1; $x += $i) {
-        for ($y = $id; $y < $h - 1; $y = $y + $i) {
-          $moyenne = ($arrayMap[$x - $id][$y - $id]->getPosZ() + $arrayMap[$x - $id][$y + $id]->getPosZ() + $arrayMap[$x + $id][$y + $id]->getPosZ() + $arrayMap[$x + $id][$y - $id]->getPosZ()) / 4;
-          $arrayMap[$x][$y]->setPosZ((int) ($moyenne + mt_rand(-($id), $id)));
-          $this->setCaseMaterial($arrayMap[$x][$y]);
+    /**
+     * @Route("/api/getMaterial", name="getMaterial")
+     */
+    public function getMaterial()
+    {
+        if (!isset($_GET['mapName']) || !isset($_GET['x']) || !isset($_GET['y']) || $_GET['mapName'] == null || $_GET['x'] == null || $_GET['y'] == null) {
+            print("need more params, ex: /api/getMaterial?mapName=carte4206664269&x=24&y=96");
+            die;
         }
-      }
 
-      $decalage = 0;
-          for ($x = 0; $x < $h; $x = $x + $id) {
-            if ($decalage == 0) {
-              $decalage = $id;
-            } else {
-              $decalage = 0;
-            }
-            for ($y = $decalage; $y < $h; $y = $y + $i) {
-              $somme = 0;
-              $n = 0;
-              if ($x >= $id) {
-                $somme = $somme + $arrayMap[$x - $id][$y]->getPosZ();
-                $n = $n + 1;
-              }
-              if ($x + $id < $h) {
-                $somme = $somme + $arrayMap[$x + $id][$y]->getPosZ();
-                $n = $n + 1;
-              }
-              if ($y >= $id) {
-                $somme = $somme + $arrayMap[$x][$y - $id]->getPosZ();
-                $n = $n + 1;
-              }
-              if ($y + $id < $h) {
-                $somme = $somme + $arrayMap[$x][$y + $id]->getPosZ();
-                $n = $n + 1;
-              }
-                $arrayMap[$x][$y]->setPosZ((int) ($somme / $n + mt_rand(-($id), $id)));
+        $carteTemp = file_get_contents($_GET['mapName'] . '.txt');
+        $carteTemp = json_decode($carteTemp, true);
+        $x = $_GET['x'];
+        $y = $_GET['y'];
+        $material = 0;
 
-                if ($arrayMap[$x][$y]->getPosZ() > $z || $arrayMap[$x][$y]->getPosZ() < -$z ) {
-                  $arrayMap[$x][$y]->setPosZ((int) ($n + mt_rand(-$z, $z)));
+        foreach ($carteTemp as $lineKey => $line) {
+            if ($lineKey == $y) {
+                foreach ($line as $caseKey => $case) {
+                    if ($caseKey == $x)
+                        $material = $case['material'];
                 }
-
-                $this->setCaseMaterial($arrayMap[$x][$y]);
-              //var_dump($arrayMap[$x][$y][0]);
             }
-          }
-          $i = $id;
-    }
-
-
-
-    return $arrayMap;
-    
-  }
-
-  /**
-   * @Route("/api/getIceCase", name="getIceCase")
-   */
-  public function getIceCase(){
-    if (!isset($_GET['mapName']) || $_GET['mapName'] == null){
-      print("need more params, ex: /api/getIceCase?mapName=carte4206664269");
-      die;
-    }
-    $carteTemp = file_get_contents($_GET['mapName'].'.txt');
-    $carteTemp = json_decode($carteTemp, true);
-    $iceCases = [];
-
-    foreach ($carteTemp as $lineKey => $line) {
-      foreach ($line as $caseKey => $case) {
-        if($case['material'] == "glace")
-          $iceCases[$lineKey][$caseKey] = $case;
-      }
-    }
-    
-    $iceCases = json_encode($iceCases);
-    return new JsonResponse($iceCases, 200, [], true);
-  }
-
-  /**
-   * @Route("/api/getMaterial", name="getMaterial")
-   */
-  public function getMaterial(){
-    if (!isset($_GET['mapName']) || !isset($_GET['x']) || !isset($_GET['y']) || $_GET['mapName'] == null || $_GET['x'] == null || $_GET['y'] == null){
-      print("need more params, ex: /api/getMaterial?mapName=carte4206664269&x=24&y=96");
-      die;
-    }
-
-    $carteTemp = file_get_contents($_GET['mapName'].'.txt');
-    $carteTemp = json_decode($carteTemp, true);
-    $x = $_GET['x'];
-    $y = $_GET['y'];
-    $material = 0;
-
-    foreach ($carteTemp as $lineKey => $line) {
-      if($lineKey == $y){
-        foreach ($line as $caseKey => $case) {
-          if($caseKey == $x)
-            $material = $case['material'];
         }
-      }
+
+        $material = json_encode(["material" => $material]);
+
+        return new JsonResponse($material, 200, [], true);
     }
 
-    $material = json_encode(["material" => $material]);
-    return new JsonResponse($material, 200, [], true);
-  }
-  
-  /**
-   * @Route("/api/getZ", name="getZ")
-   */
-  public function getZ(){
-    if (!isset($_GET['mapName']) || !isset($_GET['x']) || !isset($_GET['y']) || $_GET['mapName'] == null || $_GET['x'] == null || $_GET['y'] == null){
-      print("need more params, ex: /api/getZ?mapName=carte4206664269&x=24&y=96");
-      die;
-    }
-    
-    $carteTemp = file_get_contents($_GET['mapName'].'.txt');
-    $carteTemp = json_decode($carteTemp, true);
-    $x = $_GET['x'];
-    $y = $_GET['y'];
-    $z = 0;
-
-    foreach ($carteTemp as $lineKey => $line) {
-      if($lineKey == $y){
-        foreach ($line as $caseKey => $case) {
-          if($caseKey == $x)
-            $z = $case['z'];
+    /**
+     * @Route("/api/getZ", name="getZ")
+     */
+    public function getZ()
+    {
+        if (!isset($_GET['mapName']) || !isset($_GET['x']) || !isset($_GET['y']) || $_GET['mapName'] == null || $_GET['x'] == null || $_GET['y'] == null) {
+            print("need more params, ex: /api/getZ?mapName=carte4206664269&x=24&y=96");
+            die;
         }
-      }
+
+        $carteTemp = file_get_contents($_GET['mapName'] . '.txt');
+        $carteTemp = json_decode($carteTemp, true);
+        $x = $_GET['x'];
+        $y = $_GET['y'];
+        $z = 0;
+
+        $z = $carteTemp[$y][$x][0];
+
+        $z = json_encode($z);
+        $jsonResponse = new Response();
+        $jsonResponse->setContent($z);
+        $jsonResponse->headers->set('Content-Type', 'application/json');
+
+        return $jsonResponse;
+
+//      return new JsonResponse($z, 200, [], true);
     }
 
-    $z = json_encode(["z" => $z]);
-    return new JsonResponse($z, 200, [], true);
-  }
 }
