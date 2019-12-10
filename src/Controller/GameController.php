@@ -14,8 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class GameController extends AbstractController
 {
-
-
+    
     const lineDistance = 100; // distance horizontale et vertical pour parcourir une case en mètre
     const diagonaleDistance = 140; // distance diagonale pour parcourir une case en mètre
 
@@ -41,16 +40,10 @@ class GameController extends AbstractController
         '7' => 1
     );
 
-    const BONUS = array(
-        '0' => 'coût x2, perd 1 tour',
-        '1' => '-3 d\'énergie, perd 1 tour',
-        '2' => 'recharge entre 20 et 60%',
-        '3' => 'coût -50% pour les 4 prochains tours.'
-    );
-
     const energyReload = 5; // taux d'énergie rechargé par tour passé (panneau solaire)
 
     /**
+     * Fonction de test. l'appeler avec : http://localhost/game?typeRover=economic (ou "short")
      * @Route("/game", name="game")
      * @param EcoRoverService $ecoRoverService
      * @param Request $request
@@ -215,8 +208,10 @@ class GameController extends AbstractController
     }
 
     /**
+     * Requête du front en POST (successeur du GET)
      * @Route("/post-response", name="post_response")
-     * @throws \Exception
+     * @param Request $request
+     * @return Response
      */
     public function postResponse(Request $request)
     {
@@ -305,9 +300,10 @@ class GameController extends AbstractController
 
     }
 
-    /**
+    /** Requête du front en method GET (laissé tombée pour le POST)
      * @Route("/get-response", name="get_response")
-     * @throws \Exception
+     * @param Request $request
+     * @return Response
      */
     public function getResponse(Request $request)
     {
