@@ -267,18 +267,50 @@ class DefaultController extends AbstractController
    * @Route("/api/getIceCase", name="getIceCase")
    */
   public function getIceCase(){
-    $carteTemp = file_get_contents('carte.txt');
+    if (!isset($_GET['mapName']) || $_GET['mapName'] == null){
+      print("need more params, ex: /api/getIceCase?mapName=carte4206664269");
+      die;
+    }
+    $carteTemp = file_get_contents($_GET['mapName'].'.txt');
     $carteTemp = json_decode($carteTemp, true);
     $iceCases = [];
 
     foreach ($carteTemp as $lineKey => $line) {
-      foreach ($line as $caseKkey => $case) {
+      foreach ($line as $caseKey => $case) {
         if($case['material'] == "glace")
-          $iceCases[$lineKey][$caseKkey] = $case;
+          $iceCases[$lineKey][$caseKey] = $case;
       }
     }
     
     $iceCases = json_encode($iceCases);
     return new JsonResponse($iceCases, 200, [], true);
+  }
+
+  /**
+   * @Route("/api/getZ", name="getZ")
+   */
+  public function getZ(){
+    if (!isset($_GET['mapName']) || !isset($_GET['x']) || !isset($_GET['y']) || $_GET['mapName'] == null || $_GET['x'] == null || $_GET['y'] == null){
+      print("need more params, ex: /api/getZ?mapName=carte4206664269&x=24&y=96");
+      die;
+    }
+    
+    $carteTemp = file_get_contents($_GET['mapName'].'.txt');
+    $carteTemp = json_decode($carteTemp, true);
+    $x = $_GET['x'];
+    $y = $_GET['y'];
+    $z = 0;
+
+    foreach ($carteTemp as $lineKey => $line) {
+      if($lineKey == $y){
+        foreach ($line as $caseKey => $case) {
+          if($caseKey == $x)
+            $z = $case['z'];
+        }
+      }
+    }
+
+    $z = json_encode(["z" => $z]);
+    return new JsonResponse($z, 200, [], true);
   }
 }
