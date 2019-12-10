@@ -85,6 +85,7 @@ class GameController extends AbstractController
         $posY = 1;
         $destX = 9;
         $destY = 9;
+        $mapName="map";
 
         $map[$posY][$posX]['start'] = true;
         $map[$destY][$destX]['end'] = true;
@@ -127,6 +128,7 @@ class GameController extends AbstractController
         $rover->setMemory([]);
         $rover->setPosX($posX)->setPosY($posY);
         $rover->setDestX($destX)->setDestY($destY);
+        $rover->setMap($mapName);
         // requete POST
         $fields = [
             'posX' => $rover->getPosX(),
@@ -135,9 +137,11 @@ class GameController extends AbstractController
             'energy' => $rover->getEnergy(),
             'destX' => $rover->getDestX(),
             'destY' => $rover->getDestY(),
-            'map' => 'map.json',
+            'map' => $rover->getMap(),
             'memory' => $rover->getMemory()
         ];
+        dump($rover->getMap());
+        dump($rover->requestGetZ(2, 3));
         $json = json_encode($fields);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
         $response = curl_exec($ch);
@@ -155,7 +159,7 @@ class GameController extends AbstractController
                 'energy' => $rover->getEnergy(),
                 'destX' => $rover->getDestX(),
                 'destY' => $rover->getDestY(),
-                'map' => 'map.json',
+                'map' => $rover->getMap(),
                 'memory' => $rover->getMemory()
             ];
             $json = json_encode($fields);
