@@ -4,6 +4,7 @@ SetEnv MAGIC_QUOTES 0
 SetEnv SESSION_AUTOSTART 0
 SetEnv ZEND_OPTIMIZER 1
 SetEnv PHP_VER 7_3
+Header set Access-Control-Allow-Origin "*"
 
 RewriteEngine on
 RewriteBase /
