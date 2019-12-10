@@ -1,0 +1,430 @@
+body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  z-index: 10;
+  position: relative;
+}
+
+main {
+  z-index: 10;
+  position: relative;
+}
+
+.title {
+  color: #06D4FE;
+  text-transform: uppercase;
+  font-family: "Iceland", cursive;
+  font-size: 3em;
+  padding: 0 10px;
+  text-shadow: 0 0 15px #06d4fe;
+  outline: none;
+  margin: 10px 0;
+}
+
+.paragraph {
+  color: white;
+  text-align: justify;
+  font-family: "Ubuntu", sans-serif;
+  margin: 30px 150px;
+  font-size: 1.2em;
+}
+
+.container {
+  width: 70vw;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-around;
+  align-items: center;
+  margin: auto;
+  padding: 50px 0;
+}
+.container .logoIndex {
+  display: block;
+  margin: auto auto 100px auto;
+}
+.container .logoIndex g > #circle {
+  cursor: crosshair;
+  -moz-box-shadow: 0 0 5px #06D4FE;
+  -webkit-box-shadow: 0 0 5px #06D4FE;
+  box-shadow: 0 0 5px #06D4FE;
+}
+
+.barAdd {
+  position: relative;
+  transition: color 0.2s ease-in-out;
+}
+.barAdd::after, .barAdd::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #FEA806;
+  transform: scaleX(0);
+  transition: transform 0.5s ease;
+}
+.barAdd::after {
+  bottom: 0;
+  transform-origin: center left;
+}
+.barAdd::before {
+  top: 0;
+  transform-origin: center right;
+}
+.barAdd:hover {
+  color: #FEA806;
+  text-shadow: 0 0 15px #fea806;
+}
+.barAdd:hover::before {
+  transform-origin: center left;
+  transform: scaleX(1);
+}
+.barAdd:hover::after {
+  transform-origin: center right;
+  transform: scaleX(1);
+}
+
+.container-btn-box {
+  display: block;
+  margin: 50px auto auto auto;
+  width: auto;
+  padding: 15px 0;
+}
+.container-link-bottom {
+  position: fixed;
+  bottom: 6%;
+  right: 5%;
+}
+.container-link-top {
+  position: fixed;
+  top: 3.5%;
+  left: 2%;
+}
+
+.usableButton {
+  text-align: center;
+  font-size: 5em !important;
+  margin: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+}
+
+.navLink {
+  font-size: 2em !important;
+  text-decoration: none;
+  outline: none;
+  display: block;
+}
+
+.fakeBorderTop, .fakeBorderBottom {
+  -webkit-box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
+  -moz-box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
+  box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
+  width: 100%;
+  height: 2px;
+  background: #06D4FE;
+}
+
+.fakeBorderBottom {
+  height: 4px;
+}
+
+.smallAction {
+  transition: 0.3s ease-in-out;
+}
+.smallAction:hover {
+  transform: scale(0.95);
+}
+.smallAction:hover .fakeBorderBottom, .smallAction:hover .fakeBorderTop {
+  background-color: #FEA806;
+  -webkit-box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
+  -moz-box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
+  box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
+}
+.smallAction:hover .usableButton {
+  color: #FEA806;
+  text-shadow: 0 0 100px #fea806;
+  transition: 0.3s ease-in-out;
+}
+
+.particles {
+  height: 100vh;
+  width: 100vw;
+  background: #121212;
+  position: absolute;
+  top: 0;
+  z-index: 0;
+}
+
+.wrapper {
+  display: flex;
+  width: 100%;
+  margin-top: 50px;
+  height: 50vh;
+}
+.wrapper-buttons {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 12%;
+}
+.wrapper-buttons-column {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 12%;
+}
+.wrapper-buttons-row {
+  display: flex;
+  flex-direction: row;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  width: 100%;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.wrapper-view {
+  display: flex;
+  width: 88%;
+  align-items: center;
+  justify-content: center;
+}
+
+.nameItem {
+  font-size: 23px !important;
+  text-align: center;
+}
+
+.imageItem {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+  color: rgba(6, 212, 254, 0.2);
+}
+
+.wrapper-imageItem {
+  width: 70%;
+}
+
+.buttonSelect-row {
+  border: 5px solid #06D4FE;
+  padding: 20px 30px;
+  border-radius: 30px;
+  box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
+  width: 20%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: column;
+  cursor: pointer;
+}
+.buttonSelect-row:hover {
+  border-color: #FEA806;
+  box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
+}
+.buttonSelect-row .logoSelect {
+  fill: #06D4FE;
+}
+.buttonSelect-row:hover .logoSelect {
+  fill: #FEA806;
+}
+.buttonSelect-row:hover svg defs > filter > feFlood {
+  display: none;
+}
+.buttonSelect-column {
+  border: 5px solid #06D4FE;
+  padding: 15px 20px;
+  border-radius: 30px;
+  box-shadow: 0 0 10px 5px rgba(6, 212, 254, 0.2);
+  width: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  cursor: pointer;
+  margin-bottom: 15px;
+  z-index: 100;
+}
+.buttonSelect-column:hover {
+  border-color: #FEA806;
+  box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
+}
+
+.logoSelected {
+  border-color: #FEA806;
+  box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
+  transform: scale(0.95);
+  color: #FEA806;
+  text-shadow: 0 0 100px #fea806;
+}
+.logoSelected svg defs > filter > feFlood {
+  display: none;
+}
+.logoSelected .nameItem {
+  color: #FEA806;
+  text-shadow: 0 0 15px #FEA806;
+}
+
+.logoSelectedFill {
+  fill: #FEA806 !important;
+}
+
+.roverSelected {
+  border-color: #FEA806;
+  box-shadow: 0 0 10px 5px rgba(254, 168, 6, 0.2);
+  transform: scale(0.95);
+  color: #FEA806;
+  text-shadow: 0 0 100px #fea806;
+}
+.roverSelected .title {
+  color: #FEA806;
+  text-shadow: 0 0 15px #FEA806;
+}
+
+.wrapper-form {
+  width: 100%;
+  margin-top: 40px;
+}
+.wrapper-form form {
+  border-collapse: collapse;
+  width: 50%;
+  display: block;
+  margin: auto;
+}
+.wrapper-form form .centerForm {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  width: 100%;
+}
+.wrapper-form .labelTab {
+  color: #06D4FE;
+  border-bottom: 2px solid #06D4FE;
+  font-family: "Iceland", cursive;
+  font-size: 1.5em;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+}
+.wrapper-form .labelTab h2 {
+  padding: 15px 0;
+  margin: 0;
+  text-transform: uppercase;
+  text-shadow: 0 0 15px #06d4fe;
+}
+.wrapper-form .lightBack {
+  background: rgba(126, 126, 126, 0.35);
+}
+.wrapper-form .darkBack {
+  background: rgba(70, 70, 70, 0.35);
+}
+.wrapper-form .trLine {
+  height: 60px;
+  text-align: center;
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+  justify-content: space-around;
+  align-items: center;
+}
+.wrapper-form .trLine p {
+  text-transform: uppercase;
+  color: #FEA806;
+  text-shadow: 0 0 15px #fea806;
+  font-family: "Iceland", cursive;
+  font-size: 1.5em;
+  width: 50%;
+  text-align: center;
+  margin: 0;
+}
+.wrapper-form .trLine .radioContainer {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+}
+.wrapper-form .trLine .radioContainer p {
+  font-size: 2em;
+}
+.wrapper-form .trLine .radioContainer .checkContainer {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  height: 15px;
+}
+.wrapper-form .trLine .radioContainer .checkContainer input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 25px;
+  width: 25px;
+  left: 0;
+  z-index: 10;
+}
+.wrapper-form .trLine .radioContainer .checkContainer .checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  border: 2px solid #FEA806;
+  border-radius: 30%;
+}
+.wrapper-form .trLine .radioContainer .checkContainer .checkmark::after {
+  top: 9px;
+  left: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+.wrapper-form .trLine .radioContainer .checkContainer:hover input, .wrapper-form .trLine .radioContainer .checkContainer:hover .checkmark {
+  background-color: #FDDC9C;
+}
+.wrapper-form .trLine .radioContainer .checkContainer input:checked ~ .checkmark {
+  display: block;
+  background: #FDDC9C;
+}
+.wrapper-form .trLine .slider {
+  -webkit-appearance: none;
+  width: 30%;
+  margin-right: 10px;
+  height: 2px;
+  background: #FEA806;
+  outline: none;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
+}
+.wrapper-form .trLine .slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #FDDC9C;
+  border: 2px solid #FEA806;
+  cursor: pointer;
+}
+.wrapper-form .trLine .slider::-moz-range-thumb {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #FDDC9C;
+  border: 2px solid #FEA806;
+  cursor: pointer;
+}
+
+/*# sourceMappingURL=style.css.map */
