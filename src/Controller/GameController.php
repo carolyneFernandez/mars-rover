@@ -140,13 +140,14 @@ class GameController extends AbstractController
             'map' => $rover->getMap(),
             'memory' => $rover->getMemory()
         ];
-        dump($rover->getMap());
-        dump($rover->requestGetZ(2, 3));
+//        dump($rover->getMap());
+//        dump($rover->requestGetContent(2, 3));
         $json = json_encode($fields);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
         $response = curl_exec($ch);
         $nextCase = json_decode($response, true);
-//        dd($nextCase);
+        dump(curl_error($ch));
+        dd($nextCase);
         $round = 0;
         // boucle pour la version de prod
         while ($arrived === false) {
@@ -170,6 +171,7 @@ class GameController extends AbstractController
 //            dump($response);
             if ($response == null) {
                 dump($ch);
+                dump(curl_error($ch));
                 die;
             }
 //            if ($round > 50) {

@@ -305,48 +305,36 @@ class Rover
     {
         $x = round($x);
         $y = round($y);
+
         $url = $_ENV['URL_API_CARTE']."getZ?mapName=".$this->getMap()."&x=".$x."&y=".$y;
-        dump($url);
-//        $parsed_json = json_decode(file_get_contents("../assets/json/map.json"), true);
 
         $ch = curl_init();
-
-//Set the URL that you want to GET by using the CURLOPT_URL option.
         curl_setopt($ch, CURLOPT_URL, $url);
-//        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $z = curl_exec($ch);
-        dump($z);
-        dump(curl_error($ch));
 
-        $ch = curl_init();
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => $url,
-            CURLOPT_USERAGENT => 'Codular Sample cURL Request'
-        ]);
-// Send the request & save response to $resp
-        $z = curl_exec($ch);
+        return intval($z);
 
-        dump($z);
-        dump(curl_error($ch));
-//        $z = json_decode($data);
-        return $z;
-//        $parsed_json = json_decode(file_get_contents($url), true);
-//        dump($parsed_json);
-        //        dump($parsed_json);
-        //dump("z de $x,$y : " . $parsed_json[$y][$x][0]);
-//        return $parsed_json[$y][$x][0];
     }
 
     public function requestGetContent($x, $y)
     {
+//        dd($this->getMap());
         $x = round($x);
         $y = round($y);
-        $parsed_json = json_decode(file_get_contents("../assets/json/map.json"), true);
+        $url = $_ENV['URL_API_CARTE']."getMaterial?mapName=".$this->getMap()."&x=".$x."&y=".$y;
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $idContent = curl_exec($ch);
+
+
+//        $parsed_json = json_decode(file_get_contents("../assets/json/map.json"), true);
         //        dump($parsed_json);
         //dump("z de $x,$y : " . $parsed_json[$y][$x][0]);
-        return $parsed_json[$y][$x][1];
+//        return $parsed_json[$y][$x][1];
+        return $idContent;
     }
 
     public function getMemory(): ?array
