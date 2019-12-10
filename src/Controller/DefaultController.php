@@ -287,6 +287,34 @@ class DefaultController extends AbstractController
   }
 
   /**
+   * @Route("/api/getMaterial", name="getMaterial")
+   */
+  public function getMaterial(){
+    if (!isset($_GET['mapName']) || !isset($_GET['x']) || !isset($_GET['y']) || $_GET['mapName'] == null || $_GET['x'] == null || $_GET['y'] == null){
+      print("need more params, ex: /api/getMaterial?mapName=carte4206664269&x=24&y=96");
+      die;
+    }
+
+    $carteTemp = file_get_contents($_GET['mapName'].'.txt');
+    $carteTemp = json_decode($carteTemp, true);
+    $x = $_GET['x'];
+    $y = $_GET['y'];
+    $material = 0;
+
+    foreach ($carteTemp as $lineKey => $line) {
+      if($lineKey == $y){
+        foreach ($line as $caseKey => $case) {
+          if($caseKey == $x)
+            $material = $case['material'];
+        }
+      }
+    }
+
+    $material = json_encode(["material" => $material]);
+    return new JsonResponse($material, 200, [], true);
+  }
+  
+  /**
    * @Route("/api/getZ", name="getZ")
    */
   public function getZ(){
