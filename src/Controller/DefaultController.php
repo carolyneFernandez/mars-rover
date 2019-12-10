@@ -52,10 +52,18 @@ class DefaultController extends AbstractController
       
       $arrayMap = $this->map_gen( $map->getSizeX(), $map->getSizeY(), $profondeur);
 
-      $carteTemp = fopen('carte.txt', 'w+');
+      $carteTemp = fopen('carte'.time().'.txt', 'w+');  //generates a new map every time, so don't forget to delete them
+      // dump(stream_get_meta_data($carteTemp)["uri"]);die;
       fputs($carteTemp, json_encode($arrayMap));
+      $mapName = stream_get_meta_data($carteTemp)["uri"];
       fclose($carteTemp);
-      
+
+      $arrayMap = [
+        "mapName" => $mapName,
+        "difficulty" => $level,
+        "materials" => $paramMap->getMaterials(),
+        "map" => $arrayMap
+      ];
       $arrayMap = json_encode($arrayMap);
       return new JsonResponse($arrayMap, 200, [], true);
     }
@@ -256,7 +264,7 @@ class DefaultController extends AbstractController
   }
 
   /**
-   * @Route("/api/", name="getIceCase")
+   * @Route("/api/getIceCase", name="getIceCase")
    */
   public function getIceCase(){
     $carteTemp = file_get_contents('carte.txt');
@@ -271,6 +279,6 @@ class DefaultController extends AbstractController
     }
     
     $iceCases = json_encode($iceCases);
-      return new JsonResponse($iceCases, 200, [], true);
+    return new JsonResponse($iceCases, 200, [], true);
   }
 }

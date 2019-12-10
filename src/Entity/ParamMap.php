@@ -188,4 +188,17 @@ class ParamMap
 
         return $this;
     }
+
+    public function getMaterials(): ?array
+    {
+        return [
+            "Ice"       => $this->isGlace(),
+            "Iron"      => $this->isFer(),
+            "Clay"      => $this->isArgile(),
+            "Minerals"  => $this->isMinerai(),
+            "Sand"      => $this->isSable(),
+            "Unknown"   => $this->isInconnu(),
+            "Rock"      => $this->isRoche(),
+        ];
+    }
 }
