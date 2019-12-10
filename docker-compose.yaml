@@ -5,7 +5,7 @@ services:
     container_name: web_mars-rover
     build: ./
     ports:
-      - "80:80"
+      - "8020:80"
     networks:
       - marsAPI
       - frontend
