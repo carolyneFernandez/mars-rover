@@ -137,8 +137,10 @@ class ShortRover extends Rover
     public function porcentagePendent($table, $x1, $y1, $x2, $y2)
     {
         /** @todo 2 requêtes pour obtenir les deux z */
-        $z1 = $table[$y1][$x1][0];//hateur actualle
-        $z2 = $table[$y2][$x2][0];//hateur suivant
+        $z1 = $this->requestGetZ($x1, $y1);
+        $z2 = $this->requestGetZ($x2, $y2);
+//        $z1 = $table[$y1][$x1][0];//hateur actualle
+//        $z2 = $table[$y2][$x2][0];//hateur suivant
         $distance = $this->distanceBetweenCase($x1, $y1, $x2, $y2);
         $pendent = (abs($z2 - $z1) / $distance) * 100;
         return $pendent;
@@ -335,25 +337,29 @@ class ShortRover extends Rover
     public function adjCases($table, $x, $y)
     {
 
-        $allCases = [
-            [$x + 1, $y], //right
-            [$x + 1, $y - 1],//right hauter
-            [$x, $y - 1],//top
-            [$x - 1, $y - 1],//top left
-            [$x - 1, $y],//left
-            [$x - 1, $y + 1],//down left
-            [$x, $y + 1],//down
-            [$x + 1, $y + 1]//down right
-        ];
+//        $allCases = [
+//            [$x + 1, $y], //right
+//            [$x + 1, $y - 1],//right hauter
+//            [$x, $y - 1],//top
+//            [$x - 1, $y - 1],//top left
+//            [$x - 1, $y],//left
+//            [$x - 1, $y + 1],//down left
+//            [$x, $y + 1],//down
+//            [$x + 1, $y + 1]//down right
+//        ];
+//
+//        $cases = [];
+//        foreach ($allCases as $case) {
+//            if (isset($table[$case[1]][$case[0]])) {
+//                $cases[] = $case;
+//            }
+//        }
+//
+//        return $cases;
 
-        $cases = [];
-        foreach ($allCases as $case) {
-            if (isset($table[$case[1]][$case[0]])) {
-                $cases[] = $case;
-            }
-        }
+        $allCases = $this->requestAdjCases($this, 1);
 
-        return $cases;
+        return $allCases;
     }
 
     public function isObstacle($table, $x1, $y1, $x2, $y2)

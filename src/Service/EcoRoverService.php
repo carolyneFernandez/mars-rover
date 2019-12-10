@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Controller\GameController;
+use App\Entity\Rover;
 use App\Service\Bresenham;
 
 class EcoRoverService {
@@ -104,8 +105,6 @@ class EcoRoverService {
                 $adjCases[$rover->getPosY()][$rover->getPosX() - $i] = $map[$rover->getPosY()][$rover->getPosX() - $i];
             }
         }
-
-        /** @todo reformater la réponse de la carte */
 
         return $adjCases;
     }
@@ -371,13 +370,14 @@ class EcoRoverService {
 
     /**
      * Prend le cout de déplacement pour une distance de 1 ou 1.4 avec une pente en poucentage (0,03 pour 3%)
-     * @param int $xDest utilisé pour connaitre la matière (costContent)
-     * @param int $yDest utilisé pour connaitre la matière (costContent)
-     * @param int $gradient pas en pourcentage !!
-     * @param int $distance 1 ou 1.4 (E)
+     * @param int $xDest      utilisé pour connaitre la matière (costContent)
+     * @param int $yDest      utilisé pour connaitre la matière (costContent)
+     * @param float $gradient pas en pourcentage !!
+     * @param int $distance   1 ou 1.4 (E)
+     * @param Rover $rover
      * @return float|int
-     */ 
-    public function movementCost(int $xDest, int $yDest, float $gradient, int $distance, $rover)
+     */
+    public function movementCost(int $xDest, int $yDest, float $gradient, int $distance, Rover $rover)
     {
         // E x (1+p) x costContent
         // dump($gradient);

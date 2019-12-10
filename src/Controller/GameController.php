@@ -14,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class GameController extends AbstractController
 {
-    
+
     const lineDistance = 100; // distance horizontale et vertical pour parcourir une case en mètre
     const diagonaleDistance = 140; // distance diagonale pour parcourir une case en mètre
 

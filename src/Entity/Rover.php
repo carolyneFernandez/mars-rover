@@ -310,4 +310,68 @@ class Rover
 
         return $this;
     }
+
+    /**
+     * Recupere les cases adjacente sur la cartes en fonction d'un rayon
+     * @param Rover $rover
+     * @param $radius
+     * @return array
+     */
+    public function requestAdjCases($rover, $radius) {
+        $file = file_get_contents("../assets/json/map.json");
+        $map = json_decode($file, true);
+        $adjCases = array();
+        for ($i=1; $i < $radius + 1; $i++) {
+            // Haut gauche
+            if (isset($map[$rover->getPosY() + $i][$rover->getPosX() - $i])) {
+                $adjCases[$rover->getPosY() + $i][$rover->getPosX() - $i] = $map[$rover->getPosY() + $i][$rover->getPosX() - $i];
+            }
+            // Haut
+            if (isset($map[$rover->getPosY() + $i][$rover->getPosX()])) {
+                $adjCases[$rover->getPosY() + $i][$rover->getPosX()] = $map[$rover->getPosY() + $i][$rover->getPosX()];
+            }
+            // Haut droite
+            if (isset($map[$rover->getPosY() + $i][$rover->getPosX() + $i])) {
+                $adjCases[$rover->getPosY() + $i][$rover->getPosX() + $i] = $map[$rover->getPosY() + $i][$rover->getPosX() + $i];
+            }
+            // Droite
+            if (isset($map[$rover->getPosY()][$rover->getPosX() + $i])) {
+                $adjCases[$rover->getPosY()][$rover->getPosX() + $i] = $map[$rover->getPosY()][$rover->getPosX() + $i];
+            }
+            // Bas droite
+            if (isset($map[$rover->getPosY() - $i][$rover->getPosX() + $i])) {
+                $adjCases[$rover->getPosY() - $i][$rover->getPosX() + $i] = $map[$rover->getPosY() - $i][$rover->getPosX() + $i];
+            }
+            // Bas
+            if (isset($map[$rover->getPosY() - $i][$rover->getPosX()])) {
+                $adjCases[$rover->getPosY() - $i][$rover->getPosX()] = $map[$rover->getPosY() - $i][$rover->getPosX()];
+            }
+            // Bas gauche
+            if (isset($map[$rover->getPosY() - $i][$rover->getPosX() - $i])) {
+                $adjCases[$rover->getPosY() - $i][$rover->getPosX() - $i] = $map[$rover->getPosY() - $i][$rover->getPosX() - $i];
+            }
+            // Gauche
+            if (isset($map[$rover->getPosY()][$rover->getPosX() - $i])) {
+                $adjCases[$rover->getPosY()][$rover->getPosX() - $i] = $map[$rover->getPosY()][$rover->getPosX() - $i];
+            }
+        }
+
+        /** @todo reformater la réponse de la carte */
+
+//        dump($adjCases);
+        if($rover instanceof ShortRover){
+            $newAdjCases = $adjCases;
+            $adjCases = [];
+            foreach ($newAdjCases as $y => $cases){
+                foreach ($cases as $x => $case)
+                $adjCases[] = [$x, $y];
+            }
+
+        }
+
+
+        return $adjCases;
+    }
+
+
 }
