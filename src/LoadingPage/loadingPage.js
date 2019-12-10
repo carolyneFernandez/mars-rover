@@ -5,6 +5,8 @@ function createRequestMapInit() {
     const mapSelected = map.name;
     const difficultySelected = difficulty.name;
 
+    let nameMap;
+
     console.log(mapSelected);
     if (mapSelected === 'DefaultMap'){
         const request = new Request(`http://localhost:80/?parameters_map[difficulty]=${difficultySelected}&parameters_map[ice]=1&parameters_map[iron]=1&parameters_map[clay]=1&parameters_map[minerals]=1&parameters_map[sand]=1&parameters_map[rocks]=1`);
@@ -13,6 +15,7 @@ function createRequestMapInit() {
         .then(function(response) { return response.json(); })
         .then(function(data) {
             // add affichage de la carte
+            // renvoi un name (nameMap)
         });
     } else if (mapSelected === 'CustomMap'){
         const quantity = JSON.parse(localStorage.getItem('quantity'));
@@ -32,6 +35,7 @@ function createRequestMapInit() {
         .then(function(response) { return response.json(); })
         .then(function(data) {
             // add affichage de la carte
+            // renvoi un name (nameMap)
         });
     }
 }
