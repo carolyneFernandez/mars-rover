@@ -25,7 +25,6 @@ function getRovers(){
 
 function getRoversSelected(){
     let rovers = document.getElementsByClassName('roverSelected');
-    console.log(rovers);
     let roversSelected = [];
 
     for(let i = 0; i < rovers.length; i++){
@@ -33,7 +32,6 @@ function getRoversSelected(){
     }
     window.localStorage.setItem('roversSelected', JSON.stringify(roversSelected));
 
-    console.log(roversSelected);
     if(roversSelected.length !== 0){
         movePage('roversSelected', './selectMap.html');
     }
