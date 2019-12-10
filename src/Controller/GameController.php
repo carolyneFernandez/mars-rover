@@ -53,21 +53,22 @@ class GameController extends AbstractController
     {
         //recuperation de la map et des cases de glace -- simulation api
         $file = file_get_contents("../assets/json/map.json");
-        $iceFile = file_get_contents("../assets/json/ice.json");
-        $iceCasesJSON = json_decode($iceFile);
+//        $iceFile = file_get_contents("../assets/json/ice.json");
+//        $iceCasesJSON = json_decode($iceFile);
         $map = json_decode($file, true);
 
         //Initialise un tableau avec les cases de glace
-        foreach ($iceCasesJSON as $key => $case) {
-            $res = explode(",", $case[0]);
-            $iceCases[$res[1]][$res[0]] = $case[1];
-        }
-        // place les cases de glace sur la carte pour la vue
-        foreach ($iceCases as $y => $case) {
-            foreach ($case as $x => $value) {
-                $map[$y][$x]['content'] = 1; //1 = glace
-            }
-        }
+//        foreach ($iceCasesJSON as $key => $case) {
+//            $res = explode(",", $case[0]);
+//            $iceCases[$res[1]][$res[0]] = $case[1];
+//        }
+
+//        // place les cases de glace sur la carte pour la vue
+//        foreach ($iceCases as $y => $case) {
+//            foreach ($case as $x => $value) {
+//                $map[$y][$x]['content'] = 1; //1 = glace
+//            }
+//        }
 
         // définition de la position de départ et d'arrivé
 //        $posX = rand(0,8);
@@ -86,6 +87,7 @@ class GameController extends AbstractController
         $destX = 9;
         $destY = 9;
         $mapName="map";
+
 
         $map[$posY][$posX]['start'] = true;
         $map[$destY][$destX]['end'] = true;
@@ -129,6 +131,17 @@ class GameController extends AbstractController
         $rover->setPosX($posX)->setPosY($posY);
         $rover->setDestX($destX)->setDestY($destY);
         $rover->setMap($mapName);
+
+
+
+        $iceCases = $ecoRoverService->requestIceCases($rover);
+//        // place les cases de glace sur la carte pour la vue
+        foreach ($iceCases as $y => $case) {
+            foreach ($case as $x => $value) {
+                $map[$y][$x]['content'] = 1; //1 = glace
+            }
+        }
+
         // requete POST
         $fields = [
             'posX' => $rover->getPosX(),
@@ -146,8 +159,8 @@ class GameController extends AbstractController
         curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
         $response = curl_exec($ch);
         $nextCase = json_decode($response, true);
-        dump(curl_error($ch));
-        dd($nextCase);
+//        dump(curl_error($ch));
+//        dd($nextCase);
         $round = 0;
         // boucle pour la version de prod
         while ($arrived === false) {
@@ -281,7 +294,8 @@ class GameController extends AbstractController
                 $errors[] = "L'énergie du rover n'est pas renseignée.";
             }
             if (isset($parameters['map'])) {
-                $map = $parameters['map'];
+                $rover->setMap($parameters['map']);
+//                $map = $parameters['map'];
             } else {
                 $errors[] = "La carte n'a pas été passée.";
             }

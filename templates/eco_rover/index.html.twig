@@ -40,6 +40,10 @@
     }
     .blue{
         background-color:blue;
+        color: white;
+    }
+    .darkblue {
+        background-color: darkblue;
     }
     .glace{
         background-color: #33DDFF;
@@ -67,6 +71,10 @@
                         <div class="pixel blue">
                             {{ value[0] }}
                         </div> #}
+                    {% elseif value['isPath'] is defined and value['content'] is defined and value['content'] == 1 %} {# case de d'arrivée #}
+                        <div class="pixel darkblue">
+                            {{ value[0] }} | {{ value[1]}}
+                        </div>
                     {% elseif value['isPath'] is defined %} {# case de d'arrivée #}
                         <div class="pixel green">
                             {{ value[0] }} | {{ value[1]}}

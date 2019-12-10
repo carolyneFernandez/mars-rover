@@ -1,3 +1,4 @@
+# Pour la première utilisation, lancer : docker network create --internal marsAPI
 version: '3'
 services:
   mars-rover:

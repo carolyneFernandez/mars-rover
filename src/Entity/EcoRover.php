@@ -40,6 +40,7 @@ class EcoRover extends Rover
 
         //mouvement via le service
         $ecoRoverService = new EcoRoverService();
+//        dump($this->getMap());
         $result = $ecoRoverService->move($this);
 
         //si null, alors le rover n'a trouvé aucune case et il est bloqué
