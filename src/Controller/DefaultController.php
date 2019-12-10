@@ -279,14 +279,22 @@ class DefaultController extends AbstractController
 
         foreach ($carteTemp as $lineKey => $line) {
             foreach ($line as $caseKey => $case) {
-                if ($case['material'] == "glace")
-                    $iceCases[$lineKey][$caseKey] = $case;
+                if ($case[1] == 1)
+                    $iceCases[$lineKey][$caseKey] = $case[0];
             }
         }
 
+//        $iceCases = json_encode($iceCases);
+//
+//        return new JsonResponse($iceCases, 200, [], true);
         $iceCases = json_encode($iceCases);
+        $jsonResponse = new Response();
+        $jsonResponse->setContent($iceCases);
+        $jsonResponse->headers->set('Content-Type', 'application/json');
 
-        return new JsonResponse($iceCases, 200, [], true);
+        return $jsonResponse;
+
+
     }
 
     /**
@@ -295,7 +303,7 @@ class DefaultController extends AbstractController
     public function getMaterial()
     {
         if (!isset($_GET['mapName']) || !isset($_GET['x']) || !isset($_GET['y']) || $_GET['mapName'] == null || $_GET['x'] == null || $_GET['y'] == null) {
-            print("need more params, ex: /api/getMaterial?mapName=carte4206664269&x=24&y=96");
+            print("need more params, ex: /api/getMaterial?mapName=carte4206664269&x=24&y=96.");
             die;
         }
 
@@ -303,20 +311,28 @@ class DefaultController extends AbstractController
         $carteTemp = json_decode($carteTemp, true);
         $x = $_GET['x'];
         $y = $_GET['y'];
-        $material = 0;
+        $idMaterial = 0;
+        $idMaterial = $carteTemp[$y][$x][1];
 
-        foreach ($carteTemp as $lineKey => $line) {
-            if ($lineKey == $y) {
-                foreach ($line as $caseKey => $case) {
-                    if ($caseKey == $x)
-                        $material = $case['material'];
-                }
-            }
-        }
+//        foreach ($carteTemp as $lineKey => $line) {
+//            if ($lineKey == $y) {
+//                 foreach ($line as $caseKey => $case) {
+//                    if ($caseKey == $x)
+//                        $material = $case['material'];
+//                }
+//            }
+//        }
 
-        $material = json_encode(["material" => $material]);
+//        $material = json_encode(["material" => $material]);
 
-        return new JsonResponse($material, 200, [], true);
+//        return new JsonResponse($material, 200, [], true);
+
+        $idMaterial = json_encode($idMaterial);
+        $jsonResponse = new Response();
+        $jsonResponse->setContent($idMaterial);
+        $jsonResponse->headers->set('Content-Type', 'application/json');
+
+        return $jsonResponse;
     }
 
     /**
@@ -345,6 +361,71 @@ class DefaultController extends AbstractController
         return $jsonResponse;
 
 //      return new JsonResponse($z, 200, [], true);
+    }
+
+    /**
+     * @Route("/api/getAdjCases", name="getAdjCases")
+     */
+    public function getAdjCases(){
+
+        if (!isset($_GET['mapName']) || !isset($_GET['x']) || !isset($_GET['y']) || !isset($_GET['y']) || $_GET['radius'] == null || $_GET['x'] == null || $_GET['y'] == null || $_GET['radius'] == null) {
+            print("need more params, ex: /api/getAdjCases?mapName=carte4206664269&x=24&y=96&radius=2");
+            die;
+        }
+
+        $file = file_get_contents($_GET['mapName'].".txt");
+        $map = json_decode($file, true);
+        $adjCases = array();
+        $radius = $_GET['radius'];
+        $x = $_GET['x'];
+        $y = $_GET['y'];
+        for ($i=1; $i < $radius + 1; $i++) {
+            // Haut gauche
+            if (isset($map[$y + $i][$x - $i])) {
+                $adjCases[$y + $i][$x - $i] = $map[$y + $i][$x - $i];
+            }
+            // Haut
+            if (isset($map[$y + $i][$x])) {
+                $adjCases[$y + $i][$x] = $map[$y + $i][$x];
+            }
+            // Haut droite
+            if (isset($map[$y + $i][$x + $i])) {
+                $adjCases[$y + $i][$x + $i] = $map[$y + $i][$x + $i];
+            }
+            // Droite
+            if (isset($map[$y][$x + $i])) {
+                $adjCases[$y][$x + $i] = $map[$y][$x + $i];
+            }
+            // Bas droite
+            if (isset($map[$y - $i][$x + $i])) {
+                $adjCases[$y - $i][$x + $i] = $map[$y - $i][$x + $i];
+            }
+            // Bas
+            if (isset($map[$y - $i][$x])) {
+                $adjCases[$y - $i][$x] = $map[$y - $i][$x];
+            }
+            // Bas gauche
+            if (isset($map[$y - $i][$x - $i])) {
+                $adjCases[$y - $i][$x - $i] = $map[$y - $i][$x - $i];
+            }
+            // Gauche
+            if (isset($map[$y][$x - $i])) {
+                $adjCases[$y][$x - $i] = $map[$y][$x - $i];
+            }
+        }
+
+
+        $adjCases = json_encode($adjCases);
+        $jsonResponse = new Response();
+        $jsonResponse->setContent($adjCases);
+        $jsonResponse->headers->set('Content-Type', 'application/json');
+
+        return $jsonResponse;
+
+
+
+
+
     }
 
 }
