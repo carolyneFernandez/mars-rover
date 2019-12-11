@@ -282,8 +282,8 @@ class DefaultController extends AbstractController
 
         foreach ($carteTemp as $lineKey => $line) {
             foreach ($line as $caseKey => $case) {
-                if ($case[1] == 1)
-                    $iceCases[$lineKey][$caseKey] = $case[0];
+                if ($case["material"] == "glace")
+                    $iceCases[$lineKey][$caseKey] = $case["z"];
             }
         }
 
@@ -310,12 +310,30 @@ class DefaultController extends AbstractController
             die;
         }
 
+        $contents = array(
+            'glace' => 1,
+            'roche' => 2,
+            'sable' => 3,
+            'minerai' => 4,
+            'argile' => 5,
+            'fer' => 6,
+            'inconnue' => 7,
+            '1' => 'glace',
+            '2' => 'roche',
+            '3' => 'sable',
+            '4' => 'minerai',
+            '5' => 'argile',
+            '6' => 'fer',
+            '7' => 'inconnue'
+        );
+
         $carteTemp = file_get_contents($_GET['mapName'] . '.txt');
         $carteTemp = json_decode($carteTemp, true);
         $x = $_GET['x'];
         $y = $_GET['y'];
         $idMaterial = 0;
-        $idMaterial = $carteTemp[$y][$x][1];
+        $material = $carteTemp[$y][$x]["material"];
+        $idMaterial = $contents[$material];
 
 //        foreach ($carteTemp as $lineKey => $line) {
 //            if ($lineKey == $y) {
@@ -354,7 +372,7 @@ class DefaultController extends AbstractController
         $y = $_GET['y'];
         $z = 0;
 
-        $z = $carteTemp[$y][$x][0];
+        $z = $carteTemp[$y][$x]["z"];
 
         $z = json_encode($z);
         $jsonResponse = new Response();
