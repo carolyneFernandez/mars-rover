@@ -3,8 +3,11 @@ class Game{
     _mode = 'race';
     _map = [];
     _rovers = [];
-    finish = null; // sera un tableau [x, y]
-    flag = null; // sera un tableau [x, y]
+    _finish = null; // sera un tableau [x, y]
+    _flag = null; // sera un tableau [x, y]
+    _winner = null; // sera un objet Rover
+    _round = 0;
+
 
     get mode() {
         return this._mode;
@@ -34,4 +37,39 @@ class Game{
         this._rovers.push(rover);
     }
 
+    get finish() {
+        return this._finish;
+    }
+
+    set finish(value) {
+        this._finish = value;
+    }
+
+    get flag() {
+        return this._flag;
+    }
+
+    set flag(value) {
+        this._flag = value;
+    }
+
+    get winner() {
+        return this._winner;
+    }
+
+    set winner(value) {
+        this._winner = value;
+    }
+
+    get round() {
+        return this._round;
+    }
+
+    set round(value) {
+        this._round = value;
+    }
+
+    nextRound(){
+        this._round++;
+    }
 }
