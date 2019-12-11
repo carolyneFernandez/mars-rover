@@ -1,0 +1,59 @@
+$Ice: #80ffff;
+$Rock: #d25e0f;
+$Sand: #ff9900;
+$Minerals: #B31AFF;
+$Clay: #ff8a3c;
+$Iron: #c0c0c0;
+$unknow: black;
+$visited-Rover1: blue opacity(0.5);
+$visited-Rover2: green opacity(0.5);
+
+.map-display {
+
+  margin: 50px auto auto;
+  border-collapse: collapse;
+
+  td {
+    width: 5px;
+    height: 5px;
+    //border: solid 0.5px white;
+  }
+
+  .glace {
+    background-color: $Ice;
+  }
+
+  .roche {
+    background-color: $Rock;
+  }
+
+  .sable {
+    background-color: $Sand;
+  }
+
+  .minerai {
+    background-color: $Minerals;
+  }
+
+  .argile {
+    background-color: $Clay;
+  }
+
+  .fer {
+    background-color: $Iron;
+  }
+
+  .inconnue {
+    background-color: $unknow;
+  }
+
+  .visited-rover1 {
+    background-color: $visited-Rover1;
+  }
+
+  .visited-rover2 {
+    background-color: $visited-Rover2;
+  }
+
+
+}

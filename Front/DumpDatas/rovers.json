@@ -1,17 +1,12 @@
 [
   {
-    "type": "dumb",
-    "roverName": "XX - DUMP",
+    "type": "economic",
+    "roverName": "XX - Economic",
     "pathImage": "./src/Assets/rover.png"
   },
   {
-    "type": "smart",
-    "roverName": "XX - SMART",
-    "pathImage": "./src/Assets/rover.png"
-  },
-  {
-    "type": "faster",
-    "roverName": "XX - FAST",
+    "type": "short",
+    "roverName": "XX - Short",
     "pathImage": "./src/Assets/rover.png"
   }
 ]

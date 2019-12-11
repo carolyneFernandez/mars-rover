@@ -1,11 +1,20 @@
+# Pour la première utilisation, lancer : docker network create --internal marsAPI
 version: '3'
 services:
-  web:
+  mars-rover-front:
     container_name: web_mars-rover-front
     image: httpd:2.4
     ports:
       - "3000:80"
+    networks:
+      - marsAPI
+      - frontend
     volumes:
       - ./:/usr/local/apache2/htdocs
 #      - ./apache2.conf:/etc/apache2/apache2.conf
 
+networks:
+  marsAPI:
+    external:
+      name: marsAPI # utilisation du réseau marsAPI déjà existent (sinon, il en créé un nouveau)
+  frontend:

@@ -119,3 +119,7 @@ function movePage(item, path){
         window.location.replace(path);
     }
 }
+
+
+const url_api_rover = "http://localhost/post-response";
+const url_api_carte = "http://localhost:8010/";
