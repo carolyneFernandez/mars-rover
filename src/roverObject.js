@@ -2,12 +2,16 @@ class roverObject {
     name = '';
     type = '';
     _map = '';
+    _originPosX = null;
+    _originPosY = null;
     _posX = null;
     _posY = null;
     _destX = null;
     _destY = null;
     _energy = 500;
     _memory = [];
+    _numRover = 0;
+    _hasFlag = false;
 
 
     constructor(name, type){
@@ -69,5 +73,37 @@ class roverObject {
 
     set memory(value) {
         this._memory = value;
+    }
+
+    get numRover() {
+        return this._numRover;
+    }
+
+    set numRover(value) {
+        this._numRover = value;
+    }
+
+    get originPosX() {
+        return this._originPosX;
+    }
+
+    set originPosX(value) {
+        this._originPosX = value;
+    }
+
+    get originPosY() {
+        return this._originPosY;
+    }
+
+    set originPosY(value) {
+        this._originPosY = value;
+    }
+
+    get hasFlag() {
+        return this._hasFlag;
+    }
+
+    set hasFlag(value) {
+        this._hasFlag = value;
     }
 }

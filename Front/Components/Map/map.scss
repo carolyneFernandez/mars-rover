@@ -1,3 +1,5 @@
+@import "../../Styles/variables";
+
 $Ice: #80ffff;
 $Rock: #d25e0f;
 $Sand: #ff9900;
@@ -5,55 +7,104 @@ $Minerals: #B31AFF;
 $Clay: #ff8a3c;
 $Iron: #c0c0c0;
 $unknow: black;
-$visited-Rover1: blue opacity(0.5);
-$visited-Rover2: green opacity(0.5);
+$visited-Rover1: blue;
+$visited-Rover2: green;
 
-.map-display {
+.container-game {
 
-  margin: 50px auto auto;
-  border-collapse: collapse;
 
-  td {
-    width: 5px;
-    height: 5px;
-    //border: solid 0.5px white;
+  .tableau-bord-rovers{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-around;
+    align-content: space-around;
+
+    .rover-round {
+        border-color: $colorOrange !important;
+    }
+
+    .tableau-bord-rover{
+      border: $colorBlueNeon solid 1px;
+      border-radius: 10px;
+    }
+
+    .text-blue-color{
+      color: $colorBlueNeon;
+      text-transform: uppercase;
+      font-family: $Iceland;
+      font-size: 1em;
+      padding: 0 10px;
+      text-shadow: 0 0 15px rgba($colorBlueNeon, 1);
+      outline: none;
+    }
+
   }
 
-  .glace {
-    background-color: $Ice;
+  .flex{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
   }
 
-  .roche {
-    background-color: $Rock;
+  .text-center {
+    text-align: center !important;
   }
 
-  .sable {
-    background-color: $Sand;
+  .map-display {
+
+    margin-top: 50px;
+    border-collapse: collapse;
+
+    td {
+      width: 5px;
+      height: 5px;
+      //border: solid 0.5px white;
+    }
+
+    .glace {
+      background-color: $Ice;
+    }
+
+    .roche {
+      background-color: $Rock;
+    }
+
+    .sable {
+      background-color: $Sand;
+    }
+
+    .minerai {
+      background-color: $Minerals;
+    }
+
+    .argile {
+      background-color: $Clay;
+    }
+
+    .fer {
+      background-color: $Iron;
+    }
+
+    .inconnue {
+      background-color: $unknow;
+    }
+
+    .visited-rover-economic {
+      background-color: $visited-Rover1;
+      opacity: 0.5;
+    }
+
+    .visited-rover-short {
+      background-color: $visited-Rover2;
+      opacity: 0.5;
+    }
+
+    .case-finish {
+      background-color: greenyellow;
+    }
+
+
   }
-
-  .minerai {
-    background-color: $Minerals;
-  }
-
-  .argile {
-    background-color: $Clay;
-  }
-
-  .fer {
-    background-color: $Iron;
-  }
-
-  .inconnue {
-    background-color: $unknow;
-  }
-
-  .visited-rover1 {
-    background-color: $visited-Rover1;
-  }
-
-  .visited-rover2 {
-    background-color: $visited-Rover2;
-  }
-
-
 }

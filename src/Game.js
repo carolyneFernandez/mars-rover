@@ -3,7 +3,8 @@ class Game{
     _mode = 'race';
     _map = [];
     _rovers = [];
-
+    finish = null; // sera un tableau [x, y]
+    flag = null; // sera un tableau [x, y]
 
     get mode() {
         return this._mode;

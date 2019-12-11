@@ -29,9 +29,11 @@ $(document).ready(function () {
     console.log(mapConf);
     console.log(modSelected);
     console.log(game);
-
+    console.log(game.rovers.length);
     // Affichage de la map à l'écran
     displayMap(mapConf.map);
+    initRovers(game);
+
 
 
     console.log(game.rovers[0]);
@@ -40,26 +42,61 @@ $(document).ready(function () {
 
 });
 
-function initRovers(game){
+function initGame(game) {
+    if(game.finishX == null || game.finishY == null){
+        if(game.mode == "race"){
+            setInstruction("Sélectionner l'arrivée");
+        }else{
+            setInstruction("Sélectionner l'emplacement du drapeau");
+        }
+        $("td").on("click", function(){
+            setPosFinish(this, game);
+        });
+    }
+}
 
+function initRovers(game){
+    let roverParam  = 0;
     $.each(game.rovers, function(index, rover){
         if( rover.pos_x == null || rover.pos_y == null ) {
-            $("#game-inscructions").html("Sélectionner la position de départ du rover "+rover.name);
-            $("td").on("click", setPosRover, {'rover':rover} );
+
+            rover.num = index;
+            setInstruction("Sélectionner la position de départ du rover "+rover.name);
+            $("td").on("click", function(){
+                setPosRover(this, rover, game);
+            });
+            return false;
         }else{
-            $("td").off("click", setPosRover, {'rover':rover} );
+            roverParam++;
+            $("td").off("click");
         }
     });
+    if(roverParam === game.rovers.length) initGame(game);
 
 
 }
 
-function setPosRover(rover){
-    console.log(this);
-    const coordonnees = $(this).attr('data-coor').split('_');
+function setPosFinish(evt, game){
+    console.log(evt);
+    const coordonnees = $(evt).attr('data-coor').split('_');
     console.log(coordonnees);
-    rover.pos_x(coordonnees[0]).pos_y(coordonnees[1]);
+    game.finishX = coordonnees[0];
+    game.finishY = coordonnees[1];
+    $(evt).addClass("case-finish");
+    setInstruction("C'est parti !!");
+}
 
+function setPosRover(evt, rover, game){
+    console.log(evt);
+    const coordonnees = $(evt).attr('data-coor').split('_');
+    console.log(coordonnees);
+    rover.pos_x = coordonnees[0];
+    rover.pos_y = coordonnees[1];
+    rover.originPosX = coordonnees[0];
+    rover.originPosY = coordonnees[1];
+    rmInstruction();
+    displayRover(rover);
+    initRovers(game);
 }
 
 
@@ -70,8 +107,15 @@ function constructGame(modSelected, mapConf, roversSelected){
     game.map = mapConf.mapName;
 
     // Affectation des rovers sélectionnés au jeu
-    $.each(roversSelected, function (rover, value) {
-        game.addRover(value);
+    $.each(roversSelected, function (index, rover) {
+        let chained = '<div class="tableau-bord-rover" data-rover="'+rover.num+'" >';
+        chained+='<h2 class="name-rover title">'+rover.name+'</h2>';
+        chained+='<div class="coordonnees-rover text-blue-color">Coordonnées : <span id="coordonnees-rover-'+rover.num+'"></span></div>';
+        chained+='<div class="ernegy-rover text-blue-color">Energie : <span id="energy-rover-'+rover.num+'">'+rover._energy+'</span></div>';
+        chained += '</div>';
+        $(".tableau-bord-rovers").append(chained);
+
+        game.addRover(rover);
     });
 
     return game;
@@ -89,7 +133,27 @@ function displayMap(map){
         $(".map-display").append(chained);
     });
 
+}
 
+
+function displayRover(rover){
+    const coordonnees = rover.pos_x+'_'+rover.pos_y;
+    $(".posRover"+rover.type).removeClass("posRover-"+rover.type);
+    $("td[data-coor='"+coordonnees+"']").addClass("visited-rover-"+rover.type).addClass("posRover-"+rover.type);
+}
+
+function displayRovers(game){
+    $.each(game.rovers, function (index, rover) {
+        displayRover(rover);
+    });
+}
+
+function setInstruction(instruction){
+    $("#game-inscructions").html(instruction);
+}
+
+function rmInstruction(){
+    setInstruction("&nbsp;");
 }
 
 
