@@ -57,7 +57,7 @@ class DefaultController extends AbstractController
             fputs($carteTemp, json_encode($arrayMap));
             $mapName = stream_get_meta_data($carteTemp)["uri"];
             fclose($carteTemp);
-
+            $mapName = str_replace(".txt", '', $mapName);
             $arrayMap = [
                 "mapName" => $mapName,
                 "difficulty" => $level,
