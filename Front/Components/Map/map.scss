@@ -12,6 +12,17 @@ $visited-Rover2: green;
 
 .container-game {
 
+  .hidden{
+    display: none;
+  }
+
+  #instruction{
+    position: fixed;
+    right: 0;
+    left: 0;
+    top: 10px;
+  }
+
 
   .tableau-bord-rovers{
     display: flex;
@@ -25,8 +36,10 @@ $visited-Rover2: green;
     }
 
     .tableau-bord-rover{
-      border: $colorBlueNeon solid 1px;
+      border: $colorBlueNeon solid 2px;
       border-radius: 10px;
+      margin-bottom: 20px;
+      padding: 0 10px 10px;
     }
 
     .text-blue-color{

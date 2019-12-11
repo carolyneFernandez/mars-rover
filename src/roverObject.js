@@ -8,7 +8,7 @@ class roverObject {
     _posY = null;
     _destX = null;
     _destY = null;
-    _energy = 500;
+    _energy = null;
     _memory = {};
     _numRover = 0;
     _hasFlag = false;

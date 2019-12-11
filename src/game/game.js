@@ -4,7 +4,7 @@ $(document).ready(function () {
     const mapConf = jQuery.parseJSON(localStorage.getItem('mapData'));
     const modSelected = jQuery.parseJSON(localStorage.getItem('modSelected'));
     const roversSelected = jQuery.parseJSON(localStorage.getItem('roversSelected'));
-
+    if(mapConf === null) window.location.replace("./index.html");
     const CONTENTS = {
             '1':
                 'glace',
@@ -41,37 +41,105 @@ $(document).ready(function () {
 });
 
 function gameRace(game) {
+        rmInstruction();
+    // setTimeout(function(){
+    // }, 2000);
     console.log("racccceeeeee");
 
-    while (game.round < 3) {
+    while (game.winner === null) {
+        newRoundRover(game);
+    }
 
-        $.each(game.rovers, function (index, rover) {
-                const data =
-                    {
-                        typeRover: rover.type,
-                        posX: parseInt(rover.pos_x),
-                        posY: parseInt(rover.pos_y),
-                        destX: parseInt(game.finish[0]),
-                        destY: parseInt(game.finish[1]),
-                        energy: parseInt(rover._energy),
-                        map: game._map,
-                        memory: rover._memory
-                    };
+
+
+}
+
+function newRoundRover(game) {
+    $.each(game.rovers, function (index, rover) {
+
+        $("#tableau-bord-rover-"+rover.num).addClass("rover-round");
+        let data =
+            {
+                "posX": parseInt(rover._posX),
+                "posY": parseInt(rover._posY),
+                "typeRover": rover.type,
+                "energy": parseInt(rover._energy),
+                "destX": parseInt(game.finish[0]),
+                "destY": parseInt(game.finish[1]),
+                "map": game._map,
+                "memory": rover._memory
+            };
+
+        data = JSON.stringify(data);
+        console.log(data);
+        $.ajax({
+            url: url_api_rover,
+            async: false,
+            type: "POST",
+            data: data,
+            contentType: "application/json",
+            dataType: "json",
+            success: function (data, status) {
+                data = JSON.parse(data);
                 console.log(data);
-                $.post(url_api_rover,   // url
-                    JSON.stringify(data), // data to be submit
-                    function(data, status, jqXHR) {// success callback
-                        console.log(data);
-                        // $('p').append('status: ' + status + ', data: ' + data);
-                    });
+                rover._posX = data.nextX;
+                rover._posY = data.nextY;
+                rover._memory = data.memory;
+                rover._energy = data.energyRest;
+                displayRover(rover);
+            },
+            error : function(data, status, erreur){
+                console.log(erreur);
+            },
+            complete: function(data, status){
+                // console.log(erreur);
+
+            }
+        });
+        $("#tableau-bord-rover-"+rover.num).removeClass("rover-round");
+    });
+    game.nextRound();
+    console.log(game._round);
+    return verifWinner(game);
+
+}
+
+function verifWinner(game){
+
+    if(game.mode === "Race"){
+
+        $.each(game.rovers, function(index, rover){
+           if(parseInt(rover._posX) === parseInt(game._finish[0]) && parseInt(rover._posY) === parseInt(game._finish[1]) ) {
+
+               // Vainqueur de la course !
+               game.winner = rover;
+               setInstruction("Le rover "+game.winner.name+" a gagné !!!");
+               $("#resetGame").removeClass("hidden");
+               $("#resetGame").on("click", function(){
+                   resetGame(game);
+               });
+               return false;
+
+           }
+           while(game.winner !== null){
+
+               newRoundRover(game);
+
+           }
 
         });
 
-        game.nextRound();
+        // if(parseInt(game._round) < 3){
+        //     newRoundRover(game);
+        // }else{
+        //     return false;
+        // }
 
     }
 
+
 }
+
 
 function gameFlag(game) {
 
@@ -105,7 +173,7 @@ function initGame(game) {
 function initRovers(game) {
     let roverParam = 0;
     $.each(game.rovers, function (index, rover) {
-        if (rover.pos_x == null || rover.pos_y == null) {
+        if (rover._posX === null || rover._posY === null) {
 
             // rover.num = index;
             setInstruction("Sélectionner la position de départ du rover " + rover.name);
@@ -120,11 +188,11 @@ function initRovers(game) {
     });
     if (roverParam === game.rovers.length) initGame(game);
 
-
 }
 
 function setPosFinish(evt, game) {
     console.log(evt);
+    $("td").off("click");
     const coordonnees = $(evt).attr('data-coor').split('_');
     console.log(coordonnees);
     game.finish = [coordonnees[0], coordonnees[1]];
@@ -139,8 +207,8 @@ function setPosRover(evt, rover, game) {
     console.log(evt);
     const coordonnees = $(evt).attr('data-coor').split('_');
     console.log(coordonnees);
-    rover.pos_x = coordonnees[0];
-    rover.pos_y = coordonnees[1];
+    rover._posX = coordonnees[0];
+    rover._posY = coordonnees[1];
     rover.originPosX = coordonnees[0];
     rover.originPosY = coordonnees[1];
     rmInstruction();
@@ -158,12 +226,14 @@ function constructGame(modSelected, mapConf, roversSelected) {
     // Affectation des rovers sélectionnés au jeu
     $.each(roversSelected, function (index, rover) {
         rover.num = index;
-        let chained = '<div class="tableau-bord-rover" data-rover="' + rover.num + '" >';
+        rover._energy = energyMax;
+        let chained = '<div class="tableau-bord-rover" id="tableau-bord-rover-' + rover.num + '" >';
         chained += '<h2 class="name-rover title">' + rover.name + '</h2>';
         chained += '<div class="coordonnees-rover text-blue-color">Coordonnées : <span id="coordonnees-rover-' + rover.num + '"></span></div>';
         chained += '<div class="ernegy-rover text-blue-color">Energie : <span id="energy-rover-' + rover.num + '">' + rover._energy + '</span></div>';
         chained += '</div>';
-        $(".tableau-bord-rovers").append(chained);
+        // $(".tableau-bord-rovers").append(chained);
+        $(chained).insertBefore("#resetGame");
 
         game.addRover(rover);
     });
@@ -187,9 +257,11 @@ function displayMap(map) {
 
 
 function displayRover(rover) {
-    const coordonnees = rover.pos_x + '_' + rover.pos_y;
+    const coordonnees = rover._posX + '_' + rover._posY;
     $(".posRover" + rover.type).removeClass("posRover-" + rover.type);
     $("td[data-coor='" + coordonnees + "']").addClass("visited-rover-" + rover.type).addClass("posRover-" + rover.type);
+    $("#energy-rover-"+rover.num).html(rover._energy);
+    $("#coordonnees-rover-"+rover.num).html('('+rover._posX+','+rover._posY+')');
 }
 
 function displayRovers(game) {
@@ -206,6 +278,35 @@ function rmInstruction() {
     setInstruction("&nbsp;");
 }
 
+function resetGame(game){
 
+    $.each(game.rovers, function(index, rover){
+
+        rover._hasFlag = false;
+        rover._originPosX = null;
+        rover._originPosY = null;
+        rover._posX = null;
+        rover._posY = null;
+        rover._destX = null;
+        rover._destY = null;
+        rover._energy = energyMax;
+        rover._memory = {};
+        $(".visited-rover-" + rover.type).removeClass("visited-rover-" + rover.type);
+
+    });
+
+    game._round = 0;
+    game._winner = null;
+    game._finish = null;
+    game._flag = null;
+    $(".case-finish").removeClass("case-finish");
+    $("#resetGame").addClass('hidden');
+    displayRovers(game);
+
+    initRovers(game);
+
+
+
+}
 
 
