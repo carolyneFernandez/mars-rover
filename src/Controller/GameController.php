@@ -303,8 +303,8 @@ class GameController extends AbstractController
                 $rover->setMemory($parameters['memory']);
             }
             if (!empty($errors)) {
-//                dump($errors);
-//                die;
+                dump($errors);
+                die;
             }
             // result est un array avec comme paramètre nextX, nextY, energyRest et memory
             $result = $rover->choiceStep();

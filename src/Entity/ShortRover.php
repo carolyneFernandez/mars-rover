@@ -97,7 +97,7 @@ class ShortRover extends Rover
     public function calculEnergy($table, $x1, $y1, $x2, $y2)
     {
 
-        $mateialCost = $this->constEnergy[$table[$y1][$x1][1]];
+        $mateialCost = $this->constEnergy[$this->requestGetContent($x1, $y1)];
         $pendentPorcentaje = $this->porcentagePendent($table, $x1, $y1, $x2, $y2);
         $distanceMetre = $this->distanceBetweenCase($x1, $y1, $x2, $y2);
 
