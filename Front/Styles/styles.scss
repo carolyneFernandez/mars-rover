@@ -1,4 +1,7 @@
 // import SCSS files from everywhere
+// all SCSS file are here, there are call in index.html
+// this allow to have only one file to call
+
 @import "../Components/UI/main";
 @import "../Components/UI/buttons";
 @import "../Components/Particles/particles";
