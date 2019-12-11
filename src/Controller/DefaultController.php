@@ -119,9 +119,12 @@ class DefaultController extends AbstractController
         } else if ($case->getPosZ() > -25 && $case->getPosZ() <= -10) {
             $case->setMaterials($sable);
 
-        } else if ($case->getPosZ() > -10 && $case->getPosZ() <= 10) {
+        } else if ($case->getPosZ() > -10 && $case->getPosZ() <= 9) {
             $case->setMaterials($argile);
-
+      
+        } else if ($case->getPosZ() > 9 && $case->getPosZ() <= 10) {
+            $case->setMaterials($glace);
+ 
         } else if ($case->getPosZ() > 10 && $case->getPosZ() <= 25) {
             $case->setMaterials($sable);
 
