@@ -7,6 +7,7 @@ use App\Entity\IntelligentRover;
 use App\Entity\Rover;
 use App\Entity\ShortRover;
 use App\Service\EcoRoverService;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -258,6 +259,7 @@ class GameController extends AbstractController
         * restEnergy -> restant d'énergie après le déplacement,
         * array momery ( array -> un tableau renvoyer sans traitement par le front ).
         */
+        $response = null;
         if ($request->isMethod('POST')) {
             if (isset($parameters['typeRover'])) {
                 switch ($parameters['typeRover']) {
@@ -278,18 +280,18 @@ class GameController extends AbstractController
 
             }
             if (isset($parameters['posX']) && isset($parameters['posY'])) {
-                $rover->setPosX($parameters['posX'])->setPosY($parameters['posY']);
+                $rover->setPosX(intval($parameters['posX']))->setPosY(intval($parameters['posY']));
                 $rover->setPosZ($rover->requestGetZ($rover->getPosX(), $rover->getPosY()));
             } else {
                 $errors[] = "La position du rover n'est pas renseignée.";
             }
             if (isset($parameters['destX']) && isset($parameters['destY'])) {
-                $rover->setDestX($parameters['destX'])->setDestY($parameters['destY']);
+                $rover->setDestX(intval($parameters['destX']))->setDestY(intval($parameters['destY']));
             } else {
                 $errors[] = "La destination du rover n'est pas renseignée.";
             }
             if (isset($parameters['energy'])) {
-                $rover->setEnergy($parameters['energy']);
+                $rover->setEnergy(intval($parameters['energy']));
             } else {
                 $errors[] = "L'énergie du rover n'est pas renseignée.";
             }
@@ -312,11 +314,12 @@ class GameController extends AbstractController
             $response = json_encode($result);
 
         }
-        $jsonResponse = new Response();
-        $jsonResponse->setContent($response);
-        $jsonResponse->headers->set('Content-Type', 'application/json');
-
-        return $jsonResponse;
+//        $jsonResponse = new Response();
+//        $jsonResponse->setContent($response);
+//        $jsonResponse->headers->set('Content-Type', 'application/json');
+//
+//        return $jsonResponse;
+        return new JsonResponse($response);
 
     }
 
