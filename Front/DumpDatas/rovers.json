@@ -2,11 +2,11 @@
   {
     "type": "economic",
     "roverName": "XX - Economic",
-    "pathImage": "./src/Assets/rover.png"
+    "pathImage": "./src/Assets/roverEco.png"
   },
   {
     "type": "short",
     "roverName": "XX - Short",
-    "pathImage": "./src/Assets/rover.png"
+    "pathImage": "./src/Assets/roverDumb.png"
   }
 ]

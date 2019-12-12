@@ -247,7 +247,49 @@ function displayMap(map) {
     $.each(map, function (y, resteY) {
         let chained = "<tr>";
         $.each(resteY, function (x, caseMap) {
-            chained += '<td class="' + caseMap.material + '" data-coor="' + x + '_' + y + '"></td>';
+            if(-100 < caseMap.z && caseMap.z < -90){
+                chained += '<td class="'+caseMap.material+' z-100_-90" data-coor="'+x+'_'+y+'"></td>';
+            } else if(-90 < caseMap.z && caseMap.z < -80){
+                chained += '<td class="'+caseMap.material+' z-90_-80" data-coor="'+x+'_'+y+'"></td>';
+            } else if(-80 < caseMap.z && caseMap.z < -70){
+                chained += '<td class="'+caseMap.material+' z-80_-70" data-coor="'+x+'_'+y+'"></td>';
+            } else if(-70 < caseMap.z && caseMap.z < -60){
+                chained += '<td class="'+caseMap.material+' z-70_-60" data-coor="'+x+'_'+y+'"></td>';
+            } else if(-60 < caseMap.z && caseMap.z < -50){
+                chained += '<td class="'+caseMap.material+' z-60_-50" data-coor="'+x+'_'+y+'"></td>';
+            } else if(-50 < caseMap.z && caseMap.z < -40){
+                chained += '<td class="'+caseMap.material+' z-50_-40" data-coor="'+x+'_'+y+'"></td>';
+            } else if(-40 < caseMap.z && caseMap.z < -30){
+                chained += '<td class="'+caseMap.material+' z-40_-30" data-coor="'+x+'_'+y+'"></td>';
+            } else if(-30 < caseMap.z && caseMap.z < -20){
+                chained += '<td class="'+caseMap.material+' z-30_-20" data-coor="'+x+'_'+y+'"></td>';
+            } else if(-20 < caseMap.z && caseMap.z < -10){
+                chained += '<td class="'+caseMap.material+' z-20_-10" data-coor="'+x+'_'+y+'"></td>';
+            } else if(-10 < caseMap.z && caseMap.z < 0){
+                chained += '<td class="'+caseMap.material+' z-10_0" data-coor="'+x+'_'+y+'"></td>';
+            } else if(0 < caseMap.z && caseMap.z < 10){
+                chained += '<td class="'+caseMap.material+' z0_10" data-coor="'+x+'_'+y+'"></td>';
+            } else if(10 < caseMap.z && caseMap.z < 20){
+                chained += '<td class="'+caseMap.material+' z10_20" data-coor="'+x+'_'+y+'"></td>';
+            } else if(20 < caseMap.z && caseMap.z < 30){
+                chained += '<td class="'+caseMap.material+' z20_30" data-coor="'+x+'_'+y+'"></td>';
+            } else if(30 < caseMap.z && caseMap.z < 40){
+                chained += '<td class="'+caseMap.material+' z30_40" data-coor="'+x+'_'+y+'"></td>';
+            } else if(40 < caseMap.z && caseMap.z < 50){
+                chained += '<td class="'+caseMap.material+' z40_50" data-coor="'+x+'_'+y+'"></td>';
+            } else if(50 < caseMap.z && caseMap.z < 60){
+                chained += '<td class="'+caseMap.material+' z50_60" data-coor="'+x+'_'+y+'"></td>';
+            } else if(60 < caseMap.z && caseMap.z < 70){
+                chained += '<td class="'+caseMap.material+' z60_70" data-coor="'+x+'_'+y+'"></td>';
+            } else if(70 < caseMap.z && caseMap.z < 80){
+                chained += '<td class="'+caseMap.material+' z70_80" data-coor="'+x+'_'+y+'"></td>';
+            } else if(80 < caseMap.z && caseMap.z < 90){
+                chained += '<td class="'+caseMap.material+' z80_90" data-coor="'+x+'_'+y+'"></td>';
+            } else if(90 < caseMap.z && caseMap.z < 100){
+                chained += '<td class="'+caseMap.material+' z90_100" data-coor="'+x+'_'+y+'"></td>';
+            } else {
+                chained += '<td class="'+caseMap.material+'" data-coor="'+x+'_'+y+'"></td>';
+            }
         });
         chained += "</tr>";
         $(".map-display").append(chained);

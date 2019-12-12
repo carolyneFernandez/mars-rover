@@ -35,7 +35,7 @@ function createRequestMapInit() {
             });
     } else if (mapSelected === 'CustomMap') {
         const quantity = JSON.parse(localStorage.getItem('quantity'));
-        let sRequest = url_api_carte + '?parameters_map[difficulty]=${difficultySelected}';
+        let sRequest = url_api_carte + `?parameters_map[difficulty]=${difficultySelected}`;
 
         console.log(quantity);
 
@@ -46,8 +46,9 @@ function createRequestMapInit() {
                 sRequest += `&parameters_map[${quantity[i].name}]=1`;
             }
         }
-
-        fetch(sRequest)
+        sRequest = encodeURI(sRequest);
+        const request = new Request(sRequest);
+        fetch(request)
             .then(function (data) {
                 // console.log(data);
                 return data.json();
