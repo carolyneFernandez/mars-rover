@@ -1,5 +1,5 @@
 body {
-  height: 100vh;
+  height: 100%;
   margin: 0;
   padding: 0;
 }
@@ -153,9 +153,9 @@ main {
 }
 
 .particles {
-  height: 100vh;
+  height: 100%;
   width: 100vw;
-  background: #121212;
+  background: black;
   position: absolute;
   top: 0;
   z-index: 0;
@@ -427,4 +427,92 @@ main {
   cursor: pointer;
 }
 
-/*# sourceMappingURL=style.css.map */
+.container-game .hidden {
+  display: none;
+}
+.container-game #instruction {
+  position: fixed;
+  right: 0;
+  left: 0;
+  top: 10px;
+}
+.container-game .tableau-bord-rovers {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-around;
+  align-content: space-around;
+}
+.container-game .tableau-bord-rovers .rover-round {
+  border-color: #FEA806 !important;
+}
+.container-game .tableau-bord-rovers .tableau-bord-rover {
+  border: #06D4FE solid 2px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  padding: 0 10px 10px;
+}
+.container-game .tableau-bord-rovers .text-blue-color {
+  color: #06D4FE;
+  text-transform: uppercase;
+  font-family: "Iceland", cursive;
+  font-size: 1em;
+  padding: 0 10px;
+  text-shadow: 0 0 15px #06d4fe;
+  outline: none;
+}
+.container-game .flex {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+.container-game .text-center {
+  text-align: center !important;
+}
+.container-game .map-display {
+  margin-top: 50px;
+  border-collapse: collapse;
+}
+.container-game .map-display td {
+  width: 5px;
+  height: 5px;
+}
+.container-game .map-display .glace {
+  background-color: #80ffff;
+}
+.container-game .map-display .roche {
+  background-color: #d25e0f;
+}
+.container-game .map-display .sable {
+  background-color: #ff9900;
+}
+.container-game .map-display .minerai {
+  background-color: #B31AFF;
+}
+.container-game .map-display .argile {
+  background-color: #ff8a3c;
+}
+.container-game .map-display .fer {
+  background-color: #c0c0c0;
+}
+.container-game .map-display .inconnue {
+  background-color: black;
+}
+.container-game .map-display .visited-rover-economic {
+  background-color: blue;
+  opacity: 0.5;
+}
+.container-game .map-display .visited-rover-short {
+  background-color: green;
+  opacity: 0.5;
+}
+.container-game .map-display .visited-rover-economic.visited-rover-short {
+  background-color: red !important;
+  opacity: 0.5;
+}
+.container-game .map-display .case-finish {
+  background-color: greenyellow;
+}
+
+/*# sourceMappingURL=styles.css.map */

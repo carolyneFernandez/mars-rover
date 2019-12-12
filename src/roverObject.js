@@ -12,6 +12,7 @@ class roverObject {
     _memory = {};
     _numRover = 0;
     _hasFlag = false;
+    _arrived = false;
 
 
     constructor(name, type){

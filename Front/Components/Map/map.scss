@@ -9,6 +9,7 @@ $Iron: #c0c0c0;
 $unknow: black;
 $visited-Rover1: blue;
 $visited-Rover2: green;
+$visited-all-rover: red;
 
 .container-game {
 
@@ -111,6 +112,11 @@ $visited-Rover2: green;
 
     .visited-rover-short {
       background-color: $visited-Rover2;
+      opacity: 0.5;
+    }
+
+    .visited-rover-economic.visited-rover-short {
+      background-color: $visited-all-rover !important;
       opacity: 0.5;
     }
 
