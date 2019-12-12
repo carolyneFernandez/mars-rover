@@ -26,27 +26,28 @@ $(document).ready(function () {
     // Construction du jeu
     let game = constructGame(modSelected, mapConf, roversSelected);
 
-    console.log(mapConf);
-    console.log(modSelected);
-    console.log(game);
-    console.log(game.rovers.length);
+    // console.log(mapConf);
+    // console.log(modSelected);
+    // console.log(game);
+    // console.log(game.rovers.length);
+
     // Affichage de la map à l'écran
     displayMap(mapConf.map);
+    // Initialisation des rovers
     initRovers(game);
 
-
-    console.log(game.rovers[0]);
+    // console.log(game.rovers[0]);
 
 
 });
 
 function gameRace(game) {
+    // Lancement du mode Race
+
     rmInstruction();
-    // setTimeout(function(){
-    // }, 2000);
-    console.log("racccceeeeee");
 
     while (game.winner === null) {
+        // Appel de la fonction récursive qui va intérroger l'API Rover sur son prochain déplacement
         newRoundRover(game);
     }
 
@@ -54,7 +55,8 @@ function gameRace(game) {
 }
 
 function newRoundRover(game) {
-    let response = 0;
+
+    // Pour chaque rover, on demande à l'API rover son prochain coup en fonction de son type de rover, sa position, sa destination, son ernergy et sa mémoire. (sur la carte actuelle)
     $.each(game.rovers, function (index, rover) {
 
         $("#tableau-bord-rover-" + rover.num).addClass("rover-round");
@@ -71,23 +73,23 @@ function newRoundRover(game) {
             };
 
         data = JSON.stringify(data);
-        console.log(data);
+        // console.log(data);
         $.ajax({
             url: url_api_rover,
-            async: false,
+            async: false, // on coupe le asyncrhone afin que les requêtes se fasses une par une.
             type: "POST",
             data: data,
             contentType: "application/json",
             dataType: "json",
             success: function (data, status) {
+                // Réponse de l'API ROVER, on enregistre tous les résultats
                 data = JSON.parse(data);
-                console.log(data);
                 rover._posX = data.nextX;
                 rover._posY = data.nextY;
                 rover._memory = data.memory;
                 rover._energy = data.energyRest;
                 rover._arrived = data.arrived;
-                displayRover(rover);
+                displayRover(rover); // On met à jour les infos du rover à l'écran (tableau de bord et carte)
             },
             error: function (data, status, erreur) {
                 console.log(erreur);
@@ -101,12 +103,13 @@ function newRoundRover(game) {
     });
 
     game.nextRound();
-    console.log(game._round);
     return verifWinner(game);
 
 }
 
 function verifWinner(game) {
+
+    // Fonction qui vérifie s'il y a un gagnant après chaque tour.
 
     if (game.mode === "Race") {
 
@@ -125,19 +128,15 @@ function verifWinner(game) {
             }
             while (game.winner !== null) {
                 if (roverAllArrived(game)) {
+                    // Si les rovers sont bloqué, on arrête le jeu
                     return false;
                 }
+                // Tant qu'il n'y a pas de gagnant on rappel la fonction récursive encore et encore.
                 newRoundRover(game);
 
             }
 
         });
-
-        // if(parseInt(game._round) < 3){
-        //     newRoundRover(game);
-        // }else{
-        //     return false;
-        // }
 
     }
 
@@ -151,6 +150,8 @@ function gameFlag(game) {
 
 
 function launchGame(game) {
+    // Lancement du jeu en fonction du mode de jeu choisi
+
     if (game.mode === 'Race') {
         gameRace(game);
     } else {
@@ -195,10 +196,9 @@ function initRovers(game) {
 }
 
 function setPosFinish(evt, game) {
-    console.log(evt);
+    // Fonction qui défini la position de l'arrivée en fonction d'une case cliqué sur la carte
     $("td").off("click");
     const coordonnees = $(evt).attr('data-coor').split('_');
-    console.log(coordonnees);
     game.finish = [coordonnees[0], coordonnees[1]];
     $(evt).addClass("case-finish");
     setInstruction("C'est parti !!");
@@ -208,9 +208,8 @@ function setPosFinish(evt, game) {
 }
 
 function setPosRover(evt, rover, game) {
-    console.log(evt);
+    // Fonction qui défini la position du rover en fonction d'une case cliqué sur la carte (initialisation des positions des rovers)
     const coordonnees = $(evt).attr('data-coor').split('_');
-    console.log(coordonnees);
     rover._posX = coordonnees[0];
     rover._posY = coordonnees[1];
     rover.originPosX = coordonnees[0];
@@ -248,6 +247,7 @@ function constructGame(modSelected, mapConf, roversSelected) {
 
 
 function displayMap(map) {
+    // Affiche la carte à l'écran
     $.each(map, function (y, resteY) {
         let chained = "<tr>";
         $.each(resteY, function (x, caseMap) {
@@ -261,6 +261,7 @@ function displayMap(map) {
 
 
 function displayRover(rover) {
+    // Fonction qui met à jour les infos du rover sur la carte.
     const coordonnees = rover._posX + '_' + rover._posY;
     $(".posRover" + rover.type).removeClass("posRover-" + rover.type);
     $("td[data-coor='" + coordonnees + "']").addClass("visited-rover-" + rover.type).addClass("posRover-" + rover.type);
@@ -269,6 +270,7 @@ function displayRover(rover) {
 }
 
 function displayRovers(game) {
+    // Fonction qui met à jour les infos de tous les rovers sur la carte
     $.each(game.rovers, function (index, rover) {
         displayRover(rover);
     });
@@ -283,6 +285,7 @@ function rmInstruction() {
 }
 
 function resetGame(game) {
+    //Fonction qui remet la carte et les rovers à zéro
 
     $.each(game.rovers, function (index, rover) {
 
