@@ -13,8 +13,9 @@ function getRovers(){
     // });
 
     const request = new Request('Front/DumpDatas/rovers.json');
+    const requestAsupp = new Request('http://localhost:80/rovers.json');
 
-    fetch(request)
+    fetch(requestAsupp)
         .then(function(response) { return response.json(); })
         .then(function(data) {
             for(let i = 0; i < data.length; i++){
@@ -28,7 +29,7 @@ function getRoversSelected(){
     let roversSelected = [];
 
     for(let i = 0; i < rovers.length; i++){
-        roversSelected.push(new roverObject(rovers[i].parentElement.attributes.name.value, rovers[i].parentElement.attributes.value.value));
+        roversSelected.push(new roverObject(rovers[i].attributes.name.value, rovers[i].attributes.value.value));
     }
     window.localStorage.setItem('roversSelected', JSON.stringify(roversSelected));
 
@@ -72,6 +73,13 @@ function createRover(name, type, path) {
 function getName(e) {
     const containerSelectedRoverName = document.getElementById('selectedRoverName');
     containerSelectedRoverName.innerText = e.target.getAttribute('name');
+    getImage(e);
+}
+
+function getImage(e) {
+    const containerSelectedRoverImage = document.getElementById('selectedRoverImage');
+    const path = e.target.firstChild.firstChild.getAttribute('src');
+    containerSelectedRoverImage.setAttribute('src', path);
 }
 
 function selectedRover(e){
