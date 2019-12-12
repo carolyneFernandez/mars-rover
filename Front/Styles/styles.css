@@ -507,6 +507,10 @@ main {
   background-color: green;
   opacity: 0.5;
 }
+.container-game .map-display .visited-rover-economic.visited-rover-short {
+  background-color: red !important;
+  opacity: 0.5;
+}
 .container-game .map-display .case-finish {
   background-color: greenyellow;
 }
