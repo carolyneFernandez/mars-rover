@@ -121,8 +121,8 @@ function movePage(item, path){
 }
 
 
-// const url_api_rover = "http://localhost:8020/post-response";
-// const url_api_carte = "http://localhost:8010/";
-const url_api_rover = "http://ubuntu-srv:8020/post-response";
-const url_api_carte = "http://ubuntu-srv:8010/";
+const url_api_rover = "http://localhost:8020/post-response";
+const url_api_carte = "http://localhost:8010/";
+// const url_api_rover = "http://ubuntu-srv:8020/post-response";
+// const url_api_carte = "http://ubuntu-srv:8010/";
 const energyMax = 100;
