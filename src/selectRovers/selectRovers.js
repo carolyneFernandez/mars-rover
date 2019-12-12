@@ -12,8 +12,8 @@ function getRovers(){
     //     }
     // });
 
-    const request = new Request('Front/DumpDatas/rovers.json');
-    const requestAsupp = new Request('http://localhost:80/rovers.json');
+    const requestAsupp = new Request('Front/DumpDatas/rovers.json');
+    // const requestAsupp = new Request('http://localhost:80/rovers.json');
 
     fetch(requestAsupp)
         .then(function(response) { return response.json(); })
