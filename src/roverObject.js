@@ -13,6 +13,7 @@ class roverObject {
     _numRover = 0;
     _hasFlag = false;
     _arrived = false;
+    _image = "";
 
 
     constructor(name, type){

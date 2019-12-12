@@ -232,8 +232,19 @@ function constructGame(modSelected, mapConf, roversSelected) {
         rover._energy = energyMax;
         let chained = '<div class="tableau-bord-rover" id="tableau-bord-rover-' + rover.num + '" >';
         chained += '<h2 class="name-rover title">' + rover.name + '</h2>';
+        let img = "rover.png";
+        if(rover.type === "economic"){
+            img = "roverEco.png";
+        }else if(rover.type === "short") {
+            img = "roverDumb.png";
+        }
+        chained += '<div class="flex">';
+        chained += '<img src="./src/Assets/'+img+'"  class="img-rover">';
+        chained += '<div>';
         chained += '<div class="coordonnees-rover text-blue-color">Coordonnées : <span id="coordonnees-rover-' + rover.num + '"></span></div>';
         chained += '<div class="ernegy-rover text-blue-color">Energie : <span id="energy-rover-' + rover.num + '">' + rover._energy + '</span></div>';
+        chained += '</div>';
+        chained += '</div>';
         chained += '</div>';
         // $(".tableau-bord-rovers").append(chained);
         $(chained).insertBefore("#resetGame");
@@ -306,6 +317,8 @@ function displayRover(rover) {
     // Fonction qui met à jour les infos du rover sur la carte.
     const coordonnees = rover._posX + '_' + rover._posY;
     $(".posRover" + rover.type).removeClass("posRover-" + rover.type);
+    $("td[data-coor='" + coordonnees + "']").addClass("visited-rover-" + rover.type).addClass("posRover-" + rover.type);
+    $(".posRover-" + rover.type).addClass("visited-rover-" + rover.type).removeClass("posRover-" + rover.type);
     $("td[data-coor='" + coordonnees + "']").addClass("visited-rover-" + rover.type).addClass("posRover-" + rover.type);
     $("#energy-rover-" + rover.num).html(rover._energy);
     $("#coordonnees-rover-" + rover.num).html('(' + rover._posX + ',' + rover._posY + ')');

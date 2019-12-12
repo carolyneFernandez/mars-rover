@@ -88,6 +88,10 @@ main {
   transform: scaleX(1);
 }
 
+li {
+  list-style: none;
+}
+
 .container-btn-box {
   display: block;
   margin: 50px auto auto auto;
@@ -155,7 +159,7 @@ main {
 .particles {
   height: 100%;
   width: 100vw;
-  background: black;
+  background: #000;
   position: absolute;
   top: 0;
   z-index: 0;
@@ -188,7 +192,8 @@ main {
 }
 .wrapper-view {
   display: flex;
-  width: 88%;
+  flex-direction: column;
+  width: 75%;
   align-items: center;
   justify-content: center;
 }
@@ -470,6 +475,10 @@ main {
 .container-game .text-center {
   text-align: center !important;
 }
+.container-game .img-rover {
+  width: 40px;
+  height: 40px;
+}
 .container-game .map-display {
   margin-top: 50px;
   border-collapse: collapse;
@@ -511,8 +520,98 @@ main {
   background-color: red !important;
   opacity: 0.5;
 }
+.container-game .map-display .posRover-short {
+  background-image: url("../../src/Assets/roverDumb.png") !important;
+  background-repeat: no-repeat;
+  background-size: 15px;
+}
+.container-game .map-display .posRover-economic {
+  background-image: url("../../src/Assets/roverEco.png") !important;
+  background-repeat: no-repeat;
+  background-size: 15px;
+}
 .container-game .map-display .case-finish {
   background-color: greenyellow;
+}
+
+.z-100_-90 {
+  filter: brightness(0);
+}
+
+.z-90_-80 {
+  filter: brightness(0.1);
+}
+
+.z-80_-70 {
+  filter: brightness(0.2);
+}
+
+.z-70_-60 {
+  filter: brightness(0.3);
+}
+
+.z-60_-50 {
+  filter: brightness(0.4);
+}
+
+.z-50_-40 {
+  filter: brightness(0.5);
+}
+
+.z-40_-30 {
+  filter: brightness(0.6);
+}
+
+.z-30_-20 {
+  filter: brightness(0.7);
+}
+
+.z-20_-10 {
+  filter: brightness(0.8);
+}
+
+.z-10_0 {
+  filter: brightness(0.9);
+}
+
+.z0_10 {
+  filter: brightness(1.2);
+}
+
+.z10_20 {
+  filter: brightness(1.4);
+}
+
+.z20_30 {
+  filter: brightness(1.6);
+}
+
+.z30_40 {
+  filter: brightness(1.8);
+}
+
+.z40_50 {
+  filter: brightness(2);
+}
+
+.z50_60 {
+  filter: brightness(2.2);
+}
+
+.z60_70 {
+  filter: brightness(2.4);
+}
+
+.z70_80 {
+  filter: brightness(2.6);
+}
+
+.z80_90 {
+  filter: brightness(2.8);
+}
+
+.z90_100 {
+  filter: brightness(3);
 }
 
 /*# sourceMappingURL=styles.css.map */

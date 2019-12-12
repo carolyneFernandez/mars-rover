@@ -66,6 +66,11 @@ $visited-all-rover: red;
     text-align: center !important;
   }
 
+  .img-rover{
+    width: 40px;
+    height: 40px;
+  }
+
   .map-display {
 
     margin-top: 50px;
@@ -118,6 +123,22 @@ $visited-all-rover: red;
     .visited-rover-economic.visited-rover-short {
       background-color: $visited-all-rover !important;
       opacity: 0.5;
+    }
+
+
+
+    .posRover-short{
+      background-image: url("../../src/Assets/roverDumb.png") !important;
+      //background-color: transparent !important;
+      background-repeat:no-repeat;
+      background-size:15px;
+    }
+
+    .posRover-economic {
+      background-image: url("../../src/Assets/roverEco.png") !important;
+      //background-color: transparent !important;
+      background-repeat:no-repeat;
+      background-size:15px;
     }
 
     .case-finish {
