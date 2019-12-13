@@ -1,4 +1,4 @@
-**Mise en place des 3 API**
+# Mise en place des 3 API
 
 **Pré-requis**
 *  docker
@@ -6,8 +6,13 @@
 *  composer
 *  npm
     
-**Configuration globale**
+# Installation rapide
 
+*  Depuis la branche "master", lancer le script "install.sh".
+
+# Installation manuelle
+
+**Configuration globale**
 
 *  Créer un dossier qui contiendra les 3 api et positionnez-vous dedans.
 *  Entrer cette commande dans un terminal pour créer un réseau interne à docker afin que les 3 api puissent communiquer : `docker network create --internal marsAPI`
@@ -37,7 +42,7 @@
 *  Lancer la commande dans un terminal : `npm install`
 *  Lancer le container : `docker-compose up -d`
     
-**TESTER**
+# Tester
 
 
 *  Installer une extension sur votre navigateur qui désactive le cors :
