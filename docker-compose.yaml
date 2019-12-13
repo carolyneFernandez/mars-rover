@@ -1,0 +1,22 @@
+version: '3'
+services:
+  rover: 
+    build: ./rover
+    ports:
+      - "8020:80"
+    volumes:
+      - ./rover/:/var/www/html
+    links:
+      - carte:mars-rover-carte
+  carte: 
+    build: ./carte
+    ports:
+      - "8010:80"
+    volumes:
+      - ./carte/:/var/www/html
+  front:
+    image: httpd:2.4
+    ports:
+      - "3000:80"
+    volumes:
+      - ./front/:/usr/local/apache2/htdocs
