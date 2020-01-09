@@ -87,7 +87,7 @@ class GameController extends AbstractController
         $posY = 1;
         $destX = 9;
         $destY = 9;
-        $mapName="map";
+        $mapName = "map";
 
 
         $map[$posY][$posX]['start'] = true;
@@ -132,7 +132,6 @@ class GameController extends AbstractController
         $rover->setPosX($posX)->setPosY($posY);
         $rover->setDestX($destX)->setDestY($destY);
         $rover->setMap($mapName);
-
 
 
         $iceCases = $ecoRoverService->requestIceCases($rover);
@@ -249,7 +248,7 @@ class GameController extends AbstractController
         * int energyRest
         * string map (nom de la map à utiliser)
         * array memory
-        * http://localhost:8000/post_response
+        * http://localhost:8000/post-response
         */
 
         /*
@@ -260,6 +259,7 @@ class GameController extends AbstractController
         * array momery ( array -> un tableau renvoyer sans traitement par le front ).
         */
         $response = null;
+        $result = null;
         if ($request->isMethod('POST')) {
             if (isset($parameters['typeRover'])) {
                 switch ($parameters['typeRover']) {
@@ -279,39 +279,45 @@ class GameController extends AbstractController
                 $errors[] = "Le type de rover n'est pas renseigné.";
 
             }
-            if (isset($parameters['posX']) && isset($parameters['posY'])) {
-                $rover->setPosX(intval($parameters['posX']))->setPosY(intval($parameters['posY']));
-                $rover->setPosZ($rover->requestGetZ($rover->getPosX(), $rover->getPosY()));
-            } else {
-                $errors[] = "La position du rover n'est pas renseignée.";
-            }
-            if (isset($parameters['destX']) && isset($parameters['destY'])) {
-                $rover->setDestX(intval($parameters['destX']))->setDestY(intval($parameters['destY']));
-            } else {
-                $errors[] = "La destination du rover n'est pas renseignée.";
-            }
-            if (isset($parameters['energy'])) {
-                $rover->setEnergy(intval($parameters['energy']));
-            } else {
-                $errors[] = "L'énergie du rover n'est pas renseignée.";
-            }
-            if (isset($parameters['map'])) {
-                $rover->setMap($parameters['map']);
+            if (empty($errors)) {
+
+                if (isset($parameters['posX']) && isset($parameters['posY'])) {
+                    $rover->setPosX(intval($parameters['posX']))->setPosY(intval($parameters['posY']));
+                    $rover->setPosZ($rover->requestGetZ($rover->getPosX(), $rover->getPosY()));
+                } else {
+                    $errors[] = "La position du rover n'est pas renseignée.";
+                }
+                if (isset($parameters['destX']) && isset($parameters['destY'])) {
+                    $rover->setDestX(intval($parameters['destX']))->setDestY(intval($parameters['destY']));
+                } else {
+                    $errors[] = "La destination du rover n'est pas renseignée.";
+                }
+                if (isset($parameters['energy'])) {
+                    $rover->setEnergy(intval($parameters['energy']));
+                } else {
+                    $errors[] = "L'énergie du rover n'est pas renseignée.";
+                }
+                if (isset($parameters['map'])) {
+                    $rover->setMap($parameters['map']);
 //                $map = $parameters['map'];
-            } else {
-                $errors[] = "La carte n'a pas été passée.";
+                } else {
+                    $errors[] = "La carte n'a pas été passée.";
+                }
+                if ($parameters['memory']) {
+                    $rover->setMemory($parameters['memory']);
+                }
+
             }
-            if ($parameters['memory']) {
-                $rover->setMemory($parameters['memory']);
-            }
+
             if (!empty($errors)) {
-                dump($errors);
-                die;
+                $result['errors'] = $errors;
+//                $response = json_encode($result);
+                return new JsonResponse($result, 400);
             }
             // result est un array avec comme paramètre nextX, nextY, energyRest et memory
             $result = $rover->choiceStep();
             $result['errors'] = $errors;
-            $response = json_encode($result);
+//            $response = json_encode($result);
 
         }
 //        $jsonResponse = new Response();
@@ -319,7 +325,7 @@ class GameController extends AbstractController
 //        $jsonResponse->headers->set('Content-Type', 'application/json');
 //
 //        return $jsonResponse;
-        return new JsonResponse($response);
+        return new JsonResponse($result);
 
     }
 
