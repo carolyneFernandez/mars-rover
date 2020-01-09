@@ -272,10 +272,13 @@ class DefaultController extends AbstractController
      */
     public function getIceCase()
     {
-        if (!isset($_GET['mapName']) || $_GET['mapName'] == null) {
-            print("need more params, ex: /api/getIceCase?mapName=carte4206664269");
-            die;
+        if (!isset($_GET['mapName']) || $_GET['mapName'] == null || !file_exists($_GET['mapName'].'.txt')) {
+//            print("need more params, ex: /api/getIceCase?mapName=carte4206664269");
+//            die;
+            return new Response("need more params, ex: /api/getIceCase?mapName=carte4206664269",400);
+
         }
+
         $carteTemp = file_get_contents($_GET['mapName'] . '.txt');
         $carteTemp = json_decode($carteTemp, true);
         $iceCases = [];
@@ -305,9 +308,11 @@ class DefaultController extends AbstractController
      */
     public function getMaterial()
     {
-        if (!isset($_GET['mapName']) || !isset($_GET['x']) || !isset($_GET['y']) || $_GET['mapName'] == null || $_GET['x'] == null || $_GET['y'] == null) {
-            print("need more params, ex: /api/getMaterial?mapName=carte4206664269&x=24&y=96.");
-            die;
+        if (!isset($_GET['mapName']) || !isset($_GET['x']) || !isset($_GET['y']) || $_GET['mapName'] == null || $_GET['x'] == null || $_GET['y'] == null || !file_exists($_GET['mapName'].'.txt')) {
+//            print("need more params, ex: /api/getMaterial?mapName=carte4206664269&x=24&y=96.");
+//            die;
+            return new Response("need more params, ex: /api/getMaterial?mapName=carte4206664269&x=24&y=96.",400);
+
         }
 
         $contents = array(
@@ -361,9 +366,11 @@ class DefaultController extends AbstractController
      */
     public function getZ()
     {
-        if (!isset($_GET['mapName']) || !isset($_GET['x']) || !isset($_GET['y']) || $_GET['mapName'] == null || $_GET['x'] == null || $_GET['y'] == null) {
-            print("need more params, ex: /api/getZ?mapName=carte4206664269&x=24&y=96");
-            die;
+        if (!isset($_GET['mapName']) || !isset($_GET['x']) || !isset($_GET['y']) || $_GET['mapName'] == null || $_GET['x'] == null || $_GET['y'] == null || !file_exists($_GET['mapName'].'.txt')) {
+//            print("need more params, ex: /api/getZ?mapName=carte4206664269&x=24&y=96");
+//            die;
+            return new Response("need more params, ex: /api/getZ?mapName=carte4206664269&x=24&y=96",400);
+
         }
 
         $carteTemp = file_get_contents($_GET['mapName'] . '.txt');
@@ -389,9 +396,11 @@ class DefaultController extends AbstractController
      */
     public function getAdjCases(){
 
-        if (!isset($_GET['mapName']) || !isset($_GET['x']) || !isset($_GET['y']) || !isset($_GET['y']) || $_GET['radius'] == null || $_GET['x'] == null || $_GET['y'] == null || $_GET['radius'] == null) {
-            print("need more params, ex: /api/getAdjCases?mapName=carte4206664269&x=24&y=96&radius=2");
-            die;
+        if (!isset($_GET['mapName']) || !isset($_GET['x']) || !isset($_GET['y']) || !isset($_GET['y']) || $_GET['radius'] == null || $_GET['x'] == null || $_GET['y'] == null || $_GET['radius'] == null || !file_exists($_GET['mapName'].'.txt')) {
+//            print("need more params, ex: /api/getAdjCases?mapName=carte4206664269&x=24&y=96&radius=2");
+//            die;
+
+            return new Response("need more params, ex: /api/getAdjCases?mapName=carte4206664269&x=24&y=96&radius=2",400);
         }
 
         $file = file_get_contents($_GET['mapName'].".txt");
