@@ -83,7 +83,7 @@ function newRoundRover(game) {
             dataType: "json",
             success: function (data, status) {
                 // Réponse de l'API ROVER, on enregistre tous les résultats
-                data = JSON.parse(data);
+                // data = JSON.parse(data);
                 rover._posX = data.nextX;
                 rover._posY = data.nextY;
                 rover._memory = data.memory;
